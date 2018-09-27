@@ -1,4 +1,4 @@
-int LED1 = 6; //Led connected to analog pin D8
+int LED1 = 5; //Led connected to analog pin D8
 int dutyCycle = 255;
 
 void setup() {
@@ -12,10 +12,10 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (Serial.available() > 0) {
       // read value from console
-      dutyCycle = Serial.read();
+      dutyCycle = Serial.parseInt();
       Serial.print("Value received: ");
-      Serial.print(dutyCycle, DEC);   
+      Serial.println(dutyCycle);
   }
-  
+
   analogWrite(LED1, dutyCycle);
 }

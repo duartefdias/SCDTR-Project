@@ -1,8 +1,8 @@
-const int button = 3 // Button on digital pin 3
-const int led = 8 // Button on digital pin 8 
+const int button = 5; // Button on digital pin 3
+const int led = 8; // Button on digital pin 8 
 
 // Variable thar defines is button is being pressed or not
-buttonState = 0;
+int buttonState = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -21,5 +21,5 @@ void loop() {
     digitalWrite(led, LOW);
   }
   
-  delay(100);
+  delay(10);
 }

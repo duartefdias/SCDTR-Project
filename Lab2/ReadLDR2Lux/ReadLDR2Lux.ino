@@ -6,6 +6,9 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   int LDR = analogRead(A5);
-  Serial.println(LDR);
+  int Vout = (LDR * 0.0048828125);
+  int RLDR = (10000.0 * (5 - Vout))/Vout;
+  int LuxValue = 500.0 / RLDR;
+  Serial.println(LuxValue);
   delay(500);
 }
