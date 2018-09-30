@@ -1,14 +1,22 @@
+const int LDRpin = A5;
+
+double mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
+    return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 void setup() {
-  // put your setup code here, to run once:
+  
   Serial.begin(9600);
+  pinMode(LDRpin, INPUT);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  int LDR = analogRead(A5);
-  int Vout = (LDR * 0.0048828125);
-  int RLDR = (10000.0 * (5 - Vout))/Vout;
-  int LuxValue = 500.0 / RLDR;
-  Serial.println(LuxValue);
+  
+  int LDR = analogRead(LDRpin);
+  float Vout = mapfloat(LDR, 0, 1023, 0, 5);
+  int RLDR = 10000*(5-Vout)/Vout;
+  
+  Serial.print("Resistência do LDR medida: ");
+  Serial.println(RLDR);
   delay(500);
 }
