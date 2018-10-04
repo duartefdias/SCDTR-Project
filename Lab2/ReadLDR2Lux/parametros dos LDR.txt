@@ -1,0 +1,6 @@
+LDR Azul
+m = -0.3869
+b = 0.2661
+C = 4.8740
+
+LDR Branco
