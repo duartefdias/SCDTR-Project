@@ -1,0 +1,37 @@
+clear all
+%L = logspace(0, 2, 20);
+
+% Measured with luximeter
+measuredL1 = [160, 222, 356, 1290, 733, 3, 1620 ];
+measuredV1 = [3.7, 3.93, 4.11, 4.58, 4.35, 2.51, 4.61 ];
+
+% Measured with smartphone
+measuredL2 = [229 5 60 400 600 800 1000 1200 1600 2500];
+measuredV2 = [3.5 1.75 2.52 4.36 4.09 4.19 4.27 4.31 4.44 4.54];
+
+%Simulation Parameters
+%gama = -1;
+Vcc = 5;
+%R1 = 1000;
+%k = 100;
+
+%R2 = k*(L.^gama);
+%Vi = Vcc * (R1 ./ (R1 + R2));
+
+xi = log10(measuredL);
+yi = log10(Vcc./measuredV - 1);
+plot(xi, yi, 'o');
+
+%Getting slope parameters ( y = mx + b )
+p = polyfit(xi, yi, 1);
+m = p(1)
+b = p(2)
+
+C = 10^(-b/m)
+
+%xi=logspace(0,2,20);
+L2 = 10^(-b / m) * (Vcc ./ measuredV - 1).^(1 / m);
+hold on
+% L
+% L2
+norm(measuredL - L2)

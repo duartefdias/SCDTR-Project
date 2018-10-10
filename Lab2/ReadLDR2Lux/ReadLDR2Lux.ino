@@ -24,9 +24,9 @@ void loop() {
 
   lux = C * pow(( (5 / Vout) - 1), (1/m));
 
-  Serial.print("Lux medidos: ");
+  /*Serial.print("Lux medidos: ");
   Serial.println(lux);
-  Serial.println("\n");
+  Serial.println("\n");*/
   
   delay(500);
 }
