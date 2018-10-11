@@ -1,0 +1,6 @@
+Arduino Uno (1)
+m = -0.4934
+b = 0.6969
+C = 25.8439
+
+Arduino Due (2)

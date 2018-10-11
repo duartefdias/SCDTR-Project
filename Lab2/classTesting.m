@@ -22,8 +22,8 @@ Vcc = 5;
 %R2 = k*(L.^gama);
 %Vi = Vcc * (R1 ./ (R1 + R2));
 
-xi = log10(measuredL2);
-yi = log10(Vcc./measuredV2 - 1);
+xi = log10(measuredL3);
+yi = log10(Vcc./measuredV3 - 1);
 plot(xi, yi, 'o');
 
 %Getting slope parameters ( y = mx + b )
@@ -32,10 +32,3 @@ m = p(1)
 b = p(2)
 
 C = 10^(-b/m)
-
-%xi=logspace(0,2,20);
-L2 = 10^(-b / m) * (Vcc ./ measuredV2 - 1).^(1 / m);
-hold on
-% L
-% L2
-norm(measuredL2 - L2)
