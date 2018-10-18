@@ -28,9 +28,9 @@ void setup() {
   sei(); //allow interrupts
 
   // Reference value
-  // Serial.print("Insert desired Lux value [0, 600]: ";
+  Serial.print("Insert desired Lux value [0, 600]: ";
   refValue = 500;
-  // refValue = Serial.parseInt();  
+  refValue = Serial.parseInt();  
 }
 
 volatile bool flag;
@@ -60,12 +60,16 @@ float readLDR() {
   return LuxValue; 
 }
 
-int Controller(float refValue, float measurement) {
 
-    float error = refValue - measurement;
 
-    // Code to compute the optimal input u
-    int u = 255;
+int PIDController(float ref, float y) {
+
+    float e = ref - y;
+    
+
+    
+    
+    int u = e*1000;
     return u;
 }
 
@@ -76,7 +80,7 @@ void loop() {
     float y = readLDR();
 
     // Apply control law 
-    int u = Controller(refValue, y);
+    int u = PIDController(refValue, y);
 
     // Write output to system
     analogWrite(LED1, u);
