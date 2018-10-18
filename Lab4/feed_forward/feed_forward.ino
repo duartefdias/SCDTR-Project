@@ -5,15 +5,22 @@ const int ldr = A5;
 // ldr1 parameters
 const float C = 25.8439;
 const float m = -0.4934;
+const float mG1 = 0.1001;
+const float bG1 = 44.977;
 // ldr2 parameters
 const float C2 = 25.8439;
 const float m2 = -0.4934;
+
+// Constants
+const int Vcc = 5;
 
 // Variables
 int ldrReadValue = 0;
 int desiredLuxValue = 0;
 int measuredLux = 0;
 int Ui = 0;
+float K = 1;
+
 
 float mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
     return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -50,8 +57,15 @@ float readLDR() {
 void loop() {
 
   // Calculate Ui value
+  K = 1 / (mG1 * desiredLuxValue + bG1);
+  Ui = K * desiredLuxValue;
+  Serial.println(K);
+  Serial.println(Ui);
+  
 
   // Set led value with Ui
+  Ui = mapfloat(Ui, 0, 5, 0, 255);
+  Serial.println(Ui);
   analogWrite(led, Ui);
 
   // Read ldr lux value
