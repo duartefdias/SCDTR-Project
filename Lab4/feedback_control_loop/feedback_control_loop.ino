@@ -6,6 +6,7 @@ const int LDRpin = A5; // LDR connected to A5 pin
 float refValue = 0;
 const float C = 25.8439;
 const float m = -0.4934;
+const int Vcc = 5;
 
 void setup() {
   // Setup pinmodes
@@ -51,28 +52,39 @@ float readLDR() {
   float Vi = mapfloat(LDR, 0, 1023, 0, 5);
 
   // Convert voltage into Lux
-  float LuxValue = C*(Vcc/Vi - 1)^(1/m);
+  float base = (Vcc/Vi-1);
+  float exponent = 1/m; 
+  
+  float LuxValue = C*pow(base, exponent);
 
   return LuxValue; 
 }
 
-float Controller(float refValue, float ) {
-    
+int Controller(float refValue, float measurement) {
+
+    float error = refValue - measurement;
+
+    // Code to compute the optimal input u
+    int u = 255;
+    return u;
 }
 
 void loop() {
   if(flag)
   {
     // Read current output - y
-    y = readLDR();
+    float y = readLDR();
 
     // Apply control law 
-    u = Controller(refValue, y)
+    int u = Controller(refValue, y);
 
     // Write output to system
-    analogWrite(LED1, )
+    analogWrite(LED1, u);
+
+    // Print measurement
+    Serial.print("Measured voltage: ");
+    Serial.println(y);
         
     flag = 0;
   }
-  //other operations
 }
