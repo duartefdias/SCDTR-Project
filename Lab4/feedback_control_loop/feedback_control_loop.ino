@@ -181,14 +181,11 @@ void loop() {
 
     // Apply control law
     float u = Controller(refValue, measuredY);
-    Serial.print("Written u: ");
+    Serial.print("Applied u: ");
     Serial.println(u);
     if(u > 5) {u = 5;}
-    if(u < 0) {u = 0;}
-    
+    if(u < 0) {u = 0;}    
     u = mapfloat(u, 0, 5, 0, 255);
-
-    // Write output to system
     analogWrite(LED1, u);
 
     // Register initial time of step input
