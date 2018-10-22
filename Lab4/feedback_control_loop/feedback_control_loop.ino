@@ -34,17 +34,17 @@ int ti = 0;
 
 int increment = 0;
 
-/// PI Controller
+/////////////////////////// PI Controller
 // PI controller memory
 float y_ant = 0;
 float i_ant = 0;
 float e_ant = 0;
 // PI Controller parameters
-const float Kp = 1;
-const float Ki = 1;
+const float Kp = 0.2;
+const float Ki = 100;
 
 // Sampling Period
-const float T = 0.005;
+const double T = 0.005;
 
 // Setup Interrupt
 volatile bool flag;
@@ -81,7 +81,9 @@ float Controller(float ref, float measuredY) {
   Serial.println(Uff);
 
   // Compute error
-  float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));
+  //float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));
+  float Upi =  PIcontroller(lux2volt(ref), lux2volt(measuredY));
+
   Serial.print("Upi: ");
   Serial.println(Upi);
 
@@ -97,9 +99,9 @@ float lux2volt(float lux) {
   return Vcc/(pow(base, exponent) + 1);
 }
 
-/// Computes the predicted output according to step response of system model G(s)
+/// Computes the predicted output according to step response of system model G(s) in Volt
 //  G(s) = G0(x) / 1+Tau(x)*s
-//  v*(t) = vf - (vf-vi) * e^-(t-ti)/Tau(xf)
+//  v_des(t) = vf - (vf-vi) * e^-(t-ti)/Tau(xf)
 float calculateDesiredY(float xf) {
   float Vf = lux2volt(xf);
   float Vi = lux2volt(xi);
@@ -118,15 +120,23 @@ float FeedForwardController(float refValue) {
   return Kff * refValue;
 }
 
-// PI Controller, returns the output voltage to obtain ref=y
+// PI Controller, returns the output voltage to obtain ref=y both are in Volt
 float PIcontroller(float ref, float y) {
   float K1 = Kp * G0(ref);
   Serial.print("K1: ");
   Serial.println(K1);
   float K2 = Kp * Ki * (T / 2);
-
+  Serial.print("K2: ");
+  Serial.println(K2);
+  Serial.print("Ki: ");
+  Serial.println(Ki);
+  Serial.print("mtau1: ");
+  Serial.println(mtau1);
+  Serial.print("T: ");
+  Serial.println(T);
+  
   float e = ref - y;
-  Serial.print("Error: ");
+  Serial.print("Error: ");  
   Serial.println(e);
   float p = (K1 * ref) - (Kp * y);
   Serial.print("p: ");
@@ -191,6 +201,7 @@ void loop() {
     // Register initial time of step input
     if (increment == 0) {
       ti = micros();
+      increment = 1;
     }
 
     // Print measurement
@@ -199,6 +210,5 @@ void loop() {
     Serial.println();
 
     flag = 0;
-    increment += 1;
   }
 }
