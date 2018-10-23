@@ -8,16 +8,17 @@ float refValue = 0; // Desired illuminance in Lux
 const int Vcc = 5;
 
 /// LDR1 parameters
-const float C = 25.8439;
-const float m = -0.4934;
+const float C = 185.922;
+const float m = -0.4906;
 
 /// System parameters: Gain and Time constant function of illuminance x [ARDUINO 1]
 // G0(x) = mG1*x + bG1
 // Tau(x) = mtau1*x + btau1
-const float mG1 = 0.1001;
-const float bG1 = 44.9773;
-const double mtau1 = -0.00001449;
-const double btau1 = 0.0119;
+const float mG1 = 0.1227;
+const float bG1 = 13.3269;
+const double mtau1 = -0.00009;
+const double btau1 = 0.0237;
+
 // Returns system gain for desired illuminance x
 float G0(float x) {
   return mG1*x + bG1;
@@ -40,14 +41,13 @@ float y_ant = 0;
 float i_ant = 0;
 float e_ant = 0;
 // PI Controller parameters
-const float Kp = 0.005;
-const float Ki = 2;
+const float Kp = 2;
+const float Ki = 70;
 
 // Sampling Period
 const double T = 0.005;
 
 // Setup Interrupt
-bool windup = 0;
 volatile bool flag;
 ISR(TIMER1_COMPA_vect) {
   flag = 1; //notify main loop
@@ -71,6 +71,28 @@ float readLDR() {
   return LuxValue;
 }
 
+
+// Computes the controller value for the feedback system
+// Sums the Feed Forward controller with the PI Controller
+float Controller(float ref, float measuredY) {
+
+  // Calculate Feed Forward controller input tension
+  float Uff = FeedForwardController(ref);
+  Serial.print("Uff: ");
+  Serial.println(Uff);
+
+  // Compute error
+  //float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));
+  float Upi =  PIcontroller(lux2volt(ref), lux2volt(measuredY));
+
+  Serial.print("Upi: ");
+  Serial.println(Upi);
+
+  // Compute PI controller input tension
+  float u = (Upi + Uff);
+  return u;
+}
+
 // Converts value in Lux to Volt
 float lux2volt(float lux) {
   float base = lux/C;
@@ -91,37 +113,12 @@ float calculateDesiredY(float xf) {
   return Vf - (Vf - Vi) * exp(-(t-ti)*0.000001/taux);     
 }
 
+
 // Feed Forward Controller, returns the output voltage to obtain refValue illuminance
 float FeedForwardController(float refValue) {
   // Calculate Ui value
   float Kff = 1 / (mG1 * refValue + bG1);
   return Kff * refValue;
-}
-
-// Computes the controller value for the feedback system
-// Sums the Feed Forward controller with the PI Controller
-float Controller(float ref, float measuredY) {
-
-  // Calculate Feed Forward controller input tension
-  float Uff = FeedForwardController(ref);
-  Serial.print("Uff: ");
-  Serial.println(Uff);
-
-  // Compute error
-  //float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));
-  float Upi =  PIcontroller(lux2volt(ref), lux2volt(measuredY));
-
-  Serial.print("Upi: ");
-  Serial.println(Upi);
-
-  // Compute PI controller input tension
-  float u = Upi + Uff;
-  Serial.print("Applied u: ");
-  Serial.println(u);
-  if(u > 5) {u = 5; windup = 1;}
-  else if(u < 0) {u = 0; windup = 1;}
-  else { windup = 0; }
-  return u;
 }
 
 // PI Controller, returns the output voltage to obtain ref=y both are in Volt
@@ -145,16 +142,7 @@ float PIcontroller(float ref, float y) {
   float p = (K1 * ref) - (Kp * y);
   Serial.print("p: ");
   Serial.println(p);
-
-  float i = i_ant;
-  // Windup prevention
-  if (!windup) {
-    i = i_ant + K2 * (e + e_ant);
-  }
-
-  // Limit integral term to avoid windup
-  //if (i < -300) { i = -300;}
-  //if (i > 50)  { i = 50;}
+  float i = i_ant + K2 * (e + e_ant);
   Serial.print("i: ");
   Serial.println(i);
   float u = p + i;
@@ -204,7 +192,10 @@ void loop() {
 
     // Apply control law
     float u = Controller(refValue, measuredY);
-        
+    Serial.print("Applied u: ");
+    Serial.println(u);
+    if(u > 5) {u = 5;}
+    if(u < 0) {u = 0;}    
     u = mapfloat(u, 0, 5, 0, 255);
     analogWrite(LED1, u);
 
