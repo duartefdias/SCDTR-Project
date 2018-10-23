@@ -44,8 +44,8 @@ float y_ant = 0;
 float i_ant = 0;
 float e_ant = 0;
 // PI Controller parameters
-const float Kp = 2;
-const float Ki = 70;
+const float Kp = 3;
+const float Ki = 12;
 
 // Sampling Period
 const double T = 0.005;
@@ -129,33 +129,15 @@ float FeedForwardController(float refValue) {
 // PI Controller, returns the output voltage to obtain ref=y both are in Volt
 float PIcontroller(float ref, float y) {
   float K1 = Kp * G0(ref);
-  Serial.print("K1: ");
-  Serial.println(K1);
   float K2 = Kp * Ki * (T / 2);
-  Serial.print("K2: ");
-  Serial.println(K2);
-  Serial.print("Ki: ");
-  Serial.println(Ki);
-  Serial.print("mtau1: ");
-  Serial.println(mtau1);
-  Serial.print("T: ");
-  Serial.println(T);
   
   float e = ref - y;
-  Serial.print("Error: ");  
-  Serial.println(e);
-  float p = (K1 * ref) - (Kp * y);
-  Serial.print("p: ");
-  Serial.println(p);
+  float p = Kp*e;
+  
   float i = i_ant + K2 * (e + e_ant);
-  if(i < -100){
-    i = -100;
-  }
-  else if(i > 100){
-    i = 100;
-  }
-  Serial.print("i: ");
-  Serial.println(i);
+  // Limit integral term to avoid windup
+  if (i < -10) { i = -10;}
+  if (i > 10)  { i = 10;}
   float u = p + i;
   y_ant = y;
   i_ant = i;
@@ -187,7 +169,7 @@ void setup() {
   sei(); // allow interrupts
 
   // Reference value
-  Serial.print("Insert desired Lux value [0, 600]: ");
+  Serial.print("Insert desired Lux value [0, 200]: ");
   while (refValue == 0) {
     if (Serial.available() > 0) {
       refValue = Serial.parseInt();
