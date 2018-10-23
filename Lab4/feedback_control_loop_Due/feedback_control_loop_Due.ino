@@ -11,13 +11,16 @@ const int Vcc = 5;
 const float C = 185.922;
 const float m = -0.4906;
 
-/// System parameters: Gain and Time constant function of illuminance x [ARDUINO 1]
+/// System parameters: Gain and Time constant function of illuminance x [ARDUINO 2]
 // G0(x) = mG1*x + bG1
 // Tau(x) = mtau1*x + btau1
 const float mG1 = 0.1227;
 const float bG1 = 13.3269;
 const double mtau1 = -0.00009;
 const double btau1 = 0.0237;
+
+// Additional variables
+int windup = 0;
 
 // Returns system gain for desired illuminance x
 float G0(float x) {
@@ -143,6 +146,12 @@ float PIcontroller(float ref, float y) {
   Serial.print("p: ");
   Serial.println(p);
   float i = i_ant + K2 * (e + e_ant);
+  if(windup == 1){
+    i = -500;
+  }
+  else if(windup == -1){
+    i = -500;
+  }
   Serial.print("i: ");
   Serial.println(i);
   float u = p + i;
@@ -194,8 +203,11 @@ void loop() {
     float u = Controller(refValue, measuredY);
     Serial.print("Applied u: ");
     Serial.println(u);
-    if(u > 5) {u = 5;}
-    if(u < 0) {u = 0;}    
+    if(u > 5) {u = 5; windup = 1;}
+    else if(u < 0) {u = 0; windup = -1;}
+    else {windup = 0;}
+    Serial.print("Windup: ");
+    Serial.println(windup);
     u = mapfloat(u, 0, 5, 0, 255);
     analogWrite(LED1, u);
 
