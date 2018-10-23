@@ -21,8 +21,8 @@ const double btau1 = 0.0237;
 
 // Additional variables
 int windup = 0;
-float previousTime = 0;
-float currentTime = 0;
+float startTime = 0;
+float endTime = 0;
 
 // Returns system gain for desired illuminance x
 float G0(float x) {
@@ -179,6 +179,7 @@ void setup() {
 void loop() {
   if (flag)
   {
+    startTime = micros();
     // Read current output - y
     float measuredY = readLDR();
 
@@ -187,18 +188,9 @@ void loop() {
     u = mapfloat(u, 0, 5, 0, 255);
     analogWrite(LED1, u);
 
-    // Register initial time of step input
-    if (increment == 0) {
-      ti = micros();
-      increment = 1;
-    }
-
-    currentTime = micros();
-
     // Print measurement
-    Serial.println(currentTime - previousTime);
-
-    previousTime = currentTime;
+    endTime = micros();
+    Serial.println(endTime - startTime);
 
     flag = 0;
   }
