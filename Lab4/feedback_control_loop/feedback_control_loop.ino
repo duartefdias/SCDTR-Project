@@ -32,6 +32,7 @@ double tau(float x) {
 float xi = 0;
 int ti = 0;
 int t_ans=0;
+int t_dps=0;
 
 int increment = 0;
 
@@ -188,15 +189,14 @@ void loop() {
         
     u = mapfloat(u, 0, 5, 0, 255);
     analogWrite(LED1, u);
-
-    int ta = micros();
-    Serial.println(ta-t_ans);
-    t_ans = ta;
-
+    
     // Print measurement
-    //Serial.print("Measured illuminance: ");
-    //Serial.println(measuredY);
-    //Serial.println();
+    t_ans = micros();
+    Serial.print("Measured illuminance: ");
+    Serial.println(measuredY);
+    Serial.println();
+    t_dps = micros();
+    Serial.println(t_dps-t_ans);
 
     flag = 0;
   }
