@@ -21,6 +21,8 @@ const double btau1 = 0.0237;
 
 // Additional variables
 int windup = 0;
+float previousTime = 0;
+float currentTime = 0;
 
 // Returns system gain for desired illuminance x
 float G0(float x) {
@@ -81,15 +83,10 @@ float Controller(float ref, float measuredY) {
 
   // Calculate Feed Forward controller input tension
   float Uff = FeedForwardController(ref);
-  Serial.print("Uff: ");
-  Serial.println(Uff);
 
   // Compute error
   //float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));
   float Upi =  PIcontroller(lux2volt(ref), lux2volt(measuredY));
-
-  Serial.print("Upi: ");
-  Serial.println(Upi);
 
   // Compute PI controller input tension
   float u = (Upi + Uff);
@@ -129,24 +126,10 @@ float FeedForwardController(float refValue) {
 // PI Controller, returns the output voltage to obtain ref=y both are in Volt
 float PIcontroller(float ref, float y) {
   float K1 = Kp * G0(ref);
-  Serial.print("K1: ");
-  Serial.println(K1);
   float K2 = Kp * Ki * (T / 2);
-  Serial.print("K2: ");
-  Serial.println(K2);
-  Serial.print("Ki: ");
-  Serial.println(Ki);
-  Serial.print("mtau1: ");
-  Serial.println(mtau1);
-  Serial.print("T: ");
-  Serial.println(T);
   
   float e = ref - y;
-  Serial.print("Error: ");  
-  Serial.println(e);
   float p = (K1 * ref) - (Kp * y);
-  Serial.print("p: ");
-  Serial.println(p);
   float i = i_ant + K2 * (e + e_ant);
   if(i < -100){
     i = -100;
@@ -154,8 +137,6 @@ float PIcontroller(float ref, float y) {
   else if(i > 100){
     i = 100;
   }
-  Serial.print("i: ");
-  Serial.println(i);
   float u = p + i;
   y_ant = y;
   i_ant = i;
@@ -203,13 +184,7 @@ void loop() {
 
     // Apply control law
     float u = Controller(refValue, measuredY);
-    Serial.print("Applied u[0,5]: ");
-    Serial.println(u);
-    Serial.print("Windup: ");
-    Serial.println(windup);
     u = mapfloat(u, 0, 5, 0, 255);
-    Serial.print("Applied u[0, 255]: ");
-    Serial.println(u);
     analogWrite(LED1, u);
 
     // Register initial time of step input
@@ -218,10 +193,12 @@ void loop() {
       increment = 1;
     }
 
+    currentTime = micros();
+
     // Print measurement
-    Serial.print("Measured illuminance: ");
-    Serial.println(measuredY);
-    Serial.println();
+    Serial.println(currentTime - previousTime);
+
+    previousTime = currentTime;
 
     flag = 0;
   }
