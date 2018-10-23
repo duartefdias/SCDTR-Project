@@ -170,7 +170,7 @@ void setup() {
   sei(); // allow interrupts
 
   // Reference value
-  Serial.print("Insert desired Lux value [0, 600]: ");
+  Serial.print("Insert desired Lux value [0, 300]: ");
   while (refValue == 0) {
     if (Serial.available() > 0) {
       refValue = Serial.parseInt();
@@ -191,12 +191,9 @@ void loop() {
     analogWrite(LED1, u);
     
     // Print measurement
-    t_ans = micros();
     Serial.print("Measured illuminance: ");
     Serial.println(measuredY);
-    Serial.println();
-    t_dps = micros();
-    Serial.println(t_dps-t_ans);
+
 
     flag = 0;
   }
