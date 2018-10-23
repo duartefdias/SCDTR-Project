@@ -93,6 +93,8 @@ float Controller(float ref, float measuredY) {
 
   // Compute PI controller input tension
   float u = (Upi + Uff);
+  if(u > 5){u = 5;}
+  if(u < 0){u = 0;}
   return u;
 }
 
@@ -146,11 +148,11 @@ float PIcontroller(float ref, float y) {
   Serial.print("p: ");
   Serial.println(p);
   float i = i_ant + K2 * (e + e_ant);
-  if(windup == 1){
-    i = -500;
+  if(i < -100){
+    i = -100;
   }
-  else if(windup == -1){
-    i = -500;
+  else if(i > 100){
+    i = 100;
   }
   Serial.print("i: ");
   Serial.println(i);
@@ -201,14 +203,13 @@ void loop() {
 
     // Apply control law
     float u = Controller(refValue, measuredY);
-    Serial.print("Applied u: ");
+    Serial.print("Applied u[0,5]: ");
     Serial.println(u);
-    if(u > 5) {u = 5; windup = 1;}
-    else if(u < 0) {u = 0; windup = -1;}
-    else {windup = 0;}
     Serial.print("Windup: ");
     Serial.println(windup);
     u = mapfloat(u, 0, 5, 0, 255);
+    Serial.print("Applied u[0, 255]: ");
+    Serial.println(u);
     analogWrite(LED1, u);
 
     // Register initial time of step input
