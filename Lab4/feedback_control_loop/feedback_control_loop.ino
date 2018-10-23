@@ -31,6 +31,7 @@ double tau(float x) {
 /// Tensão e tempo inicial (antes do escalão)
 float xi = 0;
 int ti = 0;
+int t_ans=0;
 
 int increment = 0;
 
@@ -39,15 +40,17 @@ int increment = 0;
 float y_ant = 0;
 float i_ant = 0;
 float e_ant = 0;
+
+
 // PI Controller parameters
-const float Kp = 0.005;
-const float Ki = 2;
+const float Kp = 3;
+const float Ki = 12;
+
 
 // Sampling Period
 const double T = 0.005;
 
 // Setup Interrupt
-bool windup = 0;
 volatile bool flag;
 ISR(TIMER1_COMPA_vect) {
   flag = 1; //notify main loop
@@ -104,59 +107,37 @@ float Controller(float ref, float measuredY) {
 
   // Calculate Feed Forward controller input tension
   float Uff = FeedForwardController(ref);
-  Serial.print("Uff: ");
-  Serial.println(Uff);
+  //Serial.print("Uff: ");
+  //Serial.println(Uff);
 
   // Compute error
   //float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));
   float Upi =  PIcontroller(lux2volt(ref), lux2volt(measuredY));
 
-  Serial.print("Upi: ");
-  Serial.println(Upi);
+  //Serial.print("Upi: ");
+  //Serial.println(Upi);
 
   // Compute PI controller input tension
   float u = Upi + Uff;
-  Serial.print("Applied u: ");
-  Serial.println(u);
-  if(u > 5) {u = 5; windup = 1;}
-  else if(u < 0) {u = 0; windup = 1;}
-  else { windup = 0; }
+  //Serial.print("Applied u: ");
+  //Serial.println(u);
+  if(u > 5) {u = 5;}
+  if(u < 0) {u = 0;}
   return u;
 }
 
 // PI Controller, returns the output voltage to obtain ref=y both are in Volt
 float PIcontroller(float ref, float y) {
   float K1 = Kp * G0(ref);
-  Serial.print("K1: ");
-  Serial.println(K1);
   float K2 = Kp * Ki * (T / 2);
-  Serial.print("K2: ");
-  Serial.println(K2);
-  Serial.print("Ki: ");
-  Serial.println(Ki);
-  Serial.print("mtau1: ");
-  Serial.println(mtau1);
-  Serial.print("T: ");
-  Serial.println(T);
   
   float e = ref - y;
-  Serial.print("Error: ");  
-  Serial.println(e);
-  float p = (K1 * ref) - (Kp * y);
-  Serial.print("p: ");
-  Serial.println(p);
-
-  float i = i_ant;
-  // Windup prevention
-  if (!windup) {
-    i = i_ant + K2 * (e + e_ant);
-  }
-
+  float p = Kp*e;
+  
+  float i = i_ant + K2 * (e + e_ant);
   // Limit integral term to avoid windup
-  //if (i < -300) { i = -300;}
-  //if (i > 50)  { i = 50;}
-  Serial.print("i: ");
-  Serial.println(i);
+  if (i < -10) { i = -10;}
+  if (i > 10)  { i = 10;}
   float u = p + i;
   y_ant = y;
   i_ant = i;
@@ -208,16 +189,14 @@ void loop() {
     u = mapfloat(u, 0, 5, 0, 255);
     analogWrite(LED1, u);
 
-    // Register initial time of step input
-    if (increment == 0) {
-      ti = micros();
-      increment = 1;
-    }
+    int ta = micros();
+    Serial.println(ta-t_ans);
+    t_ans = ta;
 
     // Print measurement
-    Serial.print("Measured illuminance: ");
-    Serial.println(measuredY);
-    Serial.println();
+    //Serial.print("Measured illuminance: ");
+    //Serial.println(measuredY);
+    //Serial.println();
 
     flag = 0;
   }
