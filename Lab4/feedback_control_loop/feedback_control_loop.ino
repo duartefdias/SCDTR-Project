@@ -193,8 +193,6 @@ void loop() {
     // Print measurement
     Serial.print("Measured illuminance: ");
     Serial.println(measuredY);
-
-
     flag = 0;
   }
 }
