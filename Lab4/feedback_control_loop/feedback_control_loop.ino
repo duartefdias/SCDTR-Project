@@ -1,23 +1,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "constants.h"
 
-// Constants
-const int LED1 = 5; // LED connected to analog pin5
-const int LDRpin = A5; // LDR connected to A5 pin
+// Global variables
 float refValue = 0; // Desired illuminance in Lux
-const int Vcc = 5;
+int input = 0;
 
-/// LDR1 parameters
-const float C = 25.8439;
-const float m = -0.4934;
-
-/// System parameters: Gain and Time constant function of illuminance x [ARDUINO 1]
-// G0(x) = mG1*x + bG1
-// Tau(x) = mtau1*x + btau1
-const float mG1 = 0.1001;
-const float bG1 = 44.9773;
-const double mtau1 = -0.00001449;
-const double btau1 = 0.0119;
 // Returns system gain for desired illuminance x
 float G0(float x) {
   return mG1*x + bG1;
@@ -27,13 +15,11 @@ double tau(float x) {
   return mtau1*x + btau1;
 }
 
-
 /// Tensão e tempo inicial (antes do escalão)
 float xi = 0;
 int ti = 0;
 int t_ans=0;
 int t_dps=0;
-
 int increment = 0;
 
 /////////////////////////// PI Controller
@@ -42,14 +28,6 @@ float y_ant = 0;
 float i_ant = 0;
 float e_ant = 0;
 
-
-// PI Controller parameters
-const float Kp = 3;
-const float Ki = 12;
-
-
-// Sampling Period
-const double T = 0.005;
 
 // Setup Interrupt
 volatile bool flag;
@@ -195,4 +173,14 @@ void loop() {
     Serial.println(measuredY);
     flag = 0;
   }
+
+  if (Serial.available()){
+    input = Serial.parseInt();
+    if (input == 0) {
+      refValue = LowValue;    // Empty desk
+    }
+    else if (input == 1) {
+      refValue = HighValue;   // Occupied desk
+    }
+  }  
 }

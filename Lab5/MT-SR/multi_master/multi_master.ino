@@ -2,7 +2,7 @@
 // Allows a node to work both as master and slave
 #include <Wire.h>
 const int other_add = 0; //broadcast address
-const int own_address = 6; //this dev address
+const int own_address = 1; //this dev address
 
 
 void setup() {
@@ -28,7 +28,7 @@ void loop() {
 
 void receiveEvent(int howMany) {
   while(Wire.available() > 0) { //check data on BUS
-    char c = Wire.read(); //receive byte at I2S BUS
+    char c = Wire.read(); //receive byte at I2C BUS
     Serial.write(c); // echo on terminal
   }
 }
