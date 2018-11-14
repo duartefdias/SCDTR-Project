@@ -2,9 +2,9 @@
 #include <avr/interrupt.h>
 #include "constants.h"
 
-// Global variables
+// Additional variables
 float refValue = 0; // Desired illuminance in Lux
-int input = 0;
+int windup = 0;
 
 // Returns system gain for desired illuminance x
 float G0(float x) {
@@ -15,11 +15,11 @@ double tau(float x) {
   return mtau1*x + btau1;
 }
 
+
 /// Tensão e tempo inicial (antes do escalão)
 float xi = 0;
 int ti = 0;
-int t_ans=0;
-int t_dps=0;
+
 int increment = 0;
 
 /////////////////////////// PI Controller
@@ -27,7 +27,6 @@ int increment = 0;
 float y_ant = 0;
 float i_ant = 0;
 float e_ant = 0;
-
 
 // Setup Interrupt
 volatile bool flag;
@@ -53,6 +52,30 @@ float readLDR() {
   return LuxValue;
 }
 
+
+// Computes the controller value for the feedback system
+// Sums the Feed Forward controller with the PI Controller
+float Controller(float ref, float measuredY) {
+
+  // Calculate Feed Forward controller input tension
+  float Uff = FeedForwardController(ref);
+  Serial.print("Uff: ");
+  Serial.println(Uff);
+
+  // Compute error
+  //float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));
+  float Upi =  PIcontroller(lux2volt(ref), lux2volt(measuredY));
+
+  Serial.print("Upi: ");
+  Serial.println(Upi);
+
+  // Compute PI controller input tension
+  float u = (Upi + Uff);
+  if(u > 5){u = 5;}
+  if(u < 0){u = 0;}
+  return u;
+}
+
 // Converts value in Lux to Volt
 float lux2volt(float lux) {
   float base = lux/C;
@@ -73,36 +96,12 @@ float calculateDesiredY(float xf) {
   return Vf - (Vf - Vi) * exp(-(t-ti)*0.000001/taux);     
 }
 
+
 // Feed Forward Controller, returns the output voltage to obtain refValue illuminance
 float FeedForwardController(float refValue) {
   // Calculate Ui value
   float Kff = 1 / (mG1 * refValue + bG1);
   return Kff * refValue;
-}
-
-// Computes the controller value for the feedback system
-// Sums the Feed Forward controller with the PI Controller
-float Controller(float ref, float measuredY) {
-
-  // Calculate Feed Forward controller input tension
-  float Uff = FeedForwardController(ref);
-  //Serial.print("Uff: ");
-  //Serial.println(Uff);
-
-  // Compute error
-  //float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));
-  float Upi =  PIcontroller(lux2volt(ref), lux2volt(measuredY));
-
-  //Serial.print("Upi: ");
-  //Serial.println(Upi);
-
-  // Compute PI controller input tension
-  float u = Upi + Uff;
-  //Serial.print("Applied u: ");
-  //Serial.println(u);
-  if(u > 5) {u = 5;}
-  if(u < 0) {u = 0;}
-  return u;
 }
 
 // PI Controller, returns the output voltage to obtain ref=y both are in Volt
@@ -148,7 +147,7 @@ void setup() {
   sei(); // allow interrupts
 
   // Reference value
-  Serial.print("Insert desired Lux value [0, 300]: ");
+  Serial.print("Insert desired Lux value [0, 200]: ");
   while (refValue == 0) {
     if (Serial.available() > 0) {
       refValue = Serial.parseInt();
@@ -164,23 +163,26 @@ void loop() {
 
     // Apply control law
     float u = Controller(refValue, measuredY);
-        
+    Serial.print("Applied u[0,5]: ");
+    Serial.println(u);
+    Serial.print("Windup: ");
+    Serial.println(windup);
     u = mapfloat(u, 0, 5, 0, 255);
+    Serial.print("Applied u[0, 255]: ");
+    Serial.println(u);
     analogWrite(LED1, u);
-    
+
+    // Register initial time of step input
+    if (increment == 0) {
+      ti = micros();
+      increment = 1;
+    }
+
     // Print measurement
     Serial.print("Measured illuminance: ");
     Serial.println(measuredY);
+    Serial.println();
+
     flag = 0;
   }
-
-  if (Serial.available()){
-    input = Serial.parseInt();
-    if (input == 0) {
-      refValue = LowValue;    // Empty desk
-    }
-    else if (input == 1) {
-      refValue = HighValue;   // Occupied desk
-    }
-  }  
 }
