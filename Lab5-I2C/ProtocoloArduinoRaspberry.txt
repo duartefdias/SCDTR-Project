@@ -1,0 +1,8 @@
+LUX -> 4 bytes = 1 for address + 1 for type + 2 for value
+
+example: 00000001 00000011 00000111 11111111
+
+
+PWM -> 3 bytes = 1 for addres + 1 for type + 1 for value
+
+example: 00000001 00000011 11111111
