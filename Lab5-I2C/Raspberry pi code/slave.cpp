@@ -4,7 +4,7 @@
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
-#define SLAVE_ADDR 0x48
+#define SLAVE_ADDR 0x0
 
 int init_slave(bsc_xfer_t &xfer, int addr) {
     
@@ -46,13 +46,16 @@ int main(int argc, char *argv[]) {
 
         xfer.txCnt = 0;
         status = bscXfer(&xfer);
+        
+        if(xfer.rxCnt > 0){
         printf("Received %d bytes\n", xfer.rxCnt);
+        }
 
         for(j=0;j<xfer.rxCnt;j++)
             printf("%c",xfer.rxBuf[j]);
         
-        printf("\n Press q to quit.\n");
-        key = getchar();
+        //printf("\n Press q to quit.\n");
+        //key = getchar();
     }
     status = close_slave(xfer);
     gpioTerminate();
