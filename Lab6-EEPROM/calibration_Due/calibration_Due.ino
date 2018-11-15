@@ -3,7 +3,7 @@
 #include "constants.h"
 
 // Global variables
-int address = 1; // Uno or Due
+int address = 2; // Uno or Due
 float refValue = 0; // Desired illuminance in Lux
 int input = 0;
 

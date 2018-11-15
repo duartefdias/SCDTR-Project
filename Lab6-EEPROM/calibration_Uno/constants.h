@@ -1,7 +1,7 @@
 #ifndef constants_h
 #define constants_h
 
-// Constants
+// ARDUINO 1 Constants
 const int LED1 = 5; // LED connected to analog pin5
 const int LDRpin = A5; // LDR connected to A5 pin
 const int Vcc = 5;

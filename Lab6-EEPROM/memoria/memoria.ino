@@ -2,12 +2,12 @@
 
 /** the current address in the EEPROM (i.e. which byte we're going to write to next) **/
 int addr = 0;
-int val = 4; // value to write on the EEPROM, should be the Arduino's own address
+int val = 2; // value to write on the EEPROM, should be the Arduino's own address
 byte value; 
 
 void setup() {
   Serial.begin(9600);
-  //EEPROM.write(addr, val); // Write to the EEPROM
+  EEPROM.write(addr, val); // Write to the EEPROM
 }
 
 void loop() {
