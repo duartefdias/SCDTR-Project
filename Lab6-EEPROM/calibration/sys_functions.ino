@@ -1,44 +1,57 @@
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include "constants.h"
 
-// Global variables
-int address = 1; // Uno or Due
-float refValue = 0; // Desired illuminance in Lux
-int input = 0;
+void setConstants(int addr) {
+  if (addr == 1) {
+    // Constants
+    LowValue = 50;  // Empty desk illuminance in Lux
+    HighValue = 100; // Occupied desk illuminance
+    
+    // LDR parameters
+    C = 25.8439;
+    m = -0.4934;
+    
+    /// System parameters: Gain and Time constant function of illuminance x [ARDUINO 1]
+    mG = 0.1001;
+    bG = 44.9773;
+    mtau = -0.00001449;
+    btau = 0.0119;
+    
+    // PI Controller parameters
+    Kp = 3;
+    Ki = 12;
+  }
+  else if (addr==2) {
+    // Ref Values
+    LowValue = 40;  // Empty desk illuminance in Lux
+    HighValue = 80; // Occupied desk illuminance
+    
+    // LDR parameters
+    C = 185.922;
+    m = -0.4906;
+    
+    /// System parameters: Gain and Time constant function of illuminance x [ARDUINO 2]
+    // G0(x) = mG*x + bG
+    // Tau(x) = mtau*x + btau
+    mG = 0.1227;
+    bG = 13.3269;
+    mtau = -0.00009;
+    btau = 0.0237;
+    
+    // PI Controller parameters
+    Kp = 3;
+    Ki = 12;
+  }
+}
+
+
 
 // Returns system gain for desired illuminance x
 float G0(float x) {
-  return mG1*x + bG1;
+  return mG*x + bG;
 }
+
 // Returns the time constant for desired illuminance x
 double tau(float x) {
-  return mtau1*x + btau1;
-}
-
-/// Tensão e tempo inicial (antes do escalão)
-float xi = 0;
-int ti = 0;
-int t_ans=0;
-int t_dps=0;
-int increment = 0;
-
-/////////////////////////// PI Controller
-// PI controller memory
-float y_ant = 0;
-float i_ant = 0;
-float e_ant = 0;
-
-
-// Setup Interrupt
-volatile bool flag;
-ISR(TIMER1_COMPA_vect) {
-  flag = 1; //notify main loop
-}
-
-// Equivalent of map function for floats
-float mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
-  return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  return mtau*x + btau;
 }
 
 // Reads illuminance value from sensor, returns value in Lux
@@ -54,12 +67,15 @@ float readLDR() {
   return LuxValue;
 }
 
-// Converts value in Lux to Volt
+
+
+// Converts value in Lux to dimming level [0-5 Volt]
 float lux2volt(float lux) {
   float base = lux/C;
   float exponent = m;
   return Vcc/(pow(base, exponent) + 1);
 }
+
 
 // Measures ambient noise and influence of each node on another
 void calibrateSystem() {  
@@ -88,7 +104,8 @@ void calibrateSystem() {
     lum = readLDR();
     k12 = lum/5;
     Serial.print("k12 = ");
-    Serial.println(k12);    
+    Serial.print(k12);
+    Serial.println(" LUX/dimming");    
     delay(1000);
   }
 
@@ -104,33 +121,8 @@ void calibrateSystem() {
     lum = readLDR();
     k21 = lum/5;
     Serial.print("k21 = ");
-    Serial.println(k21);    
+    Serial.print(k21);
+    Serial.println(" LUX/dimming");       
     delay(1000);
   }     
-}
-
-void setup() {
-  // Setup pinmodes
-  pinMode(LED1, OUTPUT);
-  pinMode(LDRpin, INPUT);
-  Serial.begin(250000);
-
-  // Reference value
-  calibrateSystem();
-}
-
-void loop() {
-
-  if (flag)
-  {
-    // Read current output - y
-    float measuredY = readLDR();
-    
-    // Print measurement
-    Serial.print("Measured illuminance: ");
-    Serial.println(measuredY);
-    flag = 0;
-  }
-
-  delay(1000);
 }
