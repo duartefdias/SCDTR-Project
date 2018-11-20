@@ -92,8 +92,8 @@ void calibrateSystem() {
   Serial.println(o);  
   delay(3000);
 
-  // Measure k12
-  Serial.println("Measuring 1's influence on 2...");
+  // Measure k21
+  Serial.println("Measuring 1's influence on 2 (k21) ...");
   if (address==1) {
     analogWrite(LED1, 255);
     delay(5000);
@@ -102,26 +102,26 @@ void calibrateSystem() {
   else if (address==2) {
     delay(4000);
     lum = readLDR();
-    k12 = lum/5;
-    Serial.print("k12 = ");
-    Serial.print(k12);
+    k12 = (lum-o)/5;
+    Serial.print("k21 = ");
+    Serial.print(k21);
     Serial.println(" LUX/dimming");    
     delay(1000);
   }
 
-  // Measure k21
-    Serial.println("Measuring 2's influence on 1");
+  // Measure k12
+    Serial.println("Measuring 2's influence on 1 (k12) ...");
   if (address==2) {
-    analogWrite(LED1, 255);
+    analogWrite(LED1, 255);   // full brightness
     delay(5000);
     analogWrite(LED1, 0);
   }
   else if (address==1) {
     delay(4000);
     lum = readLDR();
-    k21 = lum/5;
-    Serial.print("k21 = ");
-    Serial.print(k21);
+    k12 = (lum-o)/5;              // dimming = 5
+    Serial.print("k12 = ");
+    Serial.print(k12);
     Serial.println(" LUX/dimming");       
     delay(1000);
   }     
