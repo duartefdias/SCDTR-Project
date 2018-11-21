@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     bsc_xfer_t xfer;
     status = init_slave(xfer, SLAVE_ADDR);
 
-    cout << "Ready to receive data at address: 0\n" << endl;
+    printf("Ready to receive data at address: 0\n");
     while(key != 'q') {
 
         xfer.txCnt = 0;
@@ -53,42 +53,39 @@ int main(int argc, char *argv[]) {
         if(xfer.rxCnt > 0){
         printf("Received %d bytes:\n", xfer.rxCnt);
 
-        switch(xfer.rxBuf[1]){
-            // Initial lux
-            case 0:
-                luxValue = xfer.rxBuf[2] + xfer.rxBuf[3];
-                cout << "Arduino " << xfer.rxBuf[0] << endl;
-                cout << "Initial lux value: " << luxValue << endl;
-                printf("\n");
-                break;
-            // Periodic lux
-            case 1:
-                luxValue = xfer.rxBuf[2] + xfer.rxBuf[3];
-                cout << "Arduino " << xfer.rxBuf[0] << endl;
-                cout << "Current lux value: " << luxValue << endl;
-                printf("\n");
-                break;
-            // Initial pwm
-            case 2:
-                cout << "Arduino " << xfer.rxBuf[0] << endl;
-                cout << "Initial pwm value: " << xfer.rxBuf[2] << endl;
-                break;
-            // Periodic pwm
-            case 3: 
-                cout << "Arduino " << xfer.rxBuf[0] << endl;
-                cout << "Current pwm value: " << xfer.rxBuf[2] << endl;
-                break
-            default:
-                cout << "Invalid message received:" << endl;
-                for(j=0;j<xfer.rxCnt;j++)
-                    printf("%c\n",xfer.rxBuf[j]);
-                printf("\n");
-        }
+            switch(xfer.rxBuf[1]){
+                // Initial lux
+                case 0:
+                    luxValue = xfer.rxBuf[2] + xfer.rxBuf[3];
+                    printf("Arduino %d", xfer.rxBuf[0]);
+                    printf("Initial lux value: %d", luxValue);
+                    printf("\n");
+                    break;
+                // Periodic lux
+                case 1:
+                    luxValue = xfer.rxBuf[2] + xfer.rxBuf[3];
+                    printf("Arduino %d", xfer.rxBuf[0]);
+                    printf("Current lux value: %d", luxValue);
+                    printf("\n");
+                    break;
+                // Initial pwm
+                case 2:
+                    printf("Arduino %d", xfer.rxBuf[0]);
+                    printf("Initial pwm value: %d", xfer.rxBuf[2])
+                    break;
+                // Periodic pwm
+                case 3: 
+                    printf("Arduino %d", xfer.rxBuf[0]);
+                    printf("Current pwm value: %d", xfer.rxBuf[2])
+                    break
+                default:
+                    printf("Invalid mesage received: ")
+                    for(j=0;j<xfer.rxCnt;j++)
+                        printf("%c\n",xfer.rxBuf[j]);
+                    printf("\n");
+            }
 
         }
-
-        for(j=0;j<xfer.rxCnt;j++)
-            printf("%c\n\n",xfer.rxBuf[j]);
         
         //printf("\n Press q to quit.\n");
         //key = getchar();
