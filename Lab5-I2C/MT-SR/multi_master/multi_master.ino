@@ -4,11 +4,10 @@
 #include <Wire.h>
 #include <EEPROM.h>
 
-const int other_add = 0; //broadcast address
+const int other_add = 2; //broadcast address
 int own_address; //this dev address
 char buff[8]; 
 String c = "";
-char buf[8];
 
 
 void setup() {
@@ -30,6 +29,11 @@ void loop() {
     
     Wire.beginTransmission(other_add);//get BUS
     Wire.write(buf); //send byte to address on BUS
+    Serial.println(buf);
+    Wire.endTransmission(); //release BUS
+    Wire.beginTransmission(0);//get BUS
+    Wire.write(buf); //send byte to address on BUS
+    Serial.println(buf);
     Wire.endTransmission(); //release BUS 
   }
 }

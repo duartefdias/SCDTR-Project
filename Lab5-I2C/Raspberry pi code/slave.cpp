@@ -48,11 +48,11 @@ int main(int argc, char *argv[]) {
         status = bscXfer(&xfer);
         
         if(xfer.rxCnt > 0){
-        printf("Received %d bytes\n", xfer.rxCnt);
+        printf("Received %d bytes:\n", xfer.rxCnt);
         }
 
         for(j=0;j<xfer.rxCnt;j++)
-            printf("%c",xfer.rxBuf[j]);
+            printf("%c\n\n",xfer.rxBuf[j]);
         
         //printf("\n Press q to quit.\n");
         //key = getchar();
