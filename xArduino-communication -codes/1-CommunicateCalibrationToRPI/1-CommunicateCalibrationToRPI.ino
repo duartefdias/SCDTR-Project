@@ -37,6 +37,9 @@ void setup() {
 
 void loop() {
   sendInitialLuxValue(125);
+  sendPeriodicalLuxValue(340);
+  sendInitialPwmValue(25);
+  sendPeriodicalPwmValue(255);
   delay(1500);
 }
 
@@ -56,7 +59,6 @@ void sendInitialLuxValue(uint16_t luxValue){
   // Sum the 2 bytes together to get lux value
   // ToDo: Find a better way for doing this
   Wire.write(luxValue/2);
-  Wire.write(luxValue/2);
   Wire.endTransmission(); //release BUS
 }
 
@@ -67,7 +69,6 @@ void sendPeriodicalLuxValue(uint16_t luxValue){
   Wire.write(messageType);
   // Sum the 2 bytes together to get lux value
   // ToDo: Find a better way for doing this
-  Wire.write(luxValue/2);
   Wire.write(luxValue/2);
   Wire.endTransmission(); //release BUS
 }
