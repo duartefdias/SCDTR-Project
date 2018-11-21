@@ -8,6 +8,7 @@ const int other_add = 2; //broadcast address
 int own_address; //this dev address
 char buff[8]; 
 String c = "";
+char buf[8];
 
 
 void setup() {
