@@ -20,17 +20,8 @@ float mapfloat(double val, double in_min, double in_max, double out_min, double 
   return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-
-void setup() {
-  // Setup pinmodes
-  setConstants(address);
-  pinMode(LED1, OUTPUT);
-  pinMode(LDRpin, INPUT);
-
-  Serial.begin(250000);
-  calibrateSystem();
-
-  // Setup Timer interrupt (200 Hz)
+// Setup Timer Interrupt to 200 Hz sampling frequency 
+void timerSetup(){
   cli(); // stop interrupts
   TCCR1A = 0; // set entire TCCR1A register to 0
   TCCR1B = 0; // same for TCCR1B
@@ -43,7 +34,21 @@ void setup() {
   TCCR1B |= (0 << CS12) | (1 << CS11) | (0 << CS10);
   // enable timer compare interrupt
   TIMSK1 |= (1 << OCIE1A);
-  sei(); // allow interrupts
+  sei(); // allow interrupts  
+}
+
+
+void setup() {
+  // Setup pinmodes
+  setConstants(address);
+  pinMode(LED1, OUTPUT);
+  pinMode(LDRpin, INPUT);
+
+  Serial.begin(250000);
+  calibrateSystem();
+
+  // Setup Timer interrupt (200 Hz)
+  timerSetup();
 
   // Reference value
   Serial.print("Insert desired Lux value [0, 300]: ");
