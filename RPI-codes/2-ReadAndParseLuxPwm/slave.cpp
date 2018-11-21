@@ -36,8 +36,6 @@ int close_slave(bsc_xfer_t &xfer) {
 
 int main(int argc, char *argv[]) {
     int status, j, key = 0;
-    int luxValue = 0;
-    int pwmValue = 0;
 
     if (gpioInitialise() < 0) {printf("Erro 1\n"); return 1;}
     
@@ -56,30 +54,28 @@ int main(int argc, char *argv[]) {
             switch(xfer.rxBuf[1]){
                 // Initial lux
                 case 0:
-                    luxValue = xfer.rxBuf[2] + xfer.rxBuf[3];
-                    printf("Arduino %d", xfer.rxBuf[0]);
-                    printf("Initial lux value: %d", luxValue);
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Initial lux value: %d\n\n", xfer.rxBuf[2] * 2);
                     printf("\n");
                     break;
                 // Periodic lux
                 case 1:
-                    luxValue = xfer.rxBuf[2] + xfer.rxBuf[3];
-                    printf("Arduino %d", xfer.rxBuf[0]);
-                    printf("Current lux value: %d", luxValue);
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Current lux value: %d\n\n", xfer.rxBuf[2] * 2);
                     printf("\n");
                     break;
                 // Initial pwm
                 case 2:
-                    printf("Arduino %d", xfer.rxBuf[0]);
-                    printf("Initial pwm value: %d", xfer.rxBuf[2])
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Initial pwm value: %d\n\n", xfer.rxBuf[2]);
                     break;
                 // Periodic pwm
                 case 3: 
-                    printf("Arduino %d", xfer.rxBuf[0]);
-                    printf("Current pwm value: %d", xfer.rxBuf[2])
-                    break
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Current pwm value: %d\n\n", xfer.rxBuf[2]);
+                    break;
                 default:
-                    printf("Invalid mesage received: ")
+                    printf("Invalid mesage received: ");
                     for(j=0;j<xfer.rxCnt;j++)
                         printf("%c\n",xfer.rxBuf[j]);
                     printf("\n");

@@ -7,11 +7,9 @@ CC=g++
 
 all: $(EXECUTABLE)
 
-g++ -std=c++11 –lpigpio –lpthread –lrt –o hello_pi hello_pi.cpp
-
 $(EXECUTABLE): $(SOURCE)
 
-	$(CC) -std=c++11 –lpigpio –lpthread –lrt $(SOURCE) -o$(EXECUTABLE)
+	$(CC) -std=c++11 -lpigpio -lpthread -lrt -o $(EXECUTABLE) $(SOURCE)
 
 clean:
 

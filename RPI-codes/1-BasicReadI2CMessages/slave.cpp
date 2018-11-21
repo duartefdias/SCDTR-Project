@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         }
 
         for(j=0;j<xfer.rxCnt;j++)
-            printf("%c\n\n",xfer.rxBuf[j]);
+            printf("%d\n\n",xfer.rxBuf[j]);
         
         //printf("\n Press q to quit.\n");
         //key = getchar();
