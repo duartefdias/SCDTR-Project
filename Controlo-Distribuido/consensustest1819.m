@@ -2,7 +2,7 @@
 close all; 
 clear all;
 %The system
-k11 = 70; k12 = 10; k21 = 5; k22 = 30;
+k11 = 70; k12 = 2.87; k21 = 2.80; k22 = 30;
 K = [k11, k12 ; k21 , k22];
 
 % case 1
@@ -12,13 +12,13 @@ K = [k11, k12 ; k21 , k22];
 %L1 = 80; o1 = 50; L2 = 150; o2 = 50;
 
 % case 3
-L1 = 120; o1 = 5; L2 = 80; o2 = 5;
+L1 = 10; o1 = 0.12; L2 = 120; o2 = 0.08;
 
 %symmetric costs
-c1 = 1; c2 = 2; 
+%c1 = 1; c2 = 1; 
 
 %asymmetric costs
-%c1 = 1; c2 = 3;
+c1 = 1; c2 = 1;
 
 
 c = [c1 c2]; 
