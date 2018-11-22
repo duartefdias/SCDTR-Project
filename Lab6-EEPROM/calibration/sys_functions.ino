@@ -64,6 +64,7 @@ float readLDR() {
   float base = (Vcc / Vi - 1);
   float exponent = 1 / m;
   float LuxValue = C * pow(base, exponent);
+  Serial.println(LuxValue);
   return LuxValue;
 }
 

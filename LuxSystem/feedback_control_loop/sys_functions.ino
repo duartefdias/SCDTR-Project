@@ -102,7 +102,7 @@ void calibrateSystem() {
   else if (address==2) {
     delay(4000);
     lum = readLDR();
-    k12 = (lum-o)/5;
+    k21 = (lum-o)/5;
     Serial.print("k21 = ");
     Serial.print(k21);
     Serial.println(" LUX/dimming");    
