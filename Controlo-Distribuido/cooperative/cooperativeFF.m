@@ -14,16 +14,16 @@ e_ant = 0;
 % measure = ref-1;
 % Controller(ref, measure, mG(1), bG(1));
 
-ref1 = 10;
-ref2 = 300;
+ref1 = 100;
+ref2 = 70;
 u1(1) = FeedForwardController(ref1, G0(mG(1), bG(1),ref1));
 u1(1) = saturate(u1(1));
 u2(1) = FeedForwardController(ref2, G0(mG(2), bG(2),ref2));
 u2(1) = saturate(u2(1));
 k11 = G0(mG(1), bG(1),ref1);
 k22 = G0(mG(2), bG(2),ref2);
-k12 = 5;
-k21 = 50;
+k12 = 2.8;
+k21 = 2.9;
 iter = 20;
 
 y1(1) = k11*u1(1);
