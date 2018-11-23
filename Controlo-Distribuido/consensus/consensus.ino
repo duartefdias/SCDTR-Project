@@ -1,6 +1,10 @@
 #include "Node.h"
 
-int L1 = -10, L2 = -10;  // Illuminance requirements
+// TODO: test for different requirements and check feasibility
+//  What to do in case there is no feasible solution (too bright or too dim)
+// Implement distributed version of consensus using I2C communication
+
+int L1 = 200, L2 = 100;  // Illuminance requirements
 float o1 = 0.12, o2 = 0.08; // Ambient noise
 float k11 = 70, k12 = 2.87, k21 = 2.80, k22 = 30; // Illuminance gains and cross-gains
 float K[][2] = {
@@ -45,7 +49,6 @@ struct solution primal_solve(Node node, float rho){
     if (cost_unconstrained < cost_best) {
       sol.d[0] = d_u[0]; sol.d[1] = d_u[1];
       sol.cost = cost_unconstrained;
-      Serial.println("Unconstrained");
       return sol;  // If solution exists, then it is optimal, can return now   
     }
   }
@@ -153,15 +156,54 @@ void setup(){
 }
 
 void loop(){
-  float d[] = {8,8};
   float rho = 0.07;
-  struct solution sol = primal_solve(node1, rho);
-  Serial.println(sol.cost);
-  Serial.print(sol.d[0]); Serial.print(" "); Serial.println(sol.d[1]);
+  struct solution sol;
+
+  // Cerca de 0.29s para fazer 50 iterações
+  for (int i=0; i <= 50; i++)
+  {
+    // Node 1
+    sol = primal_solve(node1,rho);    // send computed solution node1.d to other node
+    node1.d[0] = sol.d[0];
+    node1.d[1] = sol.d[1];
+       
+    // Node 2
+    sol = primal_solve(node2,rho);    // send computed solution node2.d to other node 
+    node2.d[0] = sol.d[0];
+    node2.d[1] = sol.d[1];
+
+    // Compute averages using the received information
+    node1.d_av[0] = (node1.d[0]+node2.d[0])/2;
+    node1.d_av[1] = (node1.d[1]+node2.d[1])/2;
+    
+    node2.d_av[0] = (node1.d[0]+node2.d[0])/2;
+    node2.d_av[1] = (node1.d[1]+node2.d[1])/2;
+
+    // Update local lagrangians
+    node1.y[0] = node1.y[0] + rho*(node1.d[0]-node1.d_av[0]);
+    node1.y[1] = node1.y[1] + rho*(node1.d[1]-node1.d_av[1]);
+    
+    node2.y[0] = node2.y[0] + rho*(node2.d[0]-node2.d_av[0]);
+    node2.y[1] = node2.y[1] + rho*(node2.d[1]-node2.d_av[1]); 
+  }
+  
+  Serial.println("Node1 consensus solution: ");
+  Serial.print("d = ");
+  Serial.print(node1.d[0]);
+  Serial.print(" ");
+  Serial.println(node1.d[1]);
+  Serial.print("L = ");
+  Serial.println(node1.k[0]*node1.d[0]+node1.k[1]*node1.d[1]+node1.o);
+
+  Serial.println("Node2 consensus solution: ");
+  Serial.print("d = ");
+  Serial.print(node2.d[0]);
+  Serial.print(" ");
+  Serial.println(node2.d[1]);
+  Serial.print("L = ");
+  Serial.println(node2.k[0]*node2.d[0]+node2.k[1]*node2.d[1]+node2.o);
+  
+  
   Serial.println();
-  sol = primal_solve(node2, rho);
-  Serial.println(sol.cost);
-  Serial.print(sol.d[0]); Serial.print(" "); Serial.println(sol.d[1]);
-  Serial.println();
-  delay(2000);
+  delay(5000);
 }
