@@ -45,9 +45,9 @@ void loop() {
 
 void receiveEvent(int howMany) {
   while(Wire.available() > 0) { //check data on BUS
-    Wire.readBytes(buff, 8);
-    //char c = Wire.read(); //receive byte at I2C BUS
-    Serial.println(buff); // echo on terminal
+    //Wire.readBytes(buff, 8);
+    char c = Wire.read(); //receive byte at I2C BUS
+    //Serial.println(buff); // echo on terminal
   }
 }
 
@@ -94,4 +94,3 @@ void sendPeriodicalPwmValue(uint16_t pwmValue){
   Serial.println(pwmValue);
   Wire.endTransmission(); //release BUS
 }
-
