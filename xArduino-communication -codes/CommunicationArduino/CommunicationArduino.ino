@@ -7,13 +7,14 @@ uint16_t rcLuxValue = 0;
 
  
 void setup() {
+    Serial.begin(9600);
     Wire.begin(own_addr);
     TWAR = (own_addr << 1) | 1;  // enable broadcasts to be received
     Wire.onReceive(receiveEvent);   // set up receive handler
 }
  
 void loop() {
-  sendPeriodicalLuxValue(340);
+  sendPeriodicalLuxValue(100);
   sendPeriodicalPwmValue(255);
   sendPeriodicalNegotioation(200);
   delay(1500);
@@ -26,14 +27,30 @@ void receiveEvent(int howMany) {
      rcMessageType = Wire.read();
      if(rcMessageType == 0) {
         rcPwmValue = Wire.read();
+        rcPwmValue = map(rcPwmValue, 0, 255, 0, 5);
+        Serial.print("Received PWM value from ");
+        Serial.println(rcAdress);
+        Serial.print("PWM value: ");
+        Serial.println(rcPwmValue);
+        Serial.println();
      }
      else if(rcMessageType == 1) {
         rcLuxValue = Wire.read();
         rcLuxValue <<= 8;
-        rcLuxValue |= Wire.read();       
+        rcLuxValue |= Wire.read();
+        Serial.print("Received Lux value from ");
+        Serial.println(rcAdress);
+        Serial.print("LUX value: ");
+        Serial.println(rcLuxValue);
+        Serial.println();       
      }
      else if(rcMessageType == 2) {
         rcPwmNegotiation= Wire.read();
+        Serial.print("Received PWM negotiation from ");
+        Serial.println(rcAdress);
+        Serial.print("PWM negotiation: ");
+        Serial.println(rcPwmNegotiation);
+        Serial.println();       
      }
 
   //use values to do something
@@ -74,5 +91,3 @@ void sendPeriodicalNegotioation(uint8_t pwmNegotiation){
   Wire.write(pwmNegotiation);
   Wire.endTransmission(); //release BUS
 }
-
-
