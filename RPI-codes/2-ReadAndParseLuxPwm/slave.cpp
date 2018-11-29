@@ -36,6 +36,7 @@ int close_slave(bsc_xfer_t &xfer) {
 
 int main(int argc, char *argv[]) {
     int status, j, key = 0;
+    uint16_t LuxValue = 0;
 
     if (gpioInitialise() < 0) {printf("Erro 1\n"); return 1;}
     
@@ -55,30 +56,24 @@ int main(int argc, char *argv[]) {
                 // Initial lux
                 case 0:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    printf("Initial lux value: %d\n\n", xfer.rxBuf[2] * 2);
+                    printf("PWM value: %d\n\n", xfer.rxBuf[2]);
                     printf("\n");
                     break;
                 // Periodic lux
                 case 1:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    printf("Current lux value: %d\n\n", xfer.rxBuf[2] * 2);
+                    LuxValue = xfer.rxBuf[2];
+                    LuxValue <<= 8;
+                    LuxValue |= xfer.rxBuf[3];  
+                    printf("Lux value: %d\n\n", LuxValue);
                     printf("\n");
                     break;
                 // Initial pwm
                 case 2:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    printf("Initial pwm value: %d\n\n", xfer.rxBuf[2]);
+                    printf("Negotiation : %d\n\n", xfer.rxBuf[2]);
                     break;
                 // Periodic pwm
-                case 3: 
-                    printf("Arduino %d\n", xfer.rxBuf[0]);
-                    printf("Current pwm value: %d\n\n", xfer.rxBuf[2]);
-                    break;
-                default:
-                    printf("Invalid mesage received: ");
-                    for(j=0;j<xfer.rxCnt;j++)
-                        printf("%c\n",xfer.rxBuf[j]);
-                    printf("\n");
             }
 
         }
