@@ -34,9 +34,15 @@ int close_slave(bsc_xfer_t &xfer) {
     return bscXfer(&xfer);
 }
 
+// Equivalent of map function for floats
+float mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
+  return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 int main(int argc, char *argv[]) {
     int status, j, key = 0;
     uint16_t LuxValue = 0;
+    float pwm;
 
     if (gpioInitialise() < 0) {printf("Erro 1\n"); return 1;}
     
@@ -53,27 +59,60 @@ int main(int argc, char *argv[]) {
         printf("Received %d bytes:\n", xfer.rxCnt);
 
             switch(xfer.rxBuf[1]){
-                // Initial lux
+                //pwm
                 case 0:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    printf("PWM value: %d\n\n", xfer.rxBuf[2]);
+                    pwm = mapfloat(xfer.rxBuf[2], 0, 5, 0, 255)
+                    printf("PWM: %d\n\n", pwm);
                     printf("\n");
                     break;
-                // Periodic lux
+                //lux
                 case 1:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];  
-                    printf("Lux value: %d\n\n", LuxValue);
+                    printf("Lux: %d\n\n", LuxValue);
                     printf("\n");
                     break;
-                // Initial pwm
+                //pwm negotiation
                 case 2:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    printf("Negotiation : %d\n\n", xfer.rxBuf[2]);
+                    pwm = mapfloat(xfer.rxBuf[2], 0, 5, 0, 255)
+                    printf("Negotiation: %d\n\n", pwm);
                     break;
-                // Periodic pwm
+                //occupancy
+                case 3:
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Occupancy: %d\n\n", xfer.rxBuf[2]);
+                    break;
+                //lux lower bound
+                case 4:
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    LuxValue = xfer.rxBuf[2];
+                    LuxValue <<= 8;
+                    LuxValue |= xfer.rxBuf[3];  
+                    printf("Lux Lower Bound: %d\n\n", LuxValue);
+                    printf("\n");
+                    break;
+                //background lux
+                case 5:
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    LuxValue = xfer.rxBuf[2];
+                    LuxValue <<= 8;
+                    LuxValue |= xfer.rxBuf[3];  
+                    printf("Background Lux: %d\n\n", LuxValue);
+                    printf("\n");
+                    break;
+                //reference lux
+                case 6:
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    LuxValue = xfer.rxBuf[2];
+                    LuxValue <<= 8;
+                    LuxValue |= xfer.rxBuf[3];  
+                    printf("Reference Lux: %d\n\n", LuxValue);
+                    printf("\n");
+                    break;
             }
 
         }
