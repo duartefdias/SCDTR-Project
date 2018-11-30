@@ -1,29 +1,35 @@
 #include <Wire.h>
 #include <EEPROM.h>
+#define MAXLUX 500
  
 uint8_t own_addr = EEPROM.read(0);
 uint8_t rcAddress, rcMessageType, rcPwmValue, rcPwmNegotiation, rcOccupancy;
 uint16_t rcLuxValue = 0, rcLuxLowerBound = 0, rcLuxBackground = 0, rcLuxRef = 0;
-float rcPwm = 0, rcPwmN = 0;
+float rcPwm = 0, rcPwmN = 0, rcLux=0;
 
 float mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
   return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 void setup() {
-  Serial.begin(9600);
   Wire.begin(own_addr);
   TWAR = (own_addr << 1) | 1;  // enable broadcasts to be received
   Wire.onReceive(receiveEvent);   // set up receive handler
 }
  
 void loop() {
-  sendLuxValue(100);
-  sendPwm(255);
-  sendNegotiation(200);
+  sendLuxReading(100.2);
+  delay(1000);
+  sendPwm(4.12);
+  delay(1000);
+  sendNegotiation(4.20);
+  delay(1000);
   sendOccupancy(0);
+  delay(1000);
   sendLuxLowerBound(100);
-  sendLuxBackground(5);
+  delay(1000);
+  sendLuxBackground(0.12);
+  delay(1000);
   sendLuxRef(100);
   delay(1500);
 }
@@ -33,7 +39,7 @@ void receiveEvent(int howMany) {
   if (howMany == 3 || howMany == 4) {
      rcAddress = Wire.read();
      rcMessageType = Wire.read();
-     
+    
      //pwm
      if(rcMessageType == 0) {
         rcPwmValue = Wire.read();
@@ -43,7 +49,8 @@ void receiveEvent(int howMany) {
      else if(rcMessageType == 1) {
         rcLuxValue = Wire.read();
         rcLuxValue <<= 8;
-        rcLuxValue |= Wire.read();       
+        rcLuxValue |= Wire.read();
+        rcLux = mapfloat(rcLuxValue, 0, 65536, 0, MAXLUX);
      }
      //pwm negotiation
      else if(rcMessageType == 2) {
@@ -58,24 +65,24 @@ void receiveEvent(int howMany) {
      else if(rcMessageType == 4) {
         rcLuxLowerBound = Wire.read();
         rcLuxLowerBound <<= 8;
-        rcLuxLowerBound |= Wire.read();       
+        rcLuxLowerBound |= Wire.read();
+        rcLux = mapfloat(rcLuxLowerBound, 0, 65536, 0, MAXLUX);
      }
      //background lux
      else if(rcMessageType == 5) {
         rcLuxBackground = Wire.read();
         rcLuxBackground <<= 8;
         rcLuxBackground |= Wire.read();
+        rcLux = mapfloat(rcLuxBackground, 0, 65536, 0, MAXLUX);
      }
      //reference lux
      else if(rcMessageType == 6) {
         rcLuxRef = Wire.read();
         rcLuxRef <<= 8;
         rcLuxRef |= Wire.read();
+        rcLux = mapfloat(rcLuxRef, 0, 65536, 0, MAXLUX);
      }  
-
-
-  //use values to do something
-  
+    //use values to do something  
   }
   // throw away any garbage
   while (Wire.available() > 0) 
@@ -83,7 +90,8 @@ void receiveEvent(int howMany) {
 }
 
 
-void sendPwm(uint8_t pwmValue){
+void sendPwm(float pwm){
+  uint8_t pwmValue = mapfloat(pwm, 0, 5, 0, 255);
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(0);  //message type
@@ -91,7 +99,8 @@ void sendPwm(uint8_t pwmValue){
   Wire.endTransmission(); //release BUS
 }
 
-void sendLuxValue(uint16_t luxValue){
+void sendLuxReading(float luxReading){
+  uint16_t luxValue = mapfloat(luxReading, 0, MAXLUX, 0, 65536);
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(1);  //message type
@@ -102,7 +111,8 @@ void sendLuxValue(uint16_t luxValue){
   Wire.endTransmission(); //release BUS
 }
 
-void sendNegotiation(uint8_t pwmNegotiation){
+void sendNegotiation(float pwmValue){
+  uint8_t pwmNegotiation = mapfloat(pwmValue, 0, 5, 0, 255);
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(2);  //message type
@@ -118,7 +128,8 @@ void sendOccupancy(uint8_t occupancy){
   Wire.endTransmission(); //release BUS
 }
 
-void sendLuxLowerBound(uint16_t luxLowerBound){
+void sendLuxLowerBound(float lowerBound){
+  uint16_t luxLowerBound = mapfloat(lowerBound, 0, MAXLUX, 0, 65536);
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(4);  //message type
@@ -129,7 +140,8 @@ void sendLuxLowerBound(uint16_t luxLowerBound){
   Wire.endTransmission(); //release BUS
 }
 
-void sendLuxBackground(uint16_t luxBackground){
+void sendLuxBackground(float background){
+  uint16_t luxBackground = mapfloat(background, 0, MAXLUX, 0, 65536);
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(5);  //message type
@@ -140,7 +152,8 @@ void sendLuxBackground(uint16_t luxBackground){
   Wire.endTransmission(); //release BUS
 }
 
-void sendLuxRef(uint16_t luxRef){
+void sendLuxRef(float luxReff){
+  uint16_t luxRef = mapfloat(luxReff, 0, MAXLUX, 0, 65536);
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(6);  //message type

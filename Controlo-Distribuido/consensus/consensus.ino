@@ -152,7 +152,10 @@ float evaluate_cost (Node n, float d[], float rho){
 }
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(9600);  
+  Wire.begin(own_addr);
+  TWAR = (own_addr << 1) | 1;  // enable broadcasts to be received
+  Wire.onReceive(receiveEvent);   // set up receive handler
 }
 
 void loop(){
