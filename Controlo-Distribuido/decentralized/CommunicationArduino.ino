@@ -1,90 +1,45 @@
 #include <Wire.h>
 #include <EEPROM.h>
+#include "globals.h"
 #define MAXLUX 500
  
-uint8_t own_addr = EEPROM.read(0);
-uint8_t rcAddress, rcMessageType, rcPwmValue, rcPwmNegotiation, rcOccupancy;
+uint8_t rcAddress, rcMessageType, rcPwmValue, rcPwmNegotiation1, rcPwmNegotiation2, rcOccupancy;
 uint16_t rcLuxValue = 0, rcLuxLowerBound = 0, rcLuxBackground = 0, rcLuxRef = 0;
-float rcPwm = 0, rcPwmN = 0, rcLux=0;
+float rcPwm = 0, rcPwm1 = 0, rcPwm2 = 0, rcLux = 0;
 
 float mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
   return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void setup() {
-  Serial.begin(9600);
-  Wire.begin(own_addr);
-  TWAR = (own_addr << 1) | 1;  // enable broadcasts to be received
-  Wire.onReceive(receiveEvent);   // set up receive handler
-}
- 
-void loop() {
-  //sendLuxReading(100.2);
-  delay(1000);
-  //sendPwm(4.12);
-  delay(1000);
-  //sendNegotiation(4.20);
-  delay(1000);
-  //sendOccupancy(0);
-  delay(1000);
-  //sendLuxLowerBound(100);
-  delay(1000);
-  //sendLuxBackground(0.12);
-  delay(1000);
-  //sendLuxRef(100);
-  delay(1500);
-}
-
 void receiveEvent(int howMany) {  
   // we are expecting 3 or 4 bytes, so check we got them
   if (howMany == 3 || howMany == 4) {
-    Serial.println("Receive Event");
      rcAddress = Wire.read();
      rcMessageType = Wire.read();
-    
-     //pwm
-     if(rcMessageType == 0) {
-        rcPwmValue = Wire.read();
-        rcPwm = mapfloat(rcPwmValue, 0, 255, 0, 5);
-     }
-     //lux
-     else if(rcMessageType == 1) {
-        rcLuxValue = Wire.read();
-        rcLuxValue <<= 8;
-        rcLuxValue |= Wire.read();
-        rcLux = mapfloat(rcLuxValue, 0, 65536, 0, MAXLUX);
-     }
-     //pwm negotiation
-     else if(rcMessageType == 2) {
-        rcPwmNegotiation= Wire.read();
-        rcPwm = mapfloat(rcPwmNegotiation, 0, 255, 0, 5);
+
+    // Negotiation messages
+     if(rcMessageType == 2) {
+        rcPwmNegotiation1 = Wire.read();
+        rcPwmNegotiation2 = Wire.read();
+        rcPwm1 = mapfloat(rcPwmNegotiation1, 0, 255, 0, 5);
+        rcPwm2 = mapfloat(rcPwmNegotiation2, 0, 255, 0, 5);
+        other_solution.d[0] = rcPwm1;
+        other_solution.d[1] = rcPwm2;
+        Serial.println("  Received solution");
+        ReceivedSolution = true;
      }
      //occupancy
      else if(rcMessageType == 3) {
         rcOccupancy = Wire.read();
+        if (rcOccupancy == 1) {
+          if(!Negotiation) {
+            Serial.println("Begin Negotiation");   
+          }
+          Negotiation = true;                 
+        } else if (rcOccupancy == 0) {
+          Negotiation = false;
+        }
      }
-     //lux lower bound
-     else if(rcMessageType == 4) {
-        rcLuxLowerBound = Wire.read();
-        rcLuxLowerBound <<= 8;
-        rcLuxLowerBound |= Wire.read();
-        rcLux = mapfloat(rcLuxLowerBound, 0, 65536, 0, MAXLUX);
-     }
-     //background lux
-     else if(rcMessageType == 5) {
-        rcLuxBackground = Wire.read();
-        rcLuxBackground <<= 8;
-        rcLuxBackground |= Wire.read();
-        rcLux = mapfloat(rcLuxBackground, 0, 65536, 0, MAXLUX);
-     }
-     //reference lux
-     else if(rcMessageType == 6) {
-        rcLuxRef = Wire.read();
-        rcLuxRef <<= 8;
-        rcLuxRef |= Wire.read();
-        rcLux = mapfloat(rcLuxRef, 0, 65536, 0, MAXLUX);
-     }  
-    //use values to do something  
   }
   // throw away any garbage
   while (Wire.available() > 0) 
@@ -113,12 +68,14 @@ void sendLuxReading(float luxReading){
   Wire.endTransmission(); //release BUS
 }
 
-void sendNegotiation(float pwmValue){
-  uint8_t pwmNegotiation = mapfloat(pwmValue, 0, 5, 0, 255);
+void sendNegotiation(float pwmValue1, float pwmValue2){
+  uint8_t pwmNegotiation1 = mapfloat(pwmValue1, 0, 5, 0, 255);
+  uint8_t pwmNegotiation2 = mapfloat(pwmValue2, 0, 5, 0, 255);
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(2);  //message type
-  Wire.write(pwmNegotiation);
+  Wire.write(pwmNegotiation1);
+  Wire.write(pwmNegotiation2);
   Wire.endTransmission(); //release BUS
 }
 
