@@ -55,6 +55,7 @@ void setup() {
   while (refValue == 0) {
     if (Serial.available() > 0) {
       refValue = Serial.parseInt();
+      Serial.flush();
     }
   }
 }
@@ -78,13 +79,15 @@ void loop() {
 
   if (Serial.available()){
     input = Serial.parseInt();
-    if (input == 0) {
+    if (input == -1) {
       Serial.println("Empty");
       refValue = LowValue;    // Empty desk
+      Serial.flush();
     }
     else if (input == 1) {
       Serial.println("Occupied");
       refValue = HighValue;   // Occupied desk
+      Serial.flush();
     }
   }  
 }
