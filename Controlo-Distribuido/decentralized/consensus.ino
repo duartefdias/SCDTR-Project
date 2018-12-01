@@ -4,6 +4,53 @@
 //  What to do in case there is no feasible solution (too bright or too dim)
 // Implement distributed version of consensus using I2C communication
 
+struct solution consensus_algorithm(){
+  int i;
+  struct solution sol;
+  
+  for (i=0; i <= 50; i++)
+  {
+    // Compute own solution and send
+    sol = primal_solve(my_node,rho);
+    my_node.d[0] = sol.d[0];
+    my_node.d[1] = sol.d[1];
+    Serial.print("SEND: ");
+    Serial.print(my_node.d[0]);
+    Serial.print(" "); 
+    Serial.print(my_node.d[1]);
+    sendNegotiation(my_node.d[0], my_node.d[1]);
+
+    // Wait to receive solution computed from other nodes ...
+    while (!ReceivedSolution && Negotiation) {
+      delay(1);        
+    }
+    ReceivedSolution = false;      
+
+    // Compute averages using the received information
+    my_node.d_av[0] = (my_node.d[0]+other_solution.d[0])/2;
+    my_node.d_av[1] = (my_node.d[1]+other_solution.d[1])/2;
+    // Update local lagrangians
+    my_node.y[0] = my_node.y[0] + rho*(my_node.d[0]-my_node.d_av[0]);
+    my_node.y[1] = my_node.y[1] + rho*(my_node.d[1]-my_node.d_av[1]);
+    
+    if ((abs(my_node.d[0]-other_solution.d[0]) < 0.02 && abs(other_solution.d[1]-my_node.d[1]) < 0.02) || !Negotiation){
+      break;
+    }
+  }
+  // Consensus was obtained!
+  Negotiation = 0;
+  sendNegotiationState(Negotiation);
+  Serial.print("Consensus at iteration ");
+  Serial.println(i);
+  sol.d[0] = my_node.d_av[0]; sol.d[1] = my_node.d_av[1];
+
+  // Reset node values
+  my_node.d[0] = 0; my_node.d[1] = 0;    
+  my_node.d_av[0] = 0; my_node.d_av[1] = 0;
+  my_node.y[0] = 0; my_node.y[1] = 0;
+  
+  return sol;
+}
 
 struct solution primal_solve(Node node, float rho){
   struct solution sol;

@@ -3,9 +3,8 @@
 #include "globals.h"
 #define MAXLUX 500
  
-uint8_t rcAddress, rcMessageType, rcPwmValue, rcPwmNegotiation1, rcPwmNegotiation2, rcOccupancy;
-uint16_t rcLuxValue = 0, rcLuxLowerBound = 0, rcLuxBackground = 0, rcLuxRef = 0;
-float rcPwm = 0, rcPwm1 = 0, rcPwm2 = 0, rcLux = 0;
+uint8_t rcAddress, rcMessageType, rcPwmNegotiation1, rcPwmNegotiation2, rcOccupancy;
+float rcPwm1 = 0, rcPwm2 = 0;
 
 float mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
   return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -28,17 +27,15 @@ void receiveEvent(int howMany) {
         Serial.println("  Received solution");
         ReceivedSolution = true;
      }
-     //occupancy
-     else if(rcMessageType == 3) {
+     // Negotiation State
+     else if(rcMessageType == 7) {
         rcOccupancy = Wire.read();
         if (rcOccupancy == 1) {
-          if(!Negotiation) {
-            Serial.println("Begin Negotiation");   
-          }
-          Negotiation = true;                 
+          Serial.println("Received negotiation request");  
+          Negotiation = 1;                 
         } else if (rcOccupancy == 0) {
-          Negotiation = false;
-        }
+          Negotiation = 0;
+        }            
      }
   }
   // throw away any garbage
@@ -120,5 +117,13 @@ void sendLuxRef(float luxReff){
   uint8_t luxL = luxRef & 0xFF;
   Wire.write(luxH);
   Wire.write(luxL);
+  Wire.endTransmission(); //release BUS
+}
+
+void sendNegotiationState(uint8_t state){
+  Wire.beginTransmission(0);//get BUS
+  Wire.write(own_addr);
+  Wire.write(7);  //message type
+  Wire.write(state);
   Wire.endTransmission(); //release BUS
 }
