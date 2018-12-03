@@ -1,0 +1,5 @@
+#Installing boost
+sudo apt-get install libboost-all-dev
+
+#Compiling code
+g++ -o output main.cpp -lboost_system -lpthread
