@@ -8,7 +8,7 @@ int main() {
     io_service io;
     boost::system::error_code ec;
     char buf[128];
-    auto ep = tcp::endpoint(tcp::v4(),10000);
+    tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 123);
 
     std::cout << "Listening at: " << ep << std::endl;
     tcp::acceptor a(io, ep);
@@ -20,6 +20,7 @@ int main() {
         for(;;) { //got a client
             size_t n = s.read_some(buffer(buf,128), ec);
             if(ec) break;
+            std::cout << "Received message: " << buf << std::endl;
             write(s, buffer(buf,n), ec);
             if(ec) break;
         } //kills connection
