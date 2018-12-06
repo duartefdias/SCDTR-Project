@@ -6,15 +6,34 @@
 
 void consensusSetup(){
   if (own_addr == 1){
-    my_node.set(0, K[0][0], k12, c1, o1, L1);
+    my_node.set(0, G0(L1), k12, c1, o1, L1);
+    
   } else if (own_addr == 2){
-    my_node.set(1, k21, K[1][1], c2, o2, L2);
+    my_node.set(1, k21, G0(L2), c2, o2, L2);
   }
 }
 
 struct solution consensus_algorithm(){
   int i;
   struct solution sol;
+  
+  Serial.println("BEGINNING CONSENSUS. MY NODE:");
+  Serial.print(" i-1=");
+  Serial.print(my_node.index);
+  Serial.print(" ki1=");
+  Serial.print(my_node.k[0]);
+  Serial.print(" ki2=");
+  Serial.print(my_node.k[1]);
+  Serial.print(" n=");
+  Serial.print(my_node.n);
+  Serial.print(" m=");
+  Serial.println(my_node.m);
+  Serial.print(" c=");
+  Serial.println(my_node.c);
+  Serial.print(" o=");
+  Serial.println(my_node.o);
+  Serial.print(" L=");
+  Serial.println(my_node.L);
   
   for (i=0; i <= 50; i++)
   {
@@ -25,7 +44,7 @@ struct solution consensus_algorithm(){
     Serial.print("SEND: ");
     Serial.print(my_node.d[0]);
     Serial.print(" "); 
-    Serial.print(my_node.d[1]);
+    Serial.println(my_node.d[1]);
     sendNegotiation(my_node.d[0], my_node.d[1]);
 
     // Wait to receive solution computed from other nodes ...

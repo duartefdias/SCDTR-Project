@@ -40,7 +40,7 @@ void setup() {
   pinMode(LED1, OUTPUT);
   pinMode(LDRpin, INPUT);
 
-  Serial.begin(115200);
+  Serial.begin(250000);
   calibrateSystem();
 
   // Setup Timer interrupt (200 Hz)
@@ -54,6 +54,7 @@ void setup() {
   while (refValue == 0) {
     if (Serial.available() > 0) {
       refValue = Serial.parseInt();
+      HighValue = refValue;
       if (own_addr==1) L1 = refValue;
       else if (own_addr==2) L2 = refValue;
       Serial.flush();
@@ -77,7 +78,7 @@ void loop() {
     analogWrite(LED1, u);
     
     // Print measurement
-    Serial.print("Measured illuminance: ");
+    //Serial.print("Measured illuminance: ");
     Serial.println(measuredY);
     sendLuxReading(measuredY);
     flag = 0;
@@ -98,7 +99,8 @@ void loop() {
       occupancy = 0;
       refValue = LowValue;    // Empty desk
       my_node.L = refValue;
-      my_node.updateGain(refValue);
+      my_node.updateGain(G0(refValue));
+      
       Negotiation = 1;
       sendNegotiationState(Negotiation);
       Serial.flush();
@@ -108,7 +110,8 @@ void loop() {
       occupancy = 1;
       refValue = HighValue;   // Occupied desk
       my_node.L = refValue;
-      my_node.updateGain(refValue);
+      my_node.updateGain(G0(refValue));
+      
       Negotiation = 1;
       sendNegotiationState(Negotiation);
       Serial.flush();

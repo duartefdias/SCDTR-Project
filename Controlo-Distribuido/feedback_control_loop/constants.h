@@ -5,7 +5,7 @@
 const int LED1 = 5; // LED connected to analog pin5
 const int LDRpin = A0; // LDR connected to A5 pin
 const int Vcc = 5;
-int LowValue = 50;  // Empty desk illuminance in Lux
+int LowValue = 20;  // Empty desk illuminance in Lux
 int HighValue = 100; // Occupied desk illuminance
 
 // LDR parameters

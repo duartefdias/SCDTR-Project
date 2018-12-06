@@ -8,7 +8,7 @@
 
 
 void setup(){
-  Serial.begin(115200);
+  Serial.begin(250000);
   Wire.begin(own_addr);
   TWAR = (own_addr << 1) | 1;  // enable broadcasts to be received
   Wire.onReceive(receiveEvent);   // set up receive handler

@@ -2,7 +2,7 @@
 void setConstants(int addr) {
   if (addr == 1) {
     // Constants
-    LowValue = 50;  // Empty desk illuminance in Lux
+    LowValue = 20;  // Empty desk illuminance in Lux
     HighValue = 100; // Occupied desk illuminance
     
     // LDR parameters
@@ -21,7 +21,7 @@ void setConstants(int addr) {
   }
   else if (addr==2) {
     // Ref Values
-    LowValue = 40;  // Empty desk illuminance in Lux
+    LowValue = 20;  // Empty desk illuminance in Lux
     HighValue = 80; // Occupied desk illuminance
     
     // LDR parameters
@@ -82,7 +82,7 @@ float lux2volt(float lux) {
 
 // Measures ambient noise and influence of each node on another
 void calibrateSystem() {  
-  float o, lum, k12, k21;
+  float o, lum;
   
   Serial.println("Press ENTER to start calibration routine.");
   while(!Serial.available()) {}
