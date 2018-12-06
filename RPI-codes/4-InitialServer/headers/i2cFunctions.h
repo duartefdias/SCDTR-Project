@@ -1,0 +1,4 @@
+#ifndef I2CFUNCTIONS_H
+#define I2CFUNCTIONS_H
+
+#endif //I2CFUNCTIONS_H
