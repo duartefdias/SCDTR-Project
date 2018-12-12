@@ -11,16 +11,17 @@ int Data::getAvailability() {
     return dataAvailability;
 }
 
-void Data::setLastLuxValueArduino1(int value) {
-    lastLuxValueArduino1 = value;
+void Data::setLastLuxValueArduino(int value, int arduino) { //arduino = {1, 2}
+    if( arduino == 1){
+        lastLuxValueArduino1 = value;
+    }
+    else if(arduino == 2){
+        lastLuxValueArduino2 = value;
+    }
 }
 
 int Data::getLastLuxValueArduino1() {
     return lastLuxValueArduino1;
-}
-
-void Data::setLastLuxValueArduino2(int value) {
-    lastLuxValueArduino2 = value;
 }
 
 int Data::getLastLuxValueArduino2() {
