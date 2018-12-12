@@ -1,5 +1,5 @@
 #include <iostream> //SYNC_TCP_SERVER.CPP
-//#include <boost/asio.hpp>
+#include <boost/asio.hpp>
 #include <string>
 
 #include "../headers/i2cFunctions.h"
