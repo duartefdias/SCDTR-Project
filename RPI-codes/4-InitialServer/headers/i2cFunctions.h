@@ -7,6 +7,8 @@ public:
     I2cFunctions();
     int getAvailability();
 
+    void readLoop();
+
 private:
 
     int i2cAvailability = 0;

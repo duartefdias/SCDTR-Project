@@ -1,6 +1,7 @@
 #include <iostream> //SYNC_TCP_SERVER.CPP
 #include <boost/asio.hpp>
 #include <string>
+#include <thread>
 
 #include "../headers/i2cFunctions.h"
 #include "../headers/data.h"
@@ -38,6 +39,11 @@ int main() {
     int y = database->getAvailability();
     std::cout << "Database availability: " << y << std::endl;
 
+    // Create i2cReader thread
+    // Read values in i2c line
+    // Store values in database
+    std::thread i2cThread (i2c->readLoop);
+
     // Create Networking thread
     // Listen to client requests, fetch requested data and respond
     for (;;) {
@@ -53,9 +59,7 @@ int main() {
         } //kills connection
     }
 
-    // Create i2cReader thread
-    // Read values in i2c line
-    // Store values in database
+    i2cThread.join();
 
     return 0;
 }
