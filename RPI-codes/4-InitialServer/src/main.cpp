@@ -7,6 +7,7 @@
 #include "../headers/data.h"
 
 using namespace std;
+using boost::asio;
 
 const string SERVER_IP_ADDRESS = "192.168.0.120";
 const string SERVER_PORT = "123";
