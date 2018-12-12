@@ -13,8 +13,10 @@ using ip::tcp;
 const string SERVER_IP_ADDRESS = "192.168.0.120";
 const int SERVER_PORT = 123;
 
-void i2cFunction(I2cFunctions i2c){
+void i2cFunction(I2cFunctions i2c, Data database){
     std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
+    std::cout << "I2c thread database availability: " << database.getAvailability() << std::endl;
+
 }
 
 int main() {
@@ -44,9 +46,9 @@ int main() {
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
-    std::thread i2cThread(i2cFunction, i2c);
+    std::thread i2cThread(i2cFunction, i2c, database);
 
-    // Create Networking thread
+    // Create Networking "thread"
     // Listen to client requests, fetch requested data and respond
     for (;;) {
         tcp::socket s(io); //create new listening socket
