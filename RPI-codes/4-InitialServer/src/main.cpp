@@ -20,7 +20,7 @@ int main() {
     io_service io;
     boost::system::error_code ec;
     char buf[128];
-    tcp::endpoint ep(ip::address::from_string(SERVER_IP_ADDRESS), SERVER_PORT);
+    tcp::endpoint ep(ip::address::from_string("192.168.0.120"), 123);
 
     std::cout << "Listening at: " << ep << std::endl;
     tcp::acceptor a(io, ep);
