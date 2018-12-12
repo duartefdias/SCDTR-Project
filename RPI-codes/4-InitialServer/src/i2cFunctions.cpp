@@ -89,7 +89,7 @@ void I2cFunctions::readLoop(Data database) {
                     LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);  
                     printf("Lux: %d\n\n", LuxValue);
                     // Add value to database
-                    database.setLastLuxValueArduino(LuxValue, xfer.rxBuf[0])
+                    database.setLastLuxValueArduino(LuxValue, xfer.rxBuf[0]);
                     printf("\n");
                     break;
                 //pwm negotiation
