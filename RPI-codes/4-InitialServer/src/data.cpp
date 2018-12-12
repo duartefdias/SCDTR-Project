@@ -10,3 +10,19 @@ Data::Data() {
 int Data::getAvailability() {
     return dataAvailability;
 }
+
+void Data::setLastLuxValueArduino1(int value) {
+    lastLuxValueArduino1 = value;
+}
+
+int Data::getLastLuxValueArduino1() {
+    return lastLuxValueArduino1;
+}
+
+void Data::setLastLuxValueArduino2(int value) {
+    lastLuxValueArduino2 = value;
+}
+
+int Data::getLastLuxValueArduino2() {
+    return lastLuxValueArduino2;
+}
