@@ -65,7 +65,6 @@ void setup() {
   consensusSetup();
 
   // TODO: some initial setup to do consensus and send initial values to server
-  // TODO: sendLuxRef bug
 }
 
 void loop() {
@@ -94,7 +93,7 @@ void loop() {
     Serial.print(" ");
     Serial.println(sol.d[1]);
     Serial.println();
-    sendLuxRef(my_node.d[my_node.index]);
+    sendPWMRef(my_node.d[my_node.index]);
   }
 
   if (Serial.available()){

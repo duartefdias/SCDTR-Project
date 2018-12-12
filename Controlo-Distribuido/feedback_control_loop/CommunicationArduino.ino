@@ -110,15 +110,12 @@ void sendLuxBackground(float background){
   Wire.endTransmission(); //release BUS
 }
 
-void sendLuxRef(float luxReff){
-  uint16_t luxRef = mapfloat(luxReff, 0, MAXLUX, 0, 65536);
+void sendPWMRef(float pwmReff){
+  uint8_t pwmRef = mapfloat(pwmReff, 0, 5, 0, 255);
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(6);  //message type
-  uint8_t luxH = luxRef >> 8;
-  uint8_t luxL = luxRef & 0xFF;
-  Wire.write(luxH);
-  Wire.write(luxL);
+  Wire.write(pwmRef);
   Wire.endTransmission(); //release BUS
 }
 
