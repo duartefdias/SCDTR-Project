@@ -60,7 +60,7 @@ void I2cFunctions::readLoop() {
     if (gpioInitialise() < 0) {printf("Erro 1\n"); return;}
     
     bsc_xfer_t xfer;
-    status = init_slave(xfer, SLAVE_ADDR);
+    status = I2cFunctions::init_slave(xfer, SLAVE_ADDR);
 
     printf("Ready to receive data at address: 0\n");
     while(key != 'q') {
@@ -75,7 +75,7 @@ void I2cFunctions::readLoop() {
                 //pwm
                 case 0:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    pwm = mapfloat(xfer.rxBuf[2], 0, 5, 0, 255)
+                    pwm = I2cFunctions::mapfloat(xfer.rxBuf[2], 0, 5, 0, 255)
                     printf("PWM: %d\n\n", pwm);
                     printf("\n");
                     break;
@@ -91,7 +91,7 @@ void I2cFunctions::readLoop() {
                 //pwm negotiation
                 case 2:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    pwm = mapfloat(xfer.rxBuf[2], 0, 5, 0, 255)
+                    pwm = I2cFunctions::mapfloat(xfer.rxBuf[2], 0, 5, 0, 255)
                     printf("Negotiation: %d\n\n", pwm);
                     break;
                 //occupancy
@@ -133,6 +133,6 @@ void I2cFunctions::readLoop() {
         //printf("\n Press q to quit.\n");
         //key = getchar();
     }
-    status = close_slave(xfer);
+    status = I2cFunctions::close_slave(xfer);
     gpioTerminate();
 }
