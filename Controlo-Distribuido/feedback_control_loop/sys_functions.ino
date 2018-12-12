@@ -93,6 +93,7 @@ void calibrateSystem() {
   o = readLDR();
   Serial.print("Ambient noise: ");
   Serial.println(o);  
+  sendLuxBackground(o);
   delay(3000);
 
   // Measure k21
