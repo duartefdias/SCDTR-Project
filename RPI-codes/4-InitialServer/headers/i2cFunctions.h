@@ -13,9 +13,9 @@ public:
     I2cFunctions();
     int getAvailability();
 
-    float mapfloat(double val, double in_min, double in_max, double out_min, double out_max);
-    int init_slave(bsc_xfer_t &xfer, int addr);
-    int close_slave(bsc_xfer_t &xfer);
+    //float mapfloat(double val, double in_min, double in_max, double out_min, double out_max);
+    //int init_slave(bsc_xfer_t &xfer, int addr);
+    //int close_slave(bsc_xfer_t &xfer);
 
     static void readLoop();
 

@@ -20,11 +20,11 @@ int I2cFunctions::getAvailability() {
     return i2cAvailability;
 }
 
-float I2cFunctions::mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
+float mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
     return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-int I2cFunctions::init_slave(bsc_xfer_t &xfer, int addr) {
+int init_slave(bsc_xfer_t &xfer, int addr) {
 
     gpioSetMode(18, PI_ALT3);
     gpioSetMode(19, PI_ALT3);
@@ -47,7 +47,7 @@ int I2cFunctions::init_slave(bsc_xfer_t &xfer, int addr) {
 
 }
 
-int I2cFunctions::close_slave(bsc_xfer_t &xfer) {
+int close_slave(bsc_xfer_t &xfer) {
     xfer.control = 0;
     return bscXfer(&xfer);
 }
