@@ -3,31 +3,51 @@
 #include <string>
 
 #include "../headers/i2cFunctions.h"
-#include "../headers/networkFunctions.h"
+//#include "../headers/networkFunctions.h"
 #include "../headers/data.h"
 
 using namespace std;
+using namespace boost::asio;
+using ip::tcp;
 
 const string SERVER_IP_ADDRESS = "192.168.0.120";
-const string SERVER_PORT = "123";
+const int SERVER_PORT = 123;
 
 int main() {
 
-    // Initialize networking module
-    //Server server(SERVER_IP_ADDRESS, SERVER_PORT);
-
     std::cout << "Hello from main.cpp" << std::endl;
+
+    io_service io;
+    boost::system::error_code ec;
+    char buf[128];
+    tcp::endpoint ep(ip::address::from_string(SERVER_IP_ADDRESS), SERVER_PORT);
+
+    std::cout << "Listening at: " << ep << std::endl;
+    tcp::acceptor a(io, ep);
 
     // Initialize i2cReading module
 
     // Initialize database module
     Data* database = new Data();
 
+    //Test database module
     int x = database->readAvailability();
     std::cout << "Database availability: " << x << std::endl;
 
     // Create Networking thread
     // Listen to client requests, fetch requested data and respond
+    for (;;) {
+        tcp::socket s(io); //create new listening socket
+        a.accept(s); //wait client to connect
+        
+        for(;;) { //got a client
+            size_t n = s.read_some(buffer(buf,128), ec);
+            if(ec) break;
+            std::cout << "Received message: " << buf << std::endl;
+            write(s, buffer(buf,n), ec);
+            if(ec) break;
+        } //kills connection
+    }
 
     // Create i2cReader thread
     // Read values in i2c line

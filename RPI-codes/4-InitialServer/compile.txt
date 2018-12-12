@@ -5,3 +5,5 @@ sudo apt-get install libboost-all-dev
 g++ -o output main.cpp -lboost_system -lpthread
 
 g++ -lboost_system -lpthread -o output src/main.cpp src/networkFunctions.cpp src/i2cFunctions.cpp src/data.cpp
+
+g++ -lboost_system -lpthread -o output src/main.cpp src/i2cFunctions.cpp src/data.cpp
