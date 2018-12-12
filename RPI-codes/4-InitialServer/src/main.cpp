@@ -21,6 +21,10 @@ int main() {
     // Initialize i2cReading module
 
     // Initialize database module
+    Data database = new Data();
+
+    int x = database.readAvailability();
+    std::cout << "Database availability: " << x << std::endl;
 
     // Create Networking thread
     // Listen to client requests, fetch requested data and respond

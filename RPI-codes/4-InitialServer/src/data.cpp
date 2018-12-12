@@ -3,7 +3,10 @@
 #include <iostream> //SYNC_TCP_SERVER.CPP
 #include <string>
 
-class Data{
+Data::Data() {
+    dataAvailability = 1;
+}
 
-
-};
+int Data::readAvailability() {
+    return dataAvailability;
+}
