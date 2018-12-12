@@ -11,6 +11,7 @@
 using namespace std;
 
 #define SLAVE_ADDR 0x0
+#define MAX_LUX 500
 
 I2cFunctions::I2cFunctions() {
     i2cAvailability = 1;
@@ -69,7 +70,7 @@ void I2cFunctions::readLoop(Data database) {
         status = bscXfer(&xfer);
         
         if(xfer.rxCnt > 0){
-        printf("Received %d bytes:\n", xfer.rxCnt);
+        //printf("Received %d bytes:\n", xfer.rxCnt);
 
             switch(xfer.rxBuf[1]){
                 //pwm
@@ -81,13 +82,14 @@ void I2cFunctions::readLoop(Data database) {
                     break;
                 //lux
                 case 1:
-                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    //printf("Arduino %d\n", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
-                    LuxValue |= xfer.rxBuf[3];  
+                    LuxValue |= xfer.rxBuf[3];
+                    LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);  
                     printf("Lux: %d\n\n", LuxValue);
                     // Add value to database
-                    std::cout << "I2c thread loop database availability: " << database.getAvailability() << std::endl;
+                    database.setLastLuxValueArduino(LuxValue, xfer.rxBuf[0]);
                     printf("\n");
                     break;
                 //pwm negotiation
