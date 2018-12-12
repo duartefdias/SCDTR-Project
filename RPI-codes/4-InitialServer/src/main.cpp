@@ -26,7 +26,7 @@ int main() {
     tcp::acceptor a(io, ep);
 
     // Initialize i2cReading module
-    I2cFunctions* i2c = new I2cFunctions();
+    I2cFunctions i2c;
 
     // Test i2c module
     int x = i2c->getAvailability();
@@ -42,7 +42,7 @@ int main() {
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
-    std::thread i2cThread(&I2cFunctions::readLoop, &i2c);
+    //std::thread i2cThread(&I2cFunctions::readLoop, &i2c);
 
     // Create Networking thread
     // Listen to client requests, fetch requested data and respond
