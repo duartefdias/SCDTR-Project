@@ -13,7 +13,7 @@ public:
     I2cFunctions();
     int getAvailability();
 
-    static void readLoop();
+    void readLoop();
 
 private:
 
