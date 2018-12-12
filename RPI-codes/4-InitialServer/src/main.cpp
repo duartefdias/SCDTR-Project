@@ -2,7 +2,6 @@
 #include <boost/asio.hpp>
 #include <string>
 #include <thread>
-#include <unistd.h>
 
 #include "../headers/i2cFunctions.h"
 #include "../headers/data.h"
@@ -14,11 +13,8 @@ using ip::tcp;
 const string SERVER_IP_ADDRESS = "192.168.0.120";
 const int SERVER_PORT = 123;
 
-void tFunction(int n){
-    for(int i = 0; i<11; i++){
-        std::cout << "i2c thread " << n << ": " << i << std::endl;
-        usleep(2000);
-    }
+void tFunction(I2cFunctions i2c){
+    std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
 }
 
 int main() {
@@ -37,21 +33,18 @@ int main() {
     I2cFunctions i2c;
 
     // Test i2c module
-    int x = i2c.getAvailability();
-    std::cout << "I2c functions availability: " << x << std::endl;
+    std::cout << "I2c functions availability: " << i2c.getAvailability() << std::endl;
 
     // Initialize database module
     Data database;
 
     // Test database module
-    int y = database.getAvailability();
-    std::cout << "Database availability: " << y << std::endl;
+    std::cout << "Database availability: " << database.getAvailability() << std::endl;
 
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
-    std::thread i2cThread1(tFunction, 1);
-    std::thread i2cThread2(tFunction, 2);
+    std::thread i2cThread1(i2cFunction, i2c);
 
     // Create Networking thread
     // Listen to client requests, fetch requested data and respond
