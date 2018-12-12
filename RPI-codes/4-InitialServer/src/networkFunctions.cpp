@@ -6,7 +6,6 @@
 using namespace boost::asio;
 using ip::tcp;
 
-class Server {
     /*io_service& io;
     tcp::acceptor acceptor;
     void start_accept() {
@@ -23,4 +22,3 @@ class Server {
         : io(io), acceptor(io, tcp::endpoint(tcp::v4(), port)) {
             start_accept();
     }*/
-};

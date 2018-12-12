@@ -9,18 +9,23 @@
 const string SERVER_IP_ADDRESS = "192.168.0.120";
 const string SERVER_PORT = "123";
 
-// Initialize networking module
-//Server server(SERVER_IP_ADDRESS, SERVER_PORT);
+int main() {
 
-std::cout << "Hello from main.cpp" << std::endl;
+    // Initialize networking module
+    //Server server(SERVER_IP_ADDRESS, SERVER_PORT);
 
-// Initialize i2cReading module
+    std::cout << "Hello from main.cpp" << std::endl;
 
-// Initialize database module
+    // Initialize i2cReading module
 
-// Create Networking thread
-// Listen to client requests, fetch requested data and respond
+    // Initialize database module
 
-// Create i2cReader thread
-// Read values in i2c line
-// Store values in database
+    // Create Networking thread
+    // Listen to client requests, fetch requested data and respond
+
+    // Create i2cReader thread
+    // Read values in i2c line
+    // Store values in database
+
+    return 0;
+}
