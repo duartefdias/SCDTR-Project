@@ -7,13 +7,15 @@
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
+#include "../headers/data.h"
+
 class I2cFunctions{
 public:
 
     I2cFunctions();
     int getAvailability();
 
-    void readLoop();
+    void readLoop(Data database);
 
 private:
 

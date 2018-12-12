@@ -52,7 +52,7 @@ int I2cFunctions::close_slave(bsc_xfer_t &xfer) {
     return bscXfer(&xfer);
 }
 
-void I2cFunctions::readLoop() {
+void I2cFunctions::readLoop(Data database) {
     int status, j, key = 0;
     uint16_t LuxValue = 0;
     float pwm;
@@ -86,6 +86,8 @@ void I2cFunctions::readLoop() {
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];  
                     printf("Lux: %d\n\n", LuxValue);
+                    // Add value to database
+                    std::cout << "I2c thread loop database availability: " << database.getAvailability() << std::endl;
                     printf("\n");
                     break;
                 //pwm negotiation

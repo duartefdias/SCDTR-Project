@@ -18,7 +18,7 @@ void i2cFunction(I2cFunctions i2c, Data database){
     std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
     std::cout << "I2c thread database availability: " << database.getAvailability() << std::endl;
 
-    i2c.readLoop();
+    i2c.readLoop(Data database);
 
 }
 
