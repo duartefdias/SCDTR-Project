@@ -7,6 +7,6 @@ Data::Data() {
     dataAvailability = 1;
 }
 
-int Data::readAvailability() {
+int Data::getAvailability() {
     return dataAvailability;
 }

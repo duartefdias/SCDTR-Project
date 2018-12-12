@@ -28,14 +28,14 @@ int main() {
     I2cFunctions* i2c = new I2cFunctions();
 
     // Test i2c module
-    int x = i2c->readAvailability();
+    int x = i2c->getAvailability();
     std::cout << "I2c functions availability: " << x << std::endl;
 
     // Initialize database module
     Data* database = new Data();
 
     // Test database module
-    int y = database->readAvailability();
+    int y = database->getAvailability();
     std::cout << "Database availability: " << y << std::endl;
 
     // Create Networking thread

@@ -6,7 +6,7 @@ public:
 
     Data();
 
-    int readAvailability();
+    int getAvailability();
 
 private:
     int dataAvailability = 0;
