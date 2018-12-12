@@ -42,7 +42,7 @@ int main() {
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
-    thread i2cThread (i2c->readLoop);
+    std::thread i2cThread(&I2cFunctions::readLoop, &i2c);
 
     // Create Networking thread
     // Listen to client requests, fetch requested data and respond
