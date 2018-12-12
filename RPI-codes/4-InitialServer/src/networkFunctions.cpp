@@ -7,7 +7,7 @@ using namespace boost::asio;
 using ip::tcp;
 
 class Server {
-    io_service& io;
+    /*io_service& io;
     tcp::acceptor acceptor;
     void start_accept() {
         session* new_sess = new session(io);
@@ -22,5 +22,5 @@ class Server {
         server(io_service& io, short port)
         : io(io), acceptor(io, tcp::endpoint(tcp::v4(), port)) {
             start_accept();
-    }
+    }*/
 };
