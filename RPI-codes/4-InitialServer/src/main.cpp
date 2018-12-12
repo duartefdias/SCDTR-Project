@@ -10,7 +10,9 @@ const string SERVER_IP_ADDRESS = "192.168.0.120";
 const string SERVER_PORT = "123";
 
 // Initialize networking module
-Server server(SERVER_IP_ADDRESS, SERVER_PORT);
+//Server server(SERVER_IP_ADDRESS, SERVER_PORT);
+
+std::cout << "Hello from main.cpp" << std::endl;
 
 // Initialize i2cReading module
 

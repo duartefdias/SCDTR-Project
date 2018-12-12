@@ -1,4 +1,10 @@
+#include "../headers/networkFunctions.h"
 
+#include <iostream> //SYNC_TCP_SERVER.CPP
+#include <boost/asio.hpp>
+
+using namespace boost::asio;
+using ip::tcp;
 
 class Server {
     io_service& io;
