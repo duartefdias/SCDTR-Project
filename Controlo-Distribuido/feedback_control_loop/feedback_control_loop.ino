@@ -39,15 +39,15 @@ void setup() {
   setConstants(own_addr);
   pinMode(LED1, OUTPUT);
   pinMode(LDRpin, INPUT);
-
+  
+  // Setup I2C communication
+  I2CSetup();  
+  
   Serial.begin(250000);
   calibrateSystem();
 
   // Setup Timer interrupt (200 Hz)
-  timerSetup();
-
-  // Setup I2C communication
-  I2CSetup();  
+  timerSetup();  
 
   // Reference value
   Serial.print("Insert desired Lux value [0, 300]: ");
