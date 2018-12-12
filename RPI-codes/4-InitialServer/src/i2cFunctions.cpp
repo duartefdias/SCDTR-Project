@@ -10,6 +10,8 @@
 
 using namespace std;
 
+#define SLAVE_ADDR 0x0;
+
 I2cFunctions::I2cFunctions() {
     i2cAvailability = 1;
 }
@@ -55,7 +57,7 @@ void I2cFunctions::readLoop() {
     uint16_t LuxValue = 0;
     float pwm;
 
-    if (gpioInitialise() < 0) {printf("Erro 1\n"); return 1;}
+    if (gpioInitialise() < 0) {printf("Erro 1\n"); return;}
     
     bsc_xfer_t xfer;
     status = init_slave(xfer, SLAVE_ADDR);
