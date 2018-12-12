@@ -3,7 +3,6 @@
 #include <string>
 
 #include "../headers/i2cFunctions.h"
-//#include "../headers/networkFunctions.h"
 #include "../headers/data.h"
 
 using namespace std;
@@ -26,13 +25,18 @@ int main() {
     tcp::acceptor a(io, ep);
 
     // Initialize i2cReading module
+    I2cFunctions* i2c = new I2cFunctions();
+
+    // Test i2c module
+    int x = i2c->readAvailability();
+    std::cout << "I2c functions availability: " << x << std::endl;
 
     // Initialize database module
     Data* database = new Data();
 
-    //Test database module
-    int x = database->readAvailability();
-    std::cout << "Database availability: " << x << std::endl;
+    // Test database module
+    int y = database->readAvailability();
+    std::cout << "Database availability: " << y << std::endl;
 
     // Create Networking thread
     // Listen to client requests, fetch requested data and respond

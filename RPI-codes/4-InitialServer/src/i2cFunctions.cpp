@@ -3,7 +3,10 @@
 #include <iostream> //SYNC_TCP_SERVER.CPP
 #include <string>
 
-class I2cFunctions{
+I2cFunctions::I2cFunctions() {
+    i2cAvailability = 1;
+}
 
-
-};
+int I2cFunctions::getAvailability() {
+    return i2cAvailability;
+}
