@@ -1,2 +1,2 @@
 all: src/main.cpp src/networkFunctions.cpp src/i2cFunctions.cpp src/data.cpp
-	g++ -o output src/main.cpp src/networkFunctions.cpp src/i2cFunctions.cpp src/data.cpp -I -lboost_system -lpthread
+	g++ -L /usr/include/boost -lboost_system -lpthread -o output src/main.cpp src/networkFunctions.cpp src/i2cFunctions.cpp src/data.cpp -I
