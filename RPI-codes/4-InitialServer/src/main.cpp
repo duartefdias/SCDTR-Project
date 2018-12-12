@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 #include <string>
 #include <thread>
+#include <unistd.h>
 
 #include "../headers/i2cFunctions.h"
 #include "../headers/data.h"
@@ -16,7 +17,7 @@ const int SERVER_PORT = 123;
 void tFunction(){
     for(int i = 0; i<11; i++){
         std::cout << "i2c thread: " << i << std::endl;
-        //usleep(2000);
+        usleep(2000);
     }
 }
 
