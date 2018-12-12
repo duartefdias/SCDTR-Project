@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define SLAVE_ADDR 0x0;
+#define SLAVE_ADDR 0x0
 
 I2cFunctions::I2cFunctions() {
     i2cAvailability = 1;
