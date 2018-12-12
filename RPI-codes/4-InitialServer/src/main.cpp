@@ -13,6 +13,13 @@ using ip::tcp;
 const string SERVER_IP_ADDRESS = "192.168.0.120";
 const int SERVER_PORT = 123;
 
+void tFunction(){
+    for(int i = 0; i<11; i++){
+        std::cout << "i2c thread: " << i << std::endl;
+        //usleep(2000);
+    }
+}
+
 int main() {
 
     std::cout << "Hello from main.cpp" << std::endl;
@@ -62,11 +69,4 @@ int main() {
     i2cThread.join();
 
     return 0;
-}
-
-void tFunction(){
-    for(int i = 0; i<11; i++){
-        std::cout << "i2c thread: " << i << std::endl;
-        //usleep(2000);
-    }
 }
