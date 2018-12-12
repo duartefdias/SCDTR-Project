@@ -29,7 +29,7 @@ int main() {
     I2cFunctions i2c;
 
     // Test i2c module
-    int x = i2c->getAvailability();
+    int x = i2c.getAvailability();
     std::cout << "I2c functions availability: " << x << std::endl;
 
     // Initialize database module
@@ -59,7 +59,7 @@ int main() {
         } //kills connection
     }
 
-    i2cThread.join();
+    //i2cThread.join();
 
     return 0;
 }
