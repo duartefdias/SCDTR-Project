@@ -33,16 +33,16 @@ int main() {
     std::cout << "I2c functions availability: " << x << std::endl;
 
     // Initialize database module
-    Data* database = new Data();
+    Data database;
 
     // Test database module
-    int y = database->getAvailability();
+    int y = database.getAvailability();
     std::cout << "Database availability: " << y << std::endl;
 
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
-    //std::thread i2cThread(&I2cFunctions::readLoop, &i2c);
+    std::thread i2cThread(&I2cFunctions::readLoop, &i2c);
 
     // Create Networking thread
     // Listen to client requests, fetch requested data and respond
@@ -59,7 +59,7 @@ int main() {
         } //kills connection
     }
 
-    //i2cThread.join();
+    i2cThread.join();
 
     return 0;
 }
