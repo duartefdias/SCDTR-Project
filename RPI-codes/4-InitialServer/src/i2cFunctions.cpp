@@ -75,7 +75,7 @@ void I2cFunctions::readLoop() {
                 //pwm
                 case 0:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255)
+                    pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255);
                     printf("PWM: %d\n\n", pwm);
                     printf("\n");
                     break;
@@ -91,7 +91,7 @@ void I2cFunctions::readLoop() {
                 //pwm negotiation
                 case 2:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
-                    pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255)
+                    pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255);
                     printf("Negotiation: %d\n\n", pwm);
                     break;
                 //occupancy
