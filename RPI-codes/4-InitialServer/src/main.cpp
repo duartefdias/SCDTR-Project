@@ -6,17 +6,17 @@
 #include "../headers/networkFunctions.h"
 #include "../headers/data.h"
 
-using namespace boost::asio;
+using namespace std;
 
-//const string SERVER_IP_ADDRESS = "192.168.0.120";
-//const string SERVER_PORT = "123";
+const string SERVER_IP_ADDRESS = "192.168.0.120";
+const string SERVER_PORT = "123";
 
 int main() {
 
     // Initialize networking module
     //Server server(SERVER_IP_ADDRESS, SERVER_PORT);
 
-    //std::cout << "Hello from main.cpp" << std::endl;
+    std::cout << "Hello from main.cpp" << std::endl;
 
     // Initialize i2cReading module
 
