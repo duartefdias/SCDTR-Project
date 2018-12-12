@@ -1,5 +1,5 @@
 #include <iostream> //SYNC_TCP_SERVER.CPP
-#include <boost/asio.hpp>
+//#include <boost/asio.hpp>
 #include <string>
 
 #include "../headers/i2cFunctions.h"
@@ -7,7 +7,6 @@
 #include "../headers/data.h"
 
 using namespace std;
-using boost::asio;
 
 const string SERVER_IP_ADDRESS = "192.168.0.120";
 const string SERVER_PORT = "123";
