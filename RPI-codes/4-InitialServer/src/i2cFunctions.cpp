@@ -87,7 +87,7 @@ void I2cFunctions::readLoop(Data database) {
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];
                     LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);  
-                    printf("Lux: %f\n\n", LuxValue);
+                    printf("Lux: %d\n\n", LuxValue);
                     // Add value to database
                     database.setLastLuxValueArduino(LuxValue, xfer.rxBuf[0]);
                     printf("\n");
