@@ -3,6 +3,8 @@
 #include <iostream> //SYNC_TCP_SERVER.CPP
 #include <string>
 
+using namespace std;
+
 Data::Data() {
     dataAvailability = 1;
 }
@@ -25,10 +27,12 @@ void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
     }
 }
 
-int Data::getLastLuxValueArduino1() {
-    return lastLuxValueArduino1;
+char* Data::getLastLuxValueArduino1() {
+    char value[10] = std::to_string(lastLuxValueArduino1);
+    return value;
 }
 
-int Data::getLastLuxValueArduino2() {
-    return lastLuxValueArduino2;
+char* Data::getLastLuxValueArduino2() {
+    char value[10] = std::to_string(lastLuxValueArduino2);
+    return value;
 }
