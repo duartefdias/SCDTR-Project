@@ -8,9 +8,9 @@ public:
 
     int getAvailability();
 
-    void setLastLuxValueArduino(int value, int arduino);
-    int getLastLuxValueArduino1();
-    int getLastLuxValueArduino2();
+    void setLastLuxValueArduino(int value, char arduino);
+    char* getLastLuxValueArduino1();
+    char* getLastLuxValueArduino2();
 
 private:
     int dataAvailability = 0;

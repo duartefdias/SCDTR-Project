@@ -23,7 +23,7 @@ private:
     int init_slave(bsc_xfer_t &xfer, int addr);
     int close_slave(bsc_xfer_t &xfer);
 
-    int i2cAvailability = 0;
+    int i2cAvailability = 8989;
 
 };
 
