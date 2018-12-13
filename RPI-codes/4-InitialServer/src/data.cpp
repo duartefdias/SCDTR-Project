@@ -18,6 +18,11 @@ void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
     else if(arduino == '2'){
         lastLuxValueArduino2 = value;
     }
+    else {
+        lastLuxValueArduino1 = 999999;
+        lastLuxValueArduino2 = 999999;
+
+    }
 }
 
 int Data::getLastLuxValueArduino1() {
