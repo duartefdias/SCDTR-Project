@@ -8,7 +8,7 @@ public:
 
     int getAvailability();
 
-    void setLastLuxValueArduino(int value, int arduino);
+    void setLastLuxValueArduino(int value, char arduino);
     int getLastLuxValueArduino1();
     int getLastLuxValueArduino2();
 

@@ -11,11 +11,11 @@ int Data::getAvailability() {
     return dataAvailability;
 }
 
-void Data::setLastLuxValueArduino(int value, int arduino) { //arduino = {1, 2}
-    if( arduino == 1){
+void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
+    if( arduino == '1'){
         lastLuxValueArduino1 = value;
     }
-    else if(arduino == 2){
+    else if(arduino == '2'){
         lastLuxValueArduino2 = value;
     }
 }
