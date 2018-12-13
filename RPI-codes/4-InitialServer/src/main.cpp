@@ -65,11 +65,11 @@ int main() {
             std::cout << "Received message: " << buf << std::endl;
             if(buf[2] == 'l'){
                 if(buf[4] == '1'){
-                    buf = "value1";
+                    strcpy(buf, "value1");
                     write(s, buffer(buf,n), ec);
                 }
                 else if(buf[4] == '2'){
-                    buf = "value2";
+                    strcpy(buf, "value2");
                     write(s, buffer(buf,n), ec);
                 }
             }
