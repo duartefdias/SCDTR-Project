@@ -82,7 +82,7 @@ void I2cFunctions::readLoop(Data database) {
                     break;
                 //lux
                 case 1:
-                    //printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Arduino %d\n", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];
@@ -108,7 +108,8 @@ void I2cFunctions::readLoop(Data database) {
                     printf("Arduino %d\n", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
-                    LuxValue |= xfer.rxBuf[3];  
+                    LuxValue |= xfer.rxBuf[3];
+                    LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
                     printf("Lux Lower Bound: %d\n\n", LuxValue);
                     printf("\n");
                     break;
@@ -117,7 +118,8 @@ void I2cFunctions::readLoop(Data database) {
                     printf("Arduino %d\n", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
-                    LuxValue |= xfer.rxBuf[3];  
+                    LuxValue |= xfer.rxBuf[3];
+                    LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
                     printf("Background Lux: %d\n\n", LuxValue);
                     printf("\n");
                     break;
@@ -126,7 +128,8 @@ void I2cFunctions::readLoop(Data database) {
                     printf("Arduino %d\n", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
-                    LuxValue |= xfer.rxBuf[3];  
+                    LuxValue |= xfer.rxBuf[3];
+                    LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
                     printf("Reference Lux: %d\n\n", LuxValue);
                     printf("\n");
                     break;

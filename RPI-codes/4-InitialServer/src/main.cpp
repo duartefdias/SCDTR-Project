@@ -14,6 +14,8 @@ const string SERVER_IP_ADDRESS = "192.168.0.120";
 const int SERVER_PORT = 123;
 #define SLAVE_ADDR 0x0;
 
+void respondToClient()
+
 void i2cFunction(I2cFunctions i2c, Data database){
     std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
     std::cout << "I2c thread database availability: " << database.getAvailability() << std::endl;
@@ -61,6 +63,14 @@ int main() {
             size_t n = s.read_some(buffer(buf,128), ec);
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
+            if(buf[2] == 'l'){
+                if(buf[4] == '1'){
+                    write(s, buffer(database.getLastLuxValueArduino1(),n), ec);
+                }
+                else if(buf[4] == '2'){
+                    write(s, buffer(database.getLastLuxValueArduino2(),n), ec);
+                }
+            }
             write(s, buffer(buf,n), ec);
             if(ec) break;
         } //kills connection
