@@ -65,10 +65,10 @@ int main() {
             std::cout << "Received message: " << buf << std::endl;
             if(buf[2] == 'l'){
                 if(buf[4] == '1'){
-                    write(s, buffer(std::to_string(database.getLastLuxValueArduino1()),n), ec);
+                    write(s, buffer('f',n), ec);
                 }
                 else if(buf[4] == '2'){
-                    write(s, buffer(std::to_string(database.getLastLuxValueArduino2()),n), ec);
+                    write(s, buffer('merda',n), ec);
                 }
             }
             write(s, buffer(buf,n), ec);
