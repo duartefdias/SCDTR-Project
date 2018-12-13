@@ -65,10 +65,12 @@ int main() {
             std::cout << "Received message: " << buf << std::endl;
             if(buf[2] == 'l'){
                 if(buf[4] == '1'){
-                    write(s, 'f', ec);
+                    buf = "value1";
+                    write(s, buffer(buf,n), ec);
                 }
                 else if(buf[4] == '2'){
-                    write(s, buffer('f',n), ec);
+                    buf = "value2";
+                    write(s, buffer(buf,n), ec);
                 }
             }
             write(s, buffer(buf,n), ec);
