@@ -49,7 +49,8 @@ struct solution consensus_algorithm(){
 
     // Wait to receive solution computed from other nodes ...
     while (!ReceivedSolution && Negotiation) {
-      delay(1);        
+      delay(1);
+      Serial.println("stuck");        
     }
     ReceivedSolution = false;      
 

@@ -69,7 +69,8 @@ void setup() {
 
 void loop() {
   struct solution sol;
-  //sendNegotiationState(Negotiation);
+  Serial.println("loop");
+  //if (Negotiation) sendNegotiationState(Negotiation);
   if (flag){
     // Read current output - y
     float measuredY = readLDR();
@@ -87,6 +88,7 @@ void loop() {
     flag = 0;
   }
   if (Negotiation){
+    Serial.println("Negotiation");
     sol = consensus_algorithm();
     Serial.print("solution = ");
     Serial.print(sol.d[0]);
@@ -97,6 +99,7 @@ void loop() {
   }
 
   if (Serial.available()){
+    Serial.println("Serial");
     input = Serial.parseInt();
     if (input == -1 and occupancy == 1) {
       Serial.println("Empty");

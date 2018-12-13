@@ -41,8 +41,10 @@ void receiveEvent(int howMany) {
      }
   }
   // throw away any garbage
-  while (Wire.available() > 0) 
+  while (Wire.available()) {
+    //Serial.println("recv");
     Wire.read();    
+  }
 }
 
 
