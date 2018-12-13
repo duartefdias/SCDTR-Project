@@ -12,9 +12,9 @@ using ip::tcp;
 
 const string SERVER_IP_ADDRESS = "192.168.0.120";
 const int SERVER_PORT = 123;
-#define SLAVE_ADDR 0x0;
+#define SLAVE_ADDR 0x0
 
-void respondToClient()
+//void respondToClient()
 
 void i2cFunction(I2cFunctions i2c, Data database){
     std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
