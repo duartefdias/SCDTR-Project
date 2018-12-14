@@ -36,7 +36,7 @@ float Data::getLastLuxValueArduino2() {
 }
 
 std::string Data::processRequest(char* request){
-    std::string response;
+    std::string response = "";
     if(request[2] == 'l'){
         if(request[4] == '1'){
             response = std::to_string(this->getLastLuxValueArduino1());
