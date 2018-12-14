@@ -30,7 +30,7 @@ int main() {
 
     io_service io;
     boost::system::error_code ec;
-    char buf[128];
+    char buf[512];
     tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 123);
 
     std::cout << "Listening at: " << ep << std::endl;
@@ -53,6 +53,9 @@ int main() {
     // Store values in database
     std::thread i2cThread(i2cFunction, i2c, database);
 
+    std::cout << "Last lux 1: " << database.getLastLuxValueArduino1() << std::endl;
+    std::cout << "Last lux 2: " << database.getLastLuxValueArduino2() << std::endl;
+
     // Create Networking "thread"
     // Listen to client requests, fetch requested data and respond
     for (;;) {
@@ -60,19 +63,11 @@ int main() {
         a.accept(s); //wait client to connect
         
         for(;;) { //got a client
-            size_t n = s.read_some(buffer(buf,128), ec);
+            size_t n = s.read_some(buffer(buf,512), ec);
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
-            if(buf[2] == 'l'){
-                if(buf[4] == '1'){
-                    strcpy(buf, database.getLastLuxValueArduino1());
-                    write(s, buffer(buf,n), ec);
-                }
-                else if(buf[4] == '2'){
-                    strcpy(buf, database.getLastLuxValueArduino2());
-                    write(s, buffer(buf,n), ec);
-                }
-            }
+            write(s, buffer(database.processRequest(buf), n), ec);
+            write(s, buffer("\n",n), ec);
             write(s, buffer(buf,n), ec);
             if(ec) break;
         } //kills connection

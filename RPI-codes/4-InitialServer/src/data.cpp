@@ -27,12 +27,27 @@ void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
     }
 }
 
-char* Data::getLastLuxValueArduino1() {
-    char value[10] = std::to_string(lastLuxValueArduino1);
-    return value;
+float Data::getLastLuxValueArduino1() {
+    return lastLuxValueArduino1;
 }
 
-char* Data::getLastLuxValueArduino2() {
-    char value[10] = std::to_string(lastLuxValueArduino2);
-    return value;
+float Data::getLastLuxValueArduino2() {
+    return lastLuxValueArduino2; 
+}
+
+std::string Data::processRequest(char* request){
+    std::string response;
+    if(request[2] == 'l'){
+        if(request[4] == '1'){
+            response = std::to_string(this->getLastLuxValueArduino1());
+        }
+        else if(request[4] == '2'){
+            response = std::to_string(this->getLastLuxValueArduino2());
+        }
+    }
+    else{
+        response = "Invalid request";
+    }
+
+    return response;
 }
