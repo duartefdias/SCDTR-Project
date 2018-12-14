@@ -14,7 +14,7 @@ void consensusSetup(){
 }
 
 struct solution consensus_algorithm(){
-  int i;
+  int i, j=0;
   struct solution sol;
   
   Serial.println("BEGINNING CONSENSUS. MY NODE:");
@@ -27,15 +27,15 @@ struct solution consensus_algorithm(){
   Serial.print(" n=");
   Serial.print(my_node.n);
   Serial.print(" m=");
-  Serial.println(my_node.m);
+  Serial.print(my_node.m);
   Serial.print(" c=");
-  Serial.println(my_node.c);
+  Serial.print(my_node.c);
   Serial.print(" o=");
-  Serial.println(my_node.o);
+  Serial.print(my_node.o);
   Serial.print(" L=");
   Serial.println(my_node.L);
   
-  for (i=0; i <= 50; i++)
+  for (i=0; i <= 50 && Negotiation; i++)
   {
     // Compute own solution and send
     sol = primal_solve(my_node,rho);
@@ -49,7 +49,12 @@ struct solution consensus_algorithm(){
 
     // Wait to receive solution computed from other nodes ...
     while (!ReceivedSolution && Negotiation) {
-      delay(1);
+      delay(2);
+      j++;
+      if (j > 50) {
+        Negotiation = 0;
+        break;
+      }
       Serial.println("stuck");        
     }
     ReceivedSolution = false;      
@@ -62,15 +67,17 @@ struct solution consensus_algorithm(){
     my_node.y[1] = my_node.y[1] + rho*(my_node.d[1]-my_node.d_av[1]);
     
     if ((abs(my_node.d[0]-other_solution.d[0]) < 0.02 && abs(other_solution.d[1]-my_node.d[1]) < 0.02) || !Negotiation){
+      Negotiation = 0;
       break;
     }
   }
   // Consensus was obtained!
   Negotiation = 0;
   sendNegotiationState(Negotiation);
+  sendNegotiationState(Negotiation);
   Serial.print("Consensus at iteration ");
   Serial.println(i);
-  sol.d[0] = my_node.d_av[0]; sol.d[1] = my_node.d_av[1];
+  sol.d[0] = my_node.d[0]; sol.d[1] = my_node.d[1];
 
   // Reset node values
   my_node.d[0] = 0; my_node.d[1] = 0;    

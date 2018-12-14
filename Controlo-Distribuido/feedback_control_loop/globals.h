@@ -15,7 +15,7 @@ volatile int Negotiation = 0;
 volatile bool ReceivedSolution = false;  // flag
 int occupancy = 1;
 
-struct solution other_solution;
+volatile struct solution other_solution;
 
 int L1 = 100, L2 = 80;  // Initial illuminance requirements
 int c1 = 1, c2 = 2;
