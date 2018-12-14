@@ -63,7 +63,7 @@ int main() {
         a.accept(s); //wait client to connect
         
         for(;;) { //got a client
-            size_t n = s.read_some(buffer(buf,128), ec);
+            size_t n = s.read_some(buffer(buf,512), ec);
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
             write(s, buffer(database.processRequest(buf), n), ec);
