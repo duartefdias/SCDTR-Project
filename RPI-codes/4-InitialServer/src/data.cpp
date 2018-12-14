@@ -49,5 +49,6 @@ std::string Data::processRequest(char* request){
         response = "Invalid request";
     }
 
+    std::cout << "Sent response: " << response << std::endl;
     return response;
 }
