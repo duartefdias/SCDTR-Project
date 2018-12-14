@@ -30,11 +30,11 @@ void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
 std::string Data::getLastLuxValueArduino1() {
     char valueCharArray[100]; 
     sprintf(valueCharArray,"%f", lastLuxValueArduino1); 
-    return std::string(valueCharArray); 
+    return valueCharArray; 
 }
 
 std::string Data::getLastLuxValueArduino2() {
     char valueCharArray[100];
     sprintf(valueCharArray,"%f", lastLuxValueArduino2); 
-    return std::string(valueCharArray); 
+    return valueCharArray; 
 }
