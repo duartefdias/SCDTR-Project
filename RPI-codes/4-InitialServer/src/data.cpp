@@ -27,12 +27,14 @@ void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
     }
 }
 
-char* Data::getLastLuxValueArduino1() {
-    char value[10] = std::to_string(lastLuxValueArduino1);
-    return value;
+std::string Data::getLastLuxValueArduino1() {
+    char valueCharArray[100]; 
+    sprintf(valueCharArray,"%f", lastLuxValueArduino1); 
+    return std::string(valueCharArray); 
 }
 
-char* Data::getLastLuxValueArduino2() {
-    char value[10] = std::to_string(lastLuxValueArduino2);
-    return value;
+std::string Data::getLastLuxValueArduino2() {
+    char valueCharArray[100];
+    sprintf(valueCharArray,"%f", lastLuxValueArduino2); 
+    return std::string(valueCharArray); 
 }

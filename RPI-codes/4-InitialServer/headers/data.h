@@ -1,6 +1,10 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include <string>
+
+using namespace std;
+
 class Data{
 public:
 
@@ -9,8 +13,8 @@ public:
     int getAvailability();
 
     void setLastLuxValueArduino(int value, char arduino);
-    char* getLastLuxValueArduino1();
-    char* getLastLuxValueArduino2();
+    std::string getLastLuxValueArduino1();
+    std::string getLastLuxValueArduino2();
 
 private:
     int dataAvailability = 0;
