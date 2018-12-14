@@ -65,12 +65,12 @@ int main() {
             std::cout << "Received message: " << buf << std::endl;
             if(buf[2] == 'l'){
                 if(buf[4] == '1'){
-                    buf << std::to_string(database.getLastLuxValueArduino1());
-                    write(s, buffer(buf,n), ec);
+                    //strcpy(buf, std::to_string(database.getLastLuxValueArduino1()));
+                    write(s, buffer(std::to_string(database.getLastLuxValueArduino1()),n), ec);
                 }
                 else if(buf[4] == '2'){
-                    buf << std::to_string(database.getLastLuxValueArduino2());
-                    write(s, buffer(buf,n), ec);
+                    //strcpy(buf, std::to_string(database.getLastLuxValueArduino2()));
+                    write(s, buffer(std::to_string(database.getLastLuxValueArduino2()),n), ec);
                 }
             }
             write(s, buffer(buf,n), ec);
