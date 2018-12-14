@@ -1,15 +1,16 @@
 #include "Node.h"
 
-// TODO: test for different requirements and check feasibility
+// TODO:
 //  What to do in case there is no feasible solution (too bright or too dim)
-// Implement distributed version of consensus using I2C communication
+
+float rho = 0.07;
 
 void consensusSetup(){
   if (own_addr == 1){
-    my_node.set(0, G0(L1), k12, c1, o1, L1);
+    my_node.set(0, G0(refValue), k12, 1, noise, refValue);
     
   } else if (own_addr == 2){
-    my_node.set(1, k21, G0(L2), c2, o2, L2);
+    my_node.set(1, k21, G0(refValue), 1, noise, refValue);
   }
 }
 

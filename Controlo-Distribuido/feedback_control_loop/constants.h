@@ -1,13 +1,7 @@
 #ifndef constants_h
 #define constants_h
 
-// Constants
-const int LED1 = 5; // LED connected to analog pin5
-const int LDRpin = A0; // LDR connected to A5 pin
-const int Vcc = 5;
-int LowValue = 20;  // Empty desk illuminance in Lux
-int HighValue = 100; // Occupied desk illuminance
-
+// Physical System Parameters
 // LDR parameters
 float C = 25.8439;
 float m = -0.4934;
@@ -24,9 +18,5 @@ double btau = 0.0119;
 // PI Controller parameters
 float Kp = 3;
 float Ki = 12;
-
-
-// Sampling Period
-const double T = 0.005;
 
 #endif

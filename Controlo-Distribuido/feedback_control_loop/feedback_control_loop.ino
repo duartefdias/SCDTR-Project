@@ -6,34 +6,7 @@
 #include "constants.h"
 #include "globals.h"
 
-// Global variables
-float refValue = 0; // Desired illuminance in Lux
-int input = 0;
 int debug = 1;
-
-
-// Setup Interrupt
-volatile bool flag;
-ISR(TIMER1_COMPA_vect) {
-  flag = 1; //notify main loop
-}
-
-// Setup TIMER 1 Interrupt to 100 Hz sampling frequency 
-void timerSetup(){ 
-  cli(); // stop interrupts
-  TCCR1A = 0; // set entire TCCR1A register to 0
-  TCCR1B = 0; // same for TCCR1B
-  TCNT1  = 0; // initialize counter value to 0
-  // set compare match register for 100 Hz increments
-  OCR1A = 19999; // = 16000000 / (8 * 100) - 1 (must be <65536)
-  // turn on CTC mode
-  TCCR1B |= (1 << WGM12);
-  // Set CS12, CS11 and CS10 bits for 8 prescaler
-  TCCR1B |= (0 << CS12) | (1 << CS11) | (0 << CS10);
-  // enable timer compare interrupt
-  TIMSK1 |= (1 << OCIE1A);
-  sei(); // allow interrupts
-}
 
 void setup() {
   // Setup pinmodes
@@ -41,14 +14,13 @@ void setup() {
   pinMode(LED1, OUTPUT);
   pinMode(LDRpin, INPUT);
   
-  
   Serial.begin(115200);
   calibrateSystem();
 
   // Setup I2C communication
   I2CSetup();  
   
-  // Setup Timer interrupt (200 Hz)
+  // Setup Timer interrupt (100 Hz)
   timerSetup();  
 
   // Reference value
@@ -57,8 +29,6 @@ void setup() {
     if (Serial.available()) {
       refValue = Serial.parseInt();
       HighValue = refValue;
-      if (own_addr==1) L1 = refValue;
-      else if (own_addr==2) L2 = refValue;
       Serial.flush();
     }
   }
@@ -83,7 +53,7 @@ void loop() {
     u = mapfloat(u, 0, 5, 0, 255);
     analogWrite(LED1, u);
     
-    // Print measurement
+    // Print and send Lux measurement
     //Serial.print("Measured illuminance: ");
     //Serial.println(measuredY);
     sendLuxReading(measuredY);
@@ -92,11 +62,7 @@ void loop() {
   }
   if (Negotiation){
     sol = consensus_algorithm();
-    Serial.print("solution = ");
-    Serial.print(sol.d[0]);
-    Serial.print(" ");
-    Serial.println(sol.d[1]);
-    Serial.println();
+    Serial.print("solution = "); Serial.print(sol.d[0]); Serial.print(" "); Serial.println(sol.d[1]); Serial.println();
     sendPWMRef(my_node.d[my_node.index]);
   }
 
