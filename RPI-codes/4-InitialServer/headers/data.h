@@ -18,8 +18,8 @@ public:
 
 private:
     int dataAvailability = 0;
-    int lastLuxValueArduino1 = 0;
-    int lastLuxValueArduino2 = 0;
+    float lastLuxValueArduino1 = 9.69;
+    float lastLuxValueArduino2 = 8.69;
 };
 
 #endif //DATA_H

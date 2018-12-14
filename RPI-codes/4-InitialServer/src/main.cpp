@@ -53,6 +53,9 @@ int main() {
     // Store values in database
     std::thread i2cThread(i2cFunction, i2c, database);
 
+    std::cout << "Last lux 1: " << database.getLastLuxValueArduino1() << std::endl;
+    std::cout << "Last lux 2: " << database.getLastLuxValueArduino2() << std::endl;
+
     // Create Networking "thread"
     // Listen to client requests, fetch requested data and respond
     for (;;) {
