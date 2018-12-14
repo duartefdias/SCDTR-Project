@@ -55,7 +55,7 @@ struct solution consensus_algorithm(){
         Negotiation = 0;
         break;
       }
-      Serial.println("stuck");        
+      //Serial.println("stuck");        
     }
     ReceivedSolution = false;      
 

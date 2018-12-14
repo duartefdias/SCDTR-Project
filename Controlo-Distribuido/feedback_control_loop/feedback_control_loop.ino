@@ -19,7 +19,7 @@ ISR(TIMER1_COMPA_vect) {
 }
 
 // Setup TIMER 1 Interrupt to 100 Hz sampling frequency 
-void timerSetup(){
+void timerSetup(){ 
   cli(); // stop interrupts
   TCCR1A = 0; // set entire TCCR1A register to 0
   TCCR1B = 0; // same for TCCR1B
@@ -41,19 +41,20 @@ void setup() {
   pinMode(LED1, OUTPUT);
   pinMode(LDRpin, INPUT);
   
-  // Setup I2C communication
-  I2CSetup();  
   
   Serial.begin(115200);
   calibrateSystem();
 
+  // Setup I2C communication
+  I2CSetup();  
+  
   // Setup Timer interrupt (200 Hz)
   timerSetup();  
 
   // Reference value
   Serial.print("Insert desired Lux value [0, 300]: ");
   while (refValue == 0) {
-    if (Serial.available() > 0) {
+    if (Serial.available()) {
       refValue = Serial.parseInt();
       HighValue = refValue;
       if (own_addr==1) L1 = refValue;
@@ -61,9 +62,11 @@ void setup() {
       Serial.flush();
     }
   }
+  Serial.flush();
 
   // Setup consensus protocol - setup my_node
   consensusSetup();
+  sendLuxBackground(my_node.o);
 
   // TODO: some initial setup to do consensus and send initial values to server
 }
@@ -98,33 +101,6 @@ void loop() {
   }
 
   if (Serial.available()){
-    input = Serial.parseInt();
-    if (input == -1 and occupancy == 1) {
-      Serial.println("Empty");
-      occupancy = 0;
-      sendOccupancy(occupancy);
-      refValue = LowValue;    // Empty desk
-      my_node.L = refValue;
-      sendLuxLowerBound(refValue);
-      my_node.updateGain(G0(refValue));
-      
-      Negotiation = 1;
-      sendNegotiationState(Negotiation);
-      sendNegotiationState(Negotiation);
-      Serial.flush();
-    }
-    else if (input == 1 and occupancy == 0) {
-      occupancy = 1;
-      sendOccupancy(occupancy);
-      refValue = HighValue;   // Occupied desk
-      my_node.L = refValue;
-      sendLuxLowerBound(refValue);
-      my_node.updateGain(G0(refValue));
-      
-      Negotiation = 1;
-      sendNegotiationState(Negotiation);
-      sendNegotiationState(Negotiation);
-      Serial.flush();
-    }
+    parseInput();
   }  
 }

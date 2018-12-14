@@ -42,6 +42,47 @@ void setConstants(int addr) {
   }
 }
 
+// Parses input from serial monitor
+void parseInput(){
+  if (Serial.peek() == 'c') {
+    input = Serial.parseInt();
+    Serial.print("New Cost = "); Serial.println(input);
+    my_node.c = input;
+    Negotiation = 1;
+    sendNegotiationState(Negotiation);
+    sendNegotiationState(Negotiation); 
+    return;     
+  }
+  input = Serial.parseInt();
+  if (input == -1 and occupancy == 1) {
+    occupancy = 0;
+    sendOccupancy(occupancy);
+    refValue = LowValue;    // Empty desk
+    my_node.L = refValue;
+    sendLuxLowerBound(refValue);
+    my_node.updateGain(G0(refValue));      
+    Negotiation = 1;
+    sendNegotiationState(Negotiation);
+    sendNegotiationState(Negotiation);
+    return;
+  }
+  else if (input == 1 and occupancy == 0) {
+    occupancy = 1;
+    sendOccupancy(occupancy);
+    refValue = HighValue;   // Occupied desk
+    my_node.L = refValue;
+    sendLuxLowerBound(refValue);
+    my_node.updateGain(G0(refValue));      
+    Negotiation = 1;
+    sendNegotiationState(Negotiation);
+    sendNegotiationState(Negotiation);
+    return;
+  }
+  Serial.flush(); 
+  return;
+}
+
+
 // Equivalent of map function for floats
 float mapfloat(double val, double in_min, double in_max, double out_min, double out_max) {
   return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -94,20 +135,19 @@ void calibrateSystem() {
   if (debug) o = 0.01;
   Serial.print("Ambient noise: ");
   Serial.println(o);  
-  sendLuxBackground(o);
-  delay(3000);
+  if (!debug) delay(3000);
 
   // Measure k21
   Serial.println("Measuring 1's influence on 2 (k21) ...");
   if (own_addr==1) {
     o1 = o;
     analogWrite(LED1, 255);
-    delay(5000);
+    if (!debug) delay(5000);
     analogWrite(LED1, 0);
   }
   else if (own_addr==2) {
     o2 = o;
-    delay(4000);
+    if(!debug) delay(4000);
     lum = readLDR();
     k21 = (lum-o)/5;
     if (debug) k21 = 2.04;
@@ -121,11 +161,11 @@ void calibrateSystem() {
     Serial.println("Measuring 2's influence on 1 (k12) ...");
   if (own_addr==2) {
     analogWrite(LED1, 255);   // full brightness
-    delay(5000);
+    if (!debug) delay(5000);
     analogWrite(LED1, 0);
   }
   else if (own_addr==1) {
-    delay(4000);
+    if(!debug) delay(4000);
     lum = readLDR();
     k12 = (lum-o)/5;              // dimming = 5
     if (debug) k12 = 1.98;
