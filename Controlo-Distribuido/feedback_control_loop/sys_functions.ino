@@ -91,6 +91,7 @@ void calibrateSystem() {
   Serial.println("Measuring ambient noise...");
   analogWrite(LED1, 0);
   o = readLDR();
+  if (debug) o = 0.01;
   Serial.print("Ambient noise: ");
   Serial.println(o);  
   sendLuxBackground(o);
@@ -109,6 +110,7 @@ void calibrateSystem() {
     delay(4000);
     lum = readLDR();
     k21 = (lum-o)/5;
+    if (debug) k21 = 2.04;
     Serial.print("k21 = ");
     Serial.print(k21);
     Serial.println(" LUX/dimming");    
@@ -126,6 +128,7 @@ void calibrateSystem() {
     delay(4000);
     lum = readLDR();
     k12 = (lum-o)/5;              // dimming = 5
+    if (debug) k12 = 1.98;
     Serial.print("k12 = ");
     Serial.print(k12);
     Serial.println(" LUX/dimming");       

@@ -9,6 +9,7 @@
 // Global variables
 float refValue = 0; // Desired illuminance in Lux
 int input = 0;
+int debug = 1;
 
 
 // Setup Interrupt
@@ -17,21 +18,21 @@ ISR(TIMER1_COMPA_vect) {
   flag = 1; //notify main loop
 }
 
-// Setup Timer Interrupt to 200 Hz sampling frequency 
+// Setup TIMER 1 Interrupt to 100 Hz sampling frequency 
 void timerSetup(){
   cli(); // stop interrupts
   TCCR1A = 0; // set entire TCCR1A register to 0
   TCCR1B = 0; // same for TCCR1B
   TCNT1  = 0; // initialize counter value to 0
-  // set compare match register for 200 Hz increments
-  OCR1A = 9999; // = 16000000 / (8 * 200) - 1 (must be <65536)
+  // set compare match register for 100 Hz increments
+  OCR1A = 19999; // = 16000000 / (8 * 100) - 1 (must be <65536)
   // turn on CTC mode
   TCCR1B |= (1 << WGM12);
   // Set CS12, CS11 and CS10 bits for 8 prescaler
   TCCR1B |= (0 << CS12) | (1 << CS11) | (0 << CS10);
   // enable timer compare interrupt
   TIMSK1 |= (1 << OCIE1A);
-  sei(); // allow interrupts  
+  sei(); // allow interrupts
 }
 
 void setup() {
@@ -43,7 +44,7 @@ void setup() {
   // Setup I2C communication
   I2CSetup();  
   
-  Serial.begin(250000);
+  Serial.begin(115200);
   calibrateSystem();
 
   // Setup Timer interrupt (200 Hz)
@@ -69,7 +70,7 @@ void setup() {
 
 void loop() {
   struct solution sol;
-  //sendNegotiationState(Negotiation);
+  //if (Negotiation) sendNegotiationState(Negotiation);
   if (flag){
     // Read current output - y
     float measuredY = readLDR();
@@ -109,10 +110,10 @@ void loop() {
       
       Negotiation = 1;
       sendNegotiationState(Negotiation);
+      sendNegotiationState(Negotiation);
       Serial.flush();
     }
     else if (input == 1 and occupancy == 0) {
-      Serial.println("Occupied");
       occupancy = 1;
       sendOccupancy(occupancy);
       refValue = HighValue;   // Occupied desk
@@ -121,6 +122,7 @@ void loop() {
       my_node.updateGain(G0(refValue));
       
       Negotiation = 1;
+      sendNegotiationState(Negotiation);
       sendNegotiationState(Negotiation);
       Serial.flush();
     }

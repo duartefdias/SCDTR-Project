@@ -3,8 +3,8 @@
 #include "globals.h"
 #define MAXLUX 500
  
-uint8_t rcAddress, rcMessageType, rcPwmNegotiation1, rcPwmNegotiation2, rcOccupancy;
-float rcPwm1 = 0, rcPwm2 = 0;
+volatile uint8_t rcAddress, rcMessageType, rcPwmNegotiation1, rcPwmNegotiation2, rcNegotiation;
+volatile float rcPwm1 = 0, rcPwm2 = 0;
 
 void I2CSetup() {
   Wire.begin(own_addr);
@@ -26,23 +26,25 @@ void receiveEvent(int howMany) {
         rcPwm2 = mapfloat(rcPwmNegotiation2, 0, 255, 0, 5);
         other_solution.d[0] = rcPwm1;
         other_solution.d[1] = rcPwm2;
-        Serial.println("  Received solution");
+        //Serial.println("  Received solution");
         ReceivedSolution = true;
      }
      // Negotiation State
      else if(rcMessageType == 7) {
-        rcOccupancy = Wire.read();
-        if (rcOccupancy == 1) {
-          Serial.println("Received negotiation request");  
+        rcNegotiation = Wire.read();
+        if (rcNegotiation == 1) {
+          //Serial.println("Received negotiation request");  
           Negotiation = 1;                 
-        } else if (rcOccupancy == 0) {
+        } else if (rcNegotiation == 0) {
           Negotiation = 0;
         }            
      }
   }
   // throw away any garbage
-  while (Wire.available() > 0) 
+  while (Wire.available()) {
+    //Serial.println("recv");
     Wire.read();    
+  }
 }
 
 
