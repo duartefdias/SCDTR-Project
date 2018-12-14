@@ -13,8 +13,8 @@ public:
     int getAvailability();
 
     void setLastLuxValueArduino(int value, char arduino);
-    std::string getLastLuxValueArduino1();
-    std::string getLastLuxValueArduino2();
+    float getLastLuxValueArduino1();
+    float getLastLuxValueArduino2();
 
 private:
     int dataAvailability = 0;
