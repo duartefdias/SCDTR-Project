@@ -16,6 +16,8 @@ public:
     float getLastLuxValueArduino1();
     float getLastLuxValueArduino2();
 
+    std::string processRequest(char* request);
+
 private:
     int dataAvailability = 0;
     float lastLuxValueArduino1 = 9.69;

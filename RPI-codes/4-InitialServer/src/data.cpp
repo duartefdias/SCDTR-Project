@@ -34,3 +34,20 @@ float Data::getLastLuxValueArduino1() {
 float Data::getLastLuxValueArduino2() {
     return lastLuxValueArduino2; 
 }
+
+std::string Data::processRequest(char* request){
+    std::string response;
+    if(request[2] == 'l'){
+        if(request[4] == '1'){
+            response = std::to_string(this->getLastLuxValueArduino1());
+        }
+        else if(request[4] == '2'){
+            response = std::to_string(this->getLastLuxValueArduino2());
+        }
+    }
+    else{
+        response = "Invalid request";
+    }
+
+    return response;
+}
