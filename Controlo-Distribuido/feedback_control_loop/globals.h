@@ -23,7 +23,8 @@ bool consensus = false;
 volatile int Negotiation = 0;
 volatile bool ReceivedSolution = false;  // flag
 volatile struct solution other_solution;
-Node my_node(-1,-1,-1,-1,-1,-1);
+int Nodes = 2;
+Node my_node(-1,-1,-1,-1,-1,-1,-1);
 
 // Constants
 const int LED1 = 5; // LED connected to analog pin5

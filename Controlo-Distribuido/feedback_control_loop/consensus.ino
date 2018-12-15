@@ -1,24 +1,32 @@
 #include "Node.h"
+#define MAX 10
 
 // TODO:
 //  What to do in case there is no feasible solution (too bright or too dim)
 
 float rho = 0.07;
 
+// Initialize my_node
 void consensusSetup(){
   if (own_addr == 1){
-    my_node.set(0, G0(refValue), k12, 1, noise, refValue);
+    my_node.set(own_addr-1, G0(refValue), k12, 1, noise, refValue, Nodes);
     
   } else if (own_addr == 2){
-    my_node.set(1, k21, G0(refValue), 1, noise, refValue);
+    my_node.set(own_addr-1, k21, G0(refValue), 1, noise, refValue, Nodes);
   }
 }
 
+// Compute optimal solution with consensus algorithm
 struct solution consensus_algorithm(){
-  int i, j=0;
-  struct solution sol;
+  int i, l=0;
+  struct solution sol;  
   
-  Serial.println("BEGINNING CONSENSUS. MY NODE:");
+  // Reset node values
+  set_array(my_node.d, 0, my_node.N);     // my_node.d[0] = 0; my_node.d[1] = 0;    
+  set_array(my_node.d_av, 0, my_node.N); 
+  set_array(my_node.y, 0, my_node.N);
+  
+  Serial.print("BEGINNING CONSENSUS. My node:");
   Serial.print(" i-1=");  Serial.print(my_node.index);
   Serial.print(" ki1=");  Serial.print(my_node.k[0]);
   Serial.print(" ki2=");  Serial.print(my_node.k[1]);
@@ -26,25 +34,22 @@ struct solution consensus_algorithm(){
   Serial.print(" m=");  Serial.print(my_node.m);
   Serial.print(" c=");  Serial.print(my_node.c);
   Serial.print(" o=");  Serial.print(my_node.o);
+  Serial.print(" N=");  Serial.print(my_node.N);
   Serial.print(" L=");  Serial.println(my_node.L);
   
   for (i=0; i <= 50 && Negotiation; i++)
   {
     // Compute own solution and send
     sol = primal_solve(my_node,rho);
-    my_node.d[0] = sol.d[0];
-    my_node.d[1] = sol.d[1];
-    Serial.print("SEND: ");
-    Serial.print(my_node.d[0]);
-    Serial.print(" "); 
-    Serial.println(my_node.d[1]);
-    sendNegotiation(my_node.d[0], my_node.d[1]);
+    copy_array(sol.d, my_node.d, my_node.N); //    my_node.d[0] = sol.d[0];    my_node.d[1] = sol.d[1];
+    Serial.print("SEND: "); Serial.print(my_node.d[0]); Serial.print(" "); Serial.println(my_node.d[1]);
+    sendNegotiation(my_node.d, my_node.N);
 
     // Wait to receive solution computed from other nodes ...
     while (!ReceivedSolution && Negotiation) {
       delay(2);
-      j++;
-      if (j > 50) {
+      l++;
+      if (l > 50) {
         Negotiation = 0;
         break;
       }
@@ -53,13 +58,21 @@ struct solution consensus_algorithm(){
     ReceivedSolution = false;      
 
     // Compute averages using the received information
-    my_node.d_av[0] = (my_node.d[0]+other_solution.d[0])/2;
-    my_node.d_av[1] = (my_node.d[1]+other_solution.d[1])/2;
-    // Update local lagrangians
-    my_node.y[0] = my_node.y[0] + rho*(my_node.d[0]-my_node.d_av[0]);
-    my_node.y[1] = my_node.y[1] + rho*(my_node.d[1]-my_node.d_av[1]);
+    //my_node.d_av[0] = (my_node.d[0]+other_solution.d[0])/2;
+    //my_node.d_av[1] = (my_node.d[1]+other_solution.d[1])/2;
+    for (int j=0; j<my_node.N; j++){
+      my_node.d_av[j] = (my_node.d[j]+other_solution.d[j])/2;
+    }
     
-    if ((abs(my_node.d[0]-other_solution.d[0]) < 0.02 && abs(other_solution.d[1]-my_node.d[1]) < 0.02) || !Negotiation){
+    // Update local lagrangians
+    //my_node.y[0] = my_node.y[0] + rho*(my_node.d[0]-my_node.d_av[0]);
+    //my_node.y[1] = my_node.y[1] + rho*(my_node.d[1]-my_node.d_av[1]);
+    for (int j=0; j<my_node.N; j++){
+      my_node.y[j] = my_node.y[j] + rho*(my_node.d[j]-my_node.d_av[j]);
+    }
+    
+    if (max_abs_diff(my_node.d, other_solution.d, my_node.N) < 0.01 || !Negotiation){
+    //((abs(my_node.d[0]-other_solution.d[0]) < 0.02 && abs(other_solution.d[1]-my_node.d[1]) < 0.02) || !Negotiation){
       Negotiation = 0;
       break;
     }
@@ -68,117 +81,114 @@ struct solution consensus_algorithm(){
   Negotiation = 0;
   sendNegotiationState(Negotiation);
   sendNegotiationState(Negotiation);
-  Serial.print("Consensus at iteration ");
-  Serial.println(i);
-  sol.d[0] = my_node.d[0]; sol.d[1] = my_node.d[1];
-
-  // Reset node values
-  my_node.d[0] = 0; my_node.d[1] = 0;    
-  my_node.d_av[0] = 0; my_node.d_av[1] = 0;
-  my_node.y[0] = 0; my_node.y[1] = 0;
+  Serial.print("Consensus at iteration ");  Serial.println(i);
+  copy_array(my_node.d, sol.d, my_node.N);   //  sol.d[0] = my_node.d[0]; sol.d[1] = my_node.d[1];
   
   return sol;
 }
 
 struct solution primal_solve(Node node, float rho){
+  // Initialize variables
   struct solution sol;
-  float d_best[]={-1,-1}, d[]={-1,-1}, d_u[]={-1,-1}, d_b1[]={-1,-1};
-  float d_b0[]={-1,-1}, d_10[]={-1,-1}, d_11[]={-1,-1};
-  bool sol_unconstrained=0, sol_boundary_linear=0, sol_boundary_0=0;
-  bool sol_boundary_5=0, sol_linear_0=0, sol_linear_5=0;
-    
+  float d_best[MAX], d[MAX], d_u[MAX], d_b1[MAX], d_b0[MAX], d_10[MAX], d_11[MAX];
+  set_array(d_best,0,MAX); set_array(d,0,MAX); set_array(d_u,0,MAX);
+  set_array(d_b1,0,MAX); set_array(d_b0,0,MAX); set_array(d_10,0,MAX); set_array(d_11,0,MAX);
+    bool sol_unconstrained=0, sol_boundary_linear=0, sol_boundary_0=0;
+  bool sol_boundary_5=0, sol_linear_0=0, sol_linear_5=0;    
   float cost_best=1000000, cost_unconstrained=1000000, cost_boundary_linear=1000000;
   float cost_boundary_0=1000000, cost_boundary_5=1000000, cost_linear_0=1000000, cost_linear_5=1000000;
-  float z[] = {0,0};
-  z[0] = rho*node.d_av[0] - node.y[0];
-  z[1] = rho*node.d_av[1] - node.y[1];
+  float z[MAX]; set_array(z,0,MAX);
+
+  // Set z auxiliary variable
+  for (int j=0; j<node.N; j++){
+    z[j] = rho*node.d_av[j] - node.y[j];
+  }
   z[node.index] = z[node.index] - node.c;
 
   // Unconstrained Minimum - S0
-  d_u[0] = (1/rho)*z[0];
-  d_u[1] = (1/rho)*z[1];
+  for(int j=0; j<node.N; j++)
+    d_u[j] = (1/rho)*z[j];
   sol_unconstrained = check_feasibility(node,d_u);
   if (sol_unconstrained){
     cost_unconstrained = evaluate_cost(node, d_u, rho);
     if (cost_unconstrained < cost_best) {
-      sol.d[0] = d_u[0]; sol.d[1] = d_u[1];
+      copy_array(d_u, sol.d, node.N);//      sol.d[0] = d_u[0]; sol.d[1] = d_u[1];
       sol.cost = cost_unconstrained;
       return sol;  // If solution exists, then it is optimal, can return now   
     }
   }
 
   // Compute minimum constrained by linear boundary - S1
-  d_b1[0] = z[0]/rho - (node.k[0]/node.n) * (node.o-node.L+(1/rho)*(node.k[0]*z[0]+node.k[1]*z[1]));
-  d_b1[1] = z[1]/rho - (node.k[1]/node.n) * (node.o-node.L+(1/rho)*(node.k[0]*z[0]+node.k[1]*z[1]));
+  for(int j=0; j<node.N; j++)
+    d_b1[j] = z[j]/rho - (node.k[j]/node.n) * (node.o-node.L+(1/rho)*(dot_product(node.k, z, node.N))); //node.k[0]*z[0]+node.k[1]*z[1]));
+  //d_b1[1] = z[1]/rho - (node.k[1]/node.n) * (node.o-node.L+(1/rho)*(dot_product(node.k, z, node.N))); //(node.k[0]*z[0]+node.k[1]*z[1]));
   sol_boundary_linear = check_feasibility(node, d_b1);
   if (sol_boundary_linear){
     cost_boundary_linear = evaluate_cost(node, d_b1, rho); 
     if (cost_boundary_linear < cost_best) {
-      d_best[0] = d_b1[0]; d_best[1] = d_b1[1];
+      copy_array(d_b1, d_best, node.N); //d_best[0] = d_b1[0]; d_best[1] = d_b1[1];
       cost_best = cost_boundary_linear;
     }
   }
 
   // Compute minimum constrained by 0 boundary - S2
-  d_b0[0] = (1/rho)*z[0]; d_b0[1] = (1/rho)*z[1];
+  for(int j=0; j<node.N; j++)
+    d_b0[j] = (1/rho)*z[j];
   d_b0[node.index] = 0;
   sol_boundary_0 = check_feasibility(node,d_b0);
   if (sol_boundary_0){
     cost_boundary_0 = evaluate_cost(node,d_b0,rho);
     if (cost_boundary_0 < cost_best){
-      d_best[0] = d_b0[0]; d_best[1] = d_b0[1];
+      copy_array(d_b0, d_best, node.N); //d_best[0] = d_b0[0]; d_best[1] = d_b0[1];
       cost_best = cost_boundary_0;
     }
   }
 
   // Compute minimum constrained by 5 boundary - S3
-  d_b1[0] = (1/rho)*z[0]; d_b1[1] = (1/rho)*z[1];
+  for(int j=0; j<node.N; j++)
+    d_b1[j] = (1/rho)*z[j];
   d_b1[node.index] = 5;
   sol_boundary_5 = check_feasibility(node, d_b1);  
   if (sol_boundary_5){
     cost_boundary_5 = evaluate_cost(node, d_b1,rho);
     if (cost_boundary_5 < cost_best){
-      d_best[0] = d_b1[0]; d_best[1] = d_b1[1];
+      copy_array(d_b1, d_best, node.N);//      d_best[0] = d_b1[0]; d_best[1] = d_b1[1];
       cost_best = cost_boundary_5;
     }
   }
 
   // Compute minimum constrained to linear and 0 boundary - S4
-  d_10[0] = (1/rho)*z[0] - 
-            (1/node.m)*node.k[0]*(node.o-node.L) +
-            (1/rho/node.m)*node.k[0]*(node.k[node.index]*z[node.index]-(z[0]*node.k[0]+z[1]*node.k[1]));
-  d_10[1] = (1/rho)*z[1] - 
-            (1/node.m)*node.k[1]*(node.o-node.L) +
-            (1/rho/node.m)*node.k[1]*(node.k[node.index]*z[node.index]-(z[0]*node.k[0]+z[1]*node.k[1]));
+  for(int j=0; j<node.N; j++)
+    d_10[j] = (1/rho)*z[j] - 
+              (1/node.m)*node.k[j]*(node.o-node.L) +
+              (1/rho/node.m)*node.k[j]*(node.k[node.index]*z[node.index]-dot_product(z, node.k, node.N));
   d_10[node.index] = 0;
   sol_linear_0 = check_feasibility(node,d_10);
   if (sol_linear_0){
     cost_linear_0 = evaluate_cost(node, d_10,rho);
     if (cost_linear_0 < cost_best){
-      d_best[0] = d_10[0]; d_best[1] = d_10[1];
+      copy_array(d_10, d_best, node.N); //    d_best[0] = d_10[0]; d_best[1] = d_10[1];
       cost_best = cost_linear_0;
     }
   }
 
   // Compute minimum constrained to linear and 5 boundary - S5
-  d_11[0] = (1/rho)*z[0] - 
-            (1/node.m)*node.k[0]*(node.o-node.L + 5*node.k[node.index]) +
-            (1/rho/node.m)*node.k[0]*(node.k[node.index]*z[node.index]-(z[0]*node.k[0]+z[1]*node.k[1]));
-  d_11[1] = (1/rho)*z[1] - 
-            (1/node.m)*node.k[1]*(node.o-node.L + 5*node.k[node.index]) +
-            (1/rho/node.m)*node.k[1]*(node.k[node.index]*z[node.index]-(z[0]*node.k[0]+z[1]*node.k[1]));
+  for(int j=0; j<node.N; j++)
+    d_11[j] = (1/rho)*z[j] - 
+              (1/node.m)*node.k[j]*(node.o-node.L + 5*node.k[node.index]) +
+              (1/rho/node.m)*node.k[j]*(node.k[node.index]*z[node.index]-dot_product(z, node.k, node.N)); //(z[0]*node.k[0]+z[1]*node.k[1]));
   d_11[node.index] = 5;
   sol_linear_5 = check_feasibility(node, d_11);
   if (sol_linear_5){
     cost_linear_5 = evaluate_cost(node, d_11, rho);
     if (cost_linear_5 < cost_best){
-      d_best[0] = d_11[0]; d_best[1] = d_11[1];
+      copy_array(d_11, d_best, node.N); //   d_best[0] = d_11[0]; d_best[1] = d_11[1];
       cost_best = cost_linear_5;
     }
   }
 
   // Return solution
-  sol.d[0] = d_best[0]; sol.d[1] = d_best[1];
+  copy_array(d_best, sol.d, node.N); //  sol.d[0] = d_best[0]; sol.d[1] = d_best[1];
   sol.cost = cost_best;  
   return sol;
 }
@@ -194,7 +204,7 @@ bool check_feasibility(Node node, float d[]){
   if (d[node.index] > 5 + tol){   // above allowed dimming level
     return false;
   }
-  if (d[0]*node.k[0]+d[1]*node.k[1]  < node.L - node.o - tol){     // below lighting constraints
+  if (dot_product(d, node.k, node.N)  < node.L - node.o - tol){     // below lighting constraints -  d[0]*node.k[0]+d[1]*node.k[1]
     return false;
   }
   return true;
@@ -202,5 +212,45 @@ bool check_feasibility(Node node, float d[]){
 
 // Evaluate the cost of a given solution d to Node n
 float evaluate_cost (Node n, float d[], float rho){
-  return n.c*d[n.index] + n.y[0]*(d[0]-n.d_av[0]) + n.y[1]*(d[1]-n.d_av[1]) + rho/2 * (pow(d[0]-n.d_av[0],2) + pow(d[1]-n.d_av[1],2));
+  float r2 = 0; //n.y[0]*(d[0]-n.d_av[0]) + n.y[1]*(d[1]-n.d_av[1]);
+  float r3 = 0; //pow(d[0]-n.d_av[0],2) + pow(d[1]-n.d_av[1],2);  
+  for (int j=0; j<n.N; j++){
+    r2 += n.y[j]*(d[j]-n.d_av[j]);
+    r3 += pow(d[j]-n.d_av[j],2);
+  }  
+  return n.c*d[n.index] + r2 + rho/2 * r3;
+}
+
+
+// Computes the dot product between 2 arrays of floats
+float dot_product(float v[], float u[], int N){
+  float result = 0;
+  for (int i = 0; i < N; i++)
+      result += v[i]*u[i];
+  return result;  
+}
+
+// sets all elements of array v[] to value val
+void set_array(float v[], float val, int N) {
+  for (int j = 0; j<N; j++){
+    v[j] = val;
+  }
+}
+
+// Computes the max absolute difference between the elements with the same index of arrays u[], v[]
+float max_abs_diff(float u[], float v[], int N){
+  float max_diff = 0;
+  float diff = 0;
+  for (int j=0; j<N; j++){
+    diff = abs(u[j]-v[j]);
+    if (diff > max_diff) max_diff = diff;
+  }  
+  return diff;
+}
+
+// copy array of floats from v to u
+float copy_array(float v[], float u[], int N) {
+  for (int j=0; j < N; j++){
+    u[j] = v[j];
+  }
 }

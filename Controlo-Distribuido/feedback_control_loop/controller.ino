@@ -16,7 +16,7 @@ float FeedForwardController(float refValue) {
   // Calculate Ui value
   float Kff = 1 / (mG * refValue + bG);
   //return Kff * refValue;
-  return my_node.d_av[my_node.index];
+  return my_node.d[my_node.index];
 }
 
 // Computes the controller value for the feedback system
@@ -25,8 +25,7 @@ float Controller(float ref, float measuredY) {
 
   // Calculate Feed Forward controller input tension
   float Uff = FeedForwardController(ref);
-  //Serial.print("Uff: ");
-  //Serial.println(Uff);
+  //Serial.print("Uff: "); Serial.println(Uff);
 
   // Compute error
   //float Upi = PIcontroller(calculateDesiredY(ref), lux2volt(measuredY));

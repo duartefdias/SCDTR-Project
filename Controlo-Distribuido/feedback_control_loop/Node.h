@@ -5,19 +5,20 @@ class Node{
   private:
    
   public:
-   Node(int i, float ki1, float ki2, float ci, float oi, int Li);
-   set(int i, float ki1, float ki2, float ci, float oi, int Li);
+   Node(int i, float ki1, float ki2, float ci, float oi, int Li, int num_Nodes);
+   set(int i, float ki1, float ki2, float ci, float oi, int Li, int num_Nodes);
    updateGain(float kii);
    int index;
    float d[2] = {0,0};
    float d_av[2] = {0,0};
    float y[2] = {0,0};
-   float k[2];
+   float k[2] = {0,0};
    float n;
    float m;
    float c;
    float o;
    int L;
+   int N;
 };
 
 #endif
