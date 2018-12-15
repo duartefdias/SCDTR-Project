@@ -32,12 +32,13 @@ void receiveEvent(int howMany) {
      // Negotiation State
      else if(rcMessageType == 7) {
         rcNegotiation = Wire.read();
-        if (rcNegotiation == 1) {
-          //Serial.println("Received negotiation request");  
+        if (rcNegotiation == 1) {           // received negotiation request  
           Negotiation = 1;                 
-        } else if (rcNegotiation == 0) {
+        } else if (rcNegotiation == 0) {    // no negotiation
           Negotiation = 0;
-        }            
+        } else if (rcNegotiation == 2) {    // received recalibration request
+          Negotiation = 2;         
+        }
      }
   }
   // throw away any garbage

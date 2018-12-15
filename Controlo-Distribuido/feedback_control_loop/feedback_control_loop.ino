@@ -15,11 +15,11 @@ void setup() {
   pinMode(LDRpin, INPUT);
   
   Serial.begin(115200);
-  calibrateSystem();
 
   // Setup I2C communication
   I2CSetup();  
-  
+  // Compute illuminance influence of different LED's
+  calibrateSystem();  
   // Setup Timer interrupt (100 Hz)
   timerSetup();  
 
@@ -32,11 +32,13 @@ void setup() {
       Serial.flush();
     }
   }
+  Serial.println(refValue);
+  Negotiation = 1;
+  sendNegotiationState(Negotiation);
   Serial.flush();
 
-  // Setup consensus protocol - setup my_node
+  // Setup consensus protocol and setup my_node
   consensusSetup();
-  sendLuxBackground(my_node.o);
 
   // TODO: some initial setup to do consensus and send initial values to server
 }
@@ -60,12 +62,23 @@ void loop() {
     sendPwm(u);
     flag = 0;
   }
-  if (Negotiation){
+  if (Negotiation == 1){
     sol = consensus_algorithm();
     Serial.print("solution = "); Serial.print(sol.d[0]); Serial.print(" "); Serial.println(sol.d[1]); Serial.println();
     sendPWMRef(my_node.d[my_node.index]);
   }
+  // Reset system (New node connected)
+  if (Negotiation == 2){
+    Serial.println("  SYSTEM RECALIBRATION");
+    calibrateSystem();    
+  }
 
+  // Serial interface:
+  // command: action
+  //      -1: change desk occupancy to empty
+  //       1: change desk occupancy to occupied
+  //  'c' $p: change energy cost to $p (int) 
+  //  'r' $p: change lux High reference to $p (int)
   if (Serial.available()){
     parseInput();
   }  

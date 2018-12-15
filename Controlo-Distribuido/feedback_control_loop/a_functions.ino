@@ -8,31 +8,32 @@ void parseInput(){
     sendNegotiationState(Negotiation);
     sendNegotiationState(Negotiation); 
     return;     
+  } else if (Serial.peek() == 'r') {
+    input = Serial.parseInt();
+    Serial.print("New Reference value = "); Serial.println(input);
+    HighValue = input;
+    return;    
   }
   input = Serial.parseInt();
   if (input == -1 and occupancy == 1) {
     occupancy = 0;
-    sendOccupancy(occupancy);
-    refValue = LowValue;    // Empty desk
-    my_node.L = refValue;
-    sendLuxLowerBound(refValue);
-    my_node.updateGain(G0(refValue));      
+    sendOccupancy(occupancy); // Empty desk
+    my_node.L = LowValue;
+    sendLuxLowerBound(my_node.L);
+    my_node.updateGain(G0(my_node.L));      
     Negotiation = 1;
     sendNegotiationState(Negotiation);
     sendNegotiationState(Negotiation);
-    return;
   }
   else if (input == 1 and occupancy == 0) {
     occupancy = 1;
     sendOccupancy(occupancy);
-    refValue = HighValue;   // Occupied desk
-    my_node.L = refValue;
-    sendLuxLowerBound(refValue);
-    my_node.updateGain(G0(refValue));      
+    my_node.L = HighValue;   // Occupied desk
+    sendLuxLowerBound(my_node.L);
+    my_node.updateGain(G0(my_node.L));      
     Negotiation = 1;
     sendNegotiationState(Negotiation);
     sendNegotiationState(Negotiation);
-    return;
   }
   Serial.flush(); 
   return;
@@ -69,9 +70,13 @@ float mapfloat(double val, double in_min, double in_max, double out_min, double 
 // Measures ambient noise and influence of each node on another
 void calibrateSystem() {  
   float lum;
-  
-  Serial.println("Press ENTER to start calibration routine.");
-  while(!Serial.available()) {}
+
+  if (Negotiation != 2) {
+    Serial.println("Press ENTER to start calibration routine.");
+    while(!Serial.available() && Negotiation != 2) {}
+  }
+  // Request for others to begin calibration routine
+  sendNegotiationState(2);
   
   // Ambient noise
   Serial.println("Measuring ambient noise...");
@@ -80,6 +85,7 @@ void calibrateSystem() {
   if (debug) noise = 0.01;
   Serial.print("Ambient noise: ");
   Serial.println(noise);  
+  sendLuxBackground(noise);
   if (!debug) delay(3000);
 
   // Measure k21
@@ -115,6 +121,7 @@ void calibrateSystem() {
     Serial.print("k12 = ");
     Serial.print(k12);
     Serial.println(" LUX/dimming");       
-    delay(1000);
-  }     
+    if(!debug) delay(1000);
+  }
+  Negotiation = 1;
 }

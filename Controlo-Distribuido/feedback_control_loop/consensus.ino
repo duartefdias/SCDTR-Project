@@ -19,22 +19,14 @@ struct solution consensus_algorithm(){
   struct solution sol;
   
   Serial.println("BEGINNING CONSENSUS. MY NODE:");
-  Serial.print(" i-1=");
-  Serial.print(my_node.index);
-  Serial.print(" ki1=");
-  Serial.print(my_node.k[0]);
-  Serial.print(" ki2=");
-  Serial.print(my_node.k[1]);
-  Serial.print(" n=");
-  Serial.print(my_node.n);
-  Serial.print(" m=");
-  Serial.print(my_node.m);
-  Serial.print(" c=");
-  Serial.print(my_node.c);
-  Serial.print(" o=");
-  Serial.print(my_node.o);
-  Serial.print(" L=");
-  Serial.println(my_node.L);
+  Serial.print(" i-1=");  Serial.print(my_node.index);
+  Serial.print(" ki1=");  Serial.print(my_node.k[0]);
+  Serial.print(" ki2=");  Serial.print(my_node.k[1]);
+  Serial.print(" n=");  Serial.print(my_node.n);
+  Serial.print(" m=");  Serial.print(my_node.m);
+  Serial.print(" c=");  Serial.print(my_node.c);
+  Serial.print(" o=");  Serial.print(my_node.o);
+  Serial.print(" L=");  Serial.println(my_node.L);
   
   for (i=0; i <= 50 && Negotiation; i++)
   {
