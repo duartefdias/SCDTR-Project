@@ -2,9 +2,10 @@
 #include <EEPROM.h>
 #include "globals.h"
 #define MAXLUX 500
+#define MAXNODES 10
  
-volatile uint8_t rcAddress, rcMessageType, rcPwmNegotiation1, rcPwmNegotiation2, rcNegotiation;
-volatile float rcPwm1 = 0, rcPwm2 = 0;
+volatile uint8_t rcAddress, rcMessageType, rcN, rcPwmNegotiation[MAXNODES], rcNegotiation;
+volatile float rcPwm[MAXNODES];
 
 void I2CSetup() {
   Wire.begin(own_addr);
@@ -14,19 +15,26 @@ void I2CSetup() {
 
 void receiveEvent(int howMany) {  
   // we are expecting 3 or 4 bytes, so check we got them
-  if (howMany == 3 || howMany == 4) {
+  if (howMany == 3 || howMany == 4 || howMany == 5 || howMany == 6) {
      rcAddress = Wire.read();
      rcMessageType = Wire.read();
 
-    // Negotiation messages
+    // Negotiation message received
      if(rcMessageType == 2) {
-        rcPwmNegotiation1 = Wire.read();
+        rcN = Wire.read();
+        for (int j=0; j<rcN; j++){
+          rcPwmNegotiation[j] = Wire.read();
+          rcPwm[j] = mapfloat(rcPwmNegotiation[j], 0, 255, 0, 5);
+        }
+        //Serial.print("Received "); Serial.print(rcN); Serial.println(" values from other");
+        copy_array(rcPwm, other_solution.d, rcN);
+        /*rcPwmNegotiation1 = Wire.read();
         rcPwmNegotiation2 = Wire.read();
         rcPwm1 = mapfloat(rcPwmNegotiation1, 0, 255, 0, 5);
         rcPwm2 = mapfloat(rcPwmNegotiation2, 0, 255, 0, 5);
         other_solution.d[0] = rcPwm1;
-        other_solution.d[1] = rcPwm2;
-        //Serial.println("  Received solution");
+        other_solution.d[1] = rcPwm2;*/
+        //Serial.print(" Received solution: d[0] = "); Serial.print(other_solution.d[0]); Serial.print(" d[1] = "); Serial.println(other_solution.d[1]);
         ReceivedSolution = true;
      }
      // Negotiation State
@@ -43,7 +51,6 @@ void receiveEvent(int howMany) {
   }
   // throw away any garbage
   while (Wire.available()) {
-    //Serial.println("recv");
     Wire.read();    
   }
 }
@@ -70,14 +77,16 @@ void sendLuxReading(float luxReading){
   Wire.endTransmission(); //release BUS
 }
 
-void sendNegotiation(float pwmValue1, float pwmValue2){
-  uint8_t pwmNegotiation1 = mapfloat(pwmValue1, 0, 5, 0, 255);
-  uint8_t pwmNegotiation2 = mapfloat(pwmValue2, 0, 5, 0, 255);
+void sendNegotiation(float pwmValues[], int N){
+  uint8_t pwmNegotiation;
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(2);  //message type
-  Wire.write(pwmNegotiation1);
-  Wire.write(pwmNegotiation2);
+  Wire.write(N);
+  for (int j=0; j<N; j++){
+    pwmNegotiation = mapfloat(pwmValues[j], 0, 5, 0, 255);
+    Wire.write(pwmNegotiation);
+  }
   Wire.endTransmission(); //release BUS
 }
 

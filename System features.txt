@@ -1,0 +1,9 @@
+User can:
+	- set reference value when desk is occupied
+	- set the local cost of electricity
+	- change local state of occupancy
+
+System features:
+	- when a new node is online, recalibration is automatically performed
+	- (TODO) system can have an arbitrary number of nodes
+	
