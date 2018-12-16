@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Data::Data(int nDesks = 2) { //Change number of desks here
+Data::Data(int nDesks = 2) {
     dataAvailability = 1;
 
     // Allocate vector to store measured luxs values
