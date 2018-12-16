@@ -81,7 +81,7 @@ void I2cFunctions::readLoop(Data* database) {
                     pwm = this->mapfloat(xfer.rxBuf[2], 0, 255, 0, 5);
                     printf("\tPWM: %f\n\n", pwm);
                     // Add value to database
-                    database->setcurrentPwmAtDesk(pwm, xfer.rxBuf[0]);
+                    database->setcurrentPwmAtDesk(pwm, (int)xfer.rxBuf[0]);
                     break;
                 // received lux reading
                 case 1:
