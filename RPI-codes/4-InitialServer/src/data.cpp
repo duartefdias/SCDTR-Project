@@ -129,6 +129,7 @@ std::string Data::processRequest(char* request){
             switch(request[2]){
                 case 'l':
                     response = std::to_string(this->getLastLuxValueArduino(arduino));
+                    cout << "Response: " << response << endl;
                     break;
                 case 'd':
                     // ToDo: edit this
@@ -184,6 +185,6 @@ std::string Data::processRequest(char* request){
             response = "Invalid request";
     }
     
-
+    cout << "Returned response: " << response << endl;
     return response;
 }

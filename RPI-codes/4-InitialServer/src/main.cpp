@@ -75,6 +75,7 @@ int main() {
             size_t n = s.read_some(buffer(buf,128), ec);
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
+            cout << "Buffer message sent to client: " << buffer(database.processRequest(buf)) << endl;
             write(s, buffer(database.processRequest(buf)), ec);
             write(s, buffer("                                    "), ec);
             //write(s, buffer("\n",n), ec);
