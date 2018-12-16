@@ -18,13 +18,13 @@ const int SERVER_PORT = 123;
 //void respondToClient()
 
 // Start clock (t=0)
-clock_t time;
+clock_t time = clock();
 
 void i2cFunction(I2cFunctions i2c, Data database){
     std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
     std::cout << "I2c thread database availability: " << database.getAvailability() << std::endl;
 
-    i2c.readLoop(database, time);
+    i2c.readLoop(database);
 
 }
 
