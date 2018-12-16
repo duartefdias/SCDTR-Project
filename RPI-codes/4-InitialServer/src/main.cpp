@@ -37,7 +37,7 @@ int main() {
     tcp::acceptor a(io, ep);
 
     // Initialize i2cReading module
-    I2cFunctions i2c ();
+    I2cFunctions i2c;
 
     // Test i2c module
     std::cout << "I2c functions availability: " << i2c.getAvailability() << std::endl;
