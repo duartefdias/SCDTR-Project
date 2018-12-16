@@ -10,10 +10,7 @@ Data::Data(int nDesks = 2) {
     dataAvailability = 1;
 
     // Allocate vector to store measured luxs values
-    for(int i = 0; i < nDesks; i++){
-        vector<float> row(1, 987);
-        measuredLuxs.push_back(row);
-    }
+    measuredLuxs.assign(nDesks, vector < float >(1, 987));
     
     // Allocate occupancy vector
     occupancyDesk.resize(nDesks, 1);
