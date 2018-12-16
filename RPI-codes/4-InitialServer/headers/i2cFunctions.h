@@ -15,7 +15,7 @@ public:
     I2cFunctions();
     int getAvailability();
 
-    void readLoop(Data database);
+    void readLoop(Data* database);
 
 private:
 

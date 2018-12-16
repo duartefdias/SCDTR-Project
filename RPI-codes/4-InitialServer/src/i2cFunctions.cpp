@@ -53,7 +53,7 @@ int I2cFunctions::close_slave(bsc_xfer_t &xfer) {
     return bscXfer(&xfer);
 }
 
-void I2cFunctions::readLoop(Data database) {
+void I2cFunctions::readLoop(Data* database) {
     int status, j, key = 0;
     uint16_t LuxValue = 0;
     float pwm, lux;
@@ -89,7 +89,7 @@ void I2cFunctions::readLoop(Data database) {
                     lux = this->mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);  
                     printf("\tLux: %f\n\n", lux);
                     // Add value to database
-                    database.setLastLuxValueArduino(lux, (int)xfer.rxBuf[0]);
+                    database->setLastLuxValueArduino(lux, (int)xfer.rxBuf[0]);
                     break;
                 // received pwm negotiation message
                 /*case 2:
