@@ -63,6 +63,7 @@ void Data::setLastLuxValueArduino(float value, int arduino) { //arduino = {1, 2}
 }
 
 float Data::getLastLuxValueArduino(int arduino) {
+    std::cout << "Returned lastest lux value: " << measuredLuxs[arduino][0] << std::endl;
     return measuredLuxs[arduino][0];
 }
 

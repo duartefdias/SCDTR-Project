@@ -54,7 +54,7 @@ int I2cFunctions::close_slave(bsc_xfer_t &xfer) {
 }
 
 void I2cFunctions::readLoop(Data* database) {
-    std::cout << "I2C thread database address: " << database << std::endl;
+    std::cout << "I2C thread inside readLoop database address: " << database << std::endl;
     int status, j, key = 0;
     uint16_t LuxValue = 0;
     float pwm, lux;
