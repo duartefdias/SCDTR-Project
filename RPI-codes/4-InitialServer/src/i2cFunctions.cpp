@@ -77,7 +77,7 @@ void I2cFunctions::readLoop(Data database) {
                 // current pwm signal
                 case 0:
                     printf("Arduino %d ", xfer.rxBuf[0]);
-                    pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255);
+                    pwm = this->mapfloat(xfer.rxBuf[2], 0, 255, 0, 5);
                     printf("\tPWM: %f\n\n", pwm);
                     break;
                 // received lux reading
@@ -123,7 +123,7 @@ void I2cFunctions::readLoop(Data database) {
                 // control reference pwm
                 case 6:
                     printf("Arduino %d ", xfer.rxBuf[0]);
-                    pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255);
+                    pwm = this->mapfloat(xfer.rxBuf[2], 0, 255, 0, 5);
                     printf("\tReference pwm: %f\n\n", pwm);
                     break;
             }
