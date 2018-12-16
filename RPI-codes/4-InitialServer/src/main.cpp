@@ -20,9 +20,10 @@ const int SERVER_PORT = 123;
 // Start clock (t=0)
 //clock_t time = clock();
 
-void i2cFunction(I2cFunctions i2c, Data database){
-    std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
-    std::cout << "I2c thread database availability: " << database.getAvailability() << std::endl;
+void i2cFunction(I2cFunctions i2c, Data* database){
+    //std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
+    //std::cout << "I2c thread database availability: " << database->getAvailability() << std::endl;
+    std::cout << "I2C thread database address: " << database << std::endl;
 
     i2c.readLoop(database);
 
@@ -52,11 +53,13 @@ int main() {
 
     // Test database module
     std::cout << "Database availability: " << database.getAvailability() << std::endl;
+    std::cout << "Database address in main before calling thread: " << &database << std::endl;
 
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
-    std::thread i2cThread(i2cFunction, i2c, database);
+    std::thread i2cThread(i2cFunction, i2c, &database);
+    std::cout << "Database address in main after calling thread: " << &database << std::endl;
 
     // Be carefull when calling getLastLuxValueArduino(arduino) -> arduino must be arduino - 1 because of indexes!
     std::cout << "Last lux 1: " << database.getLastLuxValueArduino(0) << std::endl;
@@ -72,8 +75,9 @@ int main() {
             size_t n = s.read_some(buffer(buf,128), ec);
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
+            //cout << "Buffer message sent to client: " << database.processRequest(buf) << endl;
             write(s, buffer(database.processRequest(buf)), ec);
-            write(s, buffer("                                    "), ec);
+            //write(s, buffer("                                    "), ec);
             //write(s, buffer("\n",n), ec);
             //write(s, buffer(buf,n), ec);
             if(ec) break;
