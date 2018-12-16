@@ -89,7 +89,7 @@ void I2cFunctions::readLoop(Data database) {
                     lux = this->mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);  
                     printf("\tLux: %f\n\n", lux);
                     // Add value to database
-                    database.setLastLuxValueArduino(lux, xfer.rxBuf[0]);
+                    database.setLastLuxValueArduino(lux, (int)xfer.rxBuf[0]);
                     break;
                 // received pwm negotiation message
                 /*case 2:
@@ -117,8 +117,8 @@ void I2cFunctions::readLoop(Data database) {
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];
-                    lux = this->mapfloat(lux, 0, 65536, 0, MAX_LUX);
-                    printf("Background Lux: %f\n\n", lux);
+                    lux = this->mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
+                    printf("\tBackground Lux: %f\n\n", lux);
                     break;
                 // control reference pwm
                 case 6:
