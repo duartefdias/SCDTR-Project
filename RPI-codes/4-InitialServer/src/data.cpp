@@ -42,8 +42,15 @@ void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
     strValue >> arduinoInt;
     arduinoInt = arduinoInt - 1; // Because of indexes
 
+    cout << "Inserting on arduino index: " << arduinoInt << endl;
+
     // Insert new measured value at beggining of measuredLuxs vector
-    measuredLuxs[arduinoInt].insert(measuredLuxs[arduinoInt].begin(), value);
+    try{
+        measuredLuxs[arduinoInt].insert(measuredLuxs[arduinoInt].begin(), value);
+    }
+    catch (int e){
+        cout << "Erro na inserção de lux arduino index: " << arduinoInt << endl;
+    }
 
     // If vector has more than 10 elements remove last one
     if(measuredLuxs[arduinoInt].size() > 10){
