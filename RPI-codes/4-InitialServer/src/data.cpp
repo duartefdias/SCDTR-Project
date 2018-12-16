@@ -52,7 +52,7 @@ void Data::setLastLuxValueArduino(float value, int arduino) { //arduino = {1, 2}
     measuredLuxs[arduino].insert(measuredLuxs[arduino].begin(), value);
 
     cout << "Lastest lux value after insert: " << measuredLuxs[arduino][0] << endl;
-    for(int i = 0; i <  measuredLuxs[arduino].size; i++){
+    for(int i = 0; i <  measuredLuxs[arduino].size(); i++){
         cout << "Value in postion " << i << ": " << measuredLuxs[arduino][i] << endl;
     }
 
