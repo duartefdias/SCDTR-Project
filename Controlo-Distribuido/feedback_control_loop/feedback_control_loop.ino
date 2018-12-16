@@ -6,7 +6,7 @@
 #include "constants.h"
 #include "globals.h"
 
-int debug = 1;
+int debug = 0;
 
 void setup() {
   // Setup pinmodes
@@ -51,7 +51,7 @@ void loop() {
     float measuredY = readLDR();
 
     // Apply control law
-    float u = Controller(refValue, measuredY);        
+    float u = Controller(my_node.L, measuredY);        
     u = mapfloat(u, 0, 5, 0, 255);
     analogWrite(LED1, u);
     

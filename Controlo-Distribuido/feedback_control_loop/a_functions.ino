@@ -51,7 +51,7 @@ void timerSetup(){
   TCCR1B = 0; // same for TCCR1B
   TCNT1  = 0; // initialize counter value to 0
   // set compare match register for 100 Hz increments
-  OCR1A = 19999; // = 16000000 / (8 * 100) - 1 (must be <65536)
+  OCR1A = 9999; // = 16000000 / (8 * 100) - 1 (must be <65536)
   // turn on CTC mode
   TCCR1B |= (1 << WGM12);
   // Set CS12, CS11 and CS10 bits for 8 prescaler
@@ -81,6 +81,7 @@ void calibrateSystem() {
   // Ambient noise
   Serial.println("Measuring ambient noise...");
   analogWrite(LED1, 0);
+  if (!debug) delay(1000);
   noise = readLDR();
   if (debug) noise = 0.01;
   Serial.print("Ambient noise: ");

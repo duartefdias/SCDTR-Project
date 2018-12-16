@@ -14,6 +14,7 @@ void I2CSetup() {
 }
 
 void receiveEvent(int howMany) {  
+  noInterrupts();
   // we are expecting 3 or 4 bytes, so check we got them
   if (howMany == 3 || howMany == 4 || howMany == 5 || howMany == 6) {
      rcAddress = Wire.read();
@@ -53,6 +54,7 @@ void receiveEvent(int howMany) {
   while (Wire.available()) {
     Wire.read();    
   }
+  interrupts();
 }
 
 
