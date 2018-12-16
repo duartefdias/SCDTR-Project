@@ -80,6 +80,8 @@ void I2cFunctions::readLoop(Data* database) {
                     printf("Arduino %d ", xfer.rxBuf[0]);
                     pwm = this->mapfloat(xfer.rxBuf[2], 0, 255, 0, 5);
                     printf("\tPWM: %f\n\n", pwm);
+                    // Add value to database
+                    database->setcurrentPwmAtDesk(pwm, xfer.rxBuf[0]);
                     break;
                 // received lux reading
                 case 1:
@@ -102,6 +104,7 @@ void I2cFunctions::readLoop(Data* database) {
                 case 3:
                     printf("Arduino %d ", xfer.rxBuf[0]);
                     printf("\tOccupancy: %d\n\n", xfer.rxBuf[2]);
+                    database->setOccupancyAtDesk(xfer.rxBuf[2], xfer.rxBuf[0]);
                     break;
                 // lux lower bound
                 case 4:
@@ -111,6 +114,8 @@ void I2cFunctions::readLoop(Data* database) {
                     LuxValue |= xfer.rxBuf[3];
                     lux = this->mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
                     printf("\tLux Lower Bound: %f\n\n", lux);
+                    // Add value to database
+                    database->setLuxLowerBoundAtDesk(lux, xfer.rxBuf[0]);
                     break;
                 // background lux
                 case 5:
@@ -120,12 +125,16 @@ void I2cFunctions::readLoop(Data* database) {
                     LuxValue |= xfer.rxBuf[3];
                     lux = this->mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
                     printf("\tBackground Lux: %f\n\n", lux);
+                    // Add value to database
+                    database->setLuxExternalAtDesk(lux, xfer.rxBuf[0]);
                     break;
                 // control reference pwm
                 case 6:
                     printf("Arduino %d ", xfer.rxBuf[0]);
                     pwm = this->mapfloat(xfer.rxBuf[2], 0, 255, 0, 5);
                     printf("\tReference pwm: %f\n\n", pwm);
+                    // Add value to database
+                    database->setLuxControlReference(pwm, xfer.rxBuf[0]);
                     break;
             }
 

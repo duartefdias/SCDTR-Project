@@ -11,8 +11,11 @@ Data::Data(int nDesks = 2) {
     numberOfDesks = nDesks;
     dataAvailability = 1;
 
-    // Allocate vector to store measured luxs values
+    // Allocate 2D matrix to store measured luxs values
     measuredLuxs.assign(nDesks, vector < float >(1, 987));
+
+    // Allocate 3D matrix to store apllied pwm values
+    appliedPwm.assign(nDesks, vector < float >(1, 789));
     
     // Allocate occupancy vector
     occupancyDesk.resize(nDesks, 1);
@@ -35,26 +38,15 @@ int Data::getAvailability() {
 // Basic getters and setters
 void Data::setLastLuxValueArduino(float value, int arduino) { //arduino = {1, 2}
 
-    // Convert arduino char into int
-    /*stringstream strValue;
-    strValue << arduino;
-    int arduinoInt;
-    strValue >> arduinoInt;
-    arduinoInt = arduinoInt - 1;*/
-
-    cout << "Received arduino number: " << arduino << endl;
     arduino = arduino - 1;
-    cout << "Arduino index to access: " << arduino << endl;
-    cout << "Received value (float): " << value << endl;
-    cout << "Lastest lux value before insert: " << measuredLuxs[arduino][0] << endl;
 
     // Insert new measured value at beggining of measuredLuxs vector
     measuredLuxs[arduino].insert(measuredLuxs[arduino].begin(), value);
 
-    cout << "Lastest lux value after insert: " << measuredLuxs[arduino][0] << endl;
-    for(int i = 0; i <  measuredLuxs[arduino].size(); i++){
-        cout << "Value in postion " << i << ": " << measuredLuxs[arduino][i] << endl;
-    }
+    //Debugging messages
+    /*for(int i = 0; i <  measuredLuxs[arduino].size(); i++){
+        cout << "Value in position " << i << ": " << measuredLuxs[arduino][i] << endl;
+    }*/
 
     // If vector has more than 10 elements remove last one
     if(measuredLuxs[arduino].size() > 10){
@@ -65,6 +57,23 @@ void Data::setLastLuxValueArduino(float value, int arduino) { //arduino = {1, 2}
 float Data::getLastLuxValueArduino(int arduino) {
     std::cout << "Returned lastest lux value: " << measuredLuxs[arduino][0] << std::endl;
     return measuredLuxs[arduino][0];
+}
+
+void Data::setcurrentPwmAtDesk(float value, int desk){
+    
+    desk = desk - 1;
+
+    // Insert new measured value at beggining of appliedPwm vector
+    appliedPwm[desk].insert(appliedPwm[desk].begin(), value);
+
+    // If vector has more than 10 elements remove last one
+    if(appliedPwm[desk].size() > 10){
+        appliedPwm[desk].pop_back();
+    }
+}
+
+float Data::getcurrentPwmAtDesk(int desk){
+    return appliedPwm[desk][0];
 }
 
 void Data::setOccupancyAtDesk(int value, int desk) {
