@@ -20,6 +20,7 @@ public:
     std::string processRequest(char* request);
 
 private:
+    int numberOfDesks = 0;
     int dataAvailability = 0;
     vector< vector<float> > measuredLuxs;
     std::vector <int> occupancyDesk;

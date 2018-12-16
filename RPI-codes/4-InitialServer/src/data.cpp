@@ -8,6 +8,7 @@
 using namespace std;
 
 Data::Data(int nDesks = 2) {
+    numberOfDesks = nDesks;
     dataAvailability = 1;
 
     // Allocate vector to store measured luxs values
@@ -43,10 +44,15 @@ int Data::setOccupancyAtDesk(int value, int desk) {
 
 std::string Data::processRequest(char* request){
     std::string response = "";
+
+    // Converting arduino value from const char to int
     stringstream strValue;
     strValue << request[4];
     int arduino;
     strValue >> arduino;
+    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid desk!";}
+    // End of convertion
+
     switch(request[0]){
         case 'g':
             switch(request[2]){
