@@ -66,6 +66,10 @@ void Data::setcurrentPwmAtDesk(float value, int desk){
     // Insert new measured value at beggining of appliedPwm vector
     appliedPwm[desk].insert(appliedPwm[desk].begin(), value);
 
+    for(int i = 0; i <  appliedPwm[desk].size(); i++){
+        cout << "Value in position " << i << ": " << appliedPwm[desk][i] << endl;
+    }
+
     // If vector has more than 10 elements remove last one
     if(appliedPwm[desk].size() > 10){
         appliedPwm[desk].pop_back();
@@ -141,8 +145,7 @@ std::string Data::processRequest(char* request){
                     cout << "Response: " << response << endl;
                     break;
                 case 'd':
-                    // ToDo: edit this
-                    
+                    response = std::to_string(this->getcurrentPwmAtDesk(arduino));
                     break;
                 case 's':
                     response = std::to_string(this->getOccupancyAtDesk(arduino));
