@@ -37,13 +37,13 @@ int main() {
     tcp::acceptor a(io, ep);
 
     // Initialize i2cReading module
-    I2cFunctions i2c();
+    I2cFunctions i2c;
 
     // Test i2c module
     std::cout << "I2c functions availability: " << i2c.getAvailability() << std::endl;
 
     // Initialize database module
-    Data database(2);
+    Data database;
 
     // Test database module
     std::cout << "Database availability: " << database.getAvailability() << std::endl;
@@ -53,8 +53,8 @@ int main() {
     // Store values in database
     std::thread i2cThread(i2cFunction, i2c, database);
 
-    std::cout << "Last lux 1: " << database.getLastLuxValueArduino1() << std::endl;
-    std::cout << "Last lux 2: " << database.getLastLuxValueArduino2() << std::endl;
+    std::cout << "Last lux 1: " << database.measuredLuxs(1) << std::endl;
+    std::cout << "Last lux 2: " << database.measuredLuxs(2) << std::endl;
 
     // Create Networking "thread"
     // Listen to client requests, fetch requested data and respond
