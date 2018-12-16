@@ -33,7 +33,7 @@ int Data::getAvailability() {
 }
 
 // Basic getters and setters
-void Data::setLastLuxValueArduino(float value, char arduino) { //arduino = {1, 2}
+void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
 
     // Convert arduino char into int
     stringstream strValue;
