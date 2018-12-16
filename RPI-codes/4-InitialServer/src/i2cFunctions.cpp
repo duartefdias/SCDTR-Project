@@ -56,7 +56,7 @@ int I2cFunctions::close_slave(bsc_xfer_t &xfer) {
 void I2cFunctions::readLoop(Data database) {
     int status, j, key = 0;
     uint16_t LuxValue = 0;
-    float pwm;
+    float pwm, lux;
 
     if (gpioInitialise() < 0) {printf("Erro 1\n"); return;}
     
@@ -72,63 +72,59 @@ void I2cFunctions::readLoop(Data database) {
         if(xfer.rxCnt > 0){
         //printf("Received %d bytes:\n", xfer.rxCnt);
 
+            // Read I2C message type
             switch(xfer.rxBuf[1]){
-                //pwm
+                // current pwm signal
                 case 0:
-                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Arduino %d ", xfer.rxBuf[0]);
                     pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255);
-                    printf("PWM: %d\n\n", pwm);
-                    printf("\n");
+                    printf("\tPWM: %f\n\n", pwm);
                     break;
-                //lux
+                // received lux reading
                 case 1:
-                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Arduino %d ", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];
-                    LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);  
-                    printf("Lux: %d\n\n", LuxValue);
+                    lux = this->mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);  
+                    printf("\tLux: %f\n\n", lux);
                     // Add value to database
-                    database.setLastLuxValueArduino(LuxValue, xfer.rxBuf[0]);
-                    printf("\n");
+                    database.setLastLuxValueArduino(lux, xfer.rxBuf[0]);
                     break;
-                //pwm negotiation
-                case 2:
+                // received pwm negotiation message
+                /*case 2:
                     printf("Arduino %d\n", xfer.rxBuf[0]);
                     pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255);
                     printf("Negotiation: %f\n\n", pwm);
-                    break;
-                //occupancy
+                    break;*/
+                // occupancy
                 case 3:
-                    printf("Arduino %d\n", xfer.rxBuf[0]);
-                    printf("Occupancy: %d\n\n", xfer.rxBuf[2]);
+                    printf("Arduino %d ", xfer.rxBuf[0]);
+                    printf("\tOccupancy: %d\n\n", xfer.rxBuf[2]);
                     break;
-                //lux lower bound
+                // lux lower bound
                 case 4:
-                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Arduino %d ", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];
-                    LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
-                    printf("Lux Lower Bound: %d\n\n", LuxValue);
-                    printf("\n");
+                    lux = this->mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
+                    printf("\tLux Lower Bound: %f\n\n", lux);
                     break;
-                //background lux
+                // background lux
                 case 5:
-                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Arduino %d ", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];
-                    LuxValue = mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);
-                    printf("Background Lux: %f\n\n", LuxValue);
-                    printf("\n");
+                    lux = this->mapfloat(lux, 0, 65536, 0, MAX_LUX);
+                    printf("Background Lux: %f\n\n", lux);
                     break;
-                //reference pwm
+                // control reference pwm
                 case 6:
-                    printf("Arduino %d\n", xfer.rxBuf[0]);
+                    printf("Arduino %d ", xfer.rxBuf[0]);
                     pwm = this->mapfloat(xfer.rxBuf[2], 0, 5, 0, 255);
-                    printf("Reference pwm: %f\n\n", pwm);
-                    printf("\n");
+                    printf("\tReference pwm: %f\n\n", pwm);
                     break;
             }
 
