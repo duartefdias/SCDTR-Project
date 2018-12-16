@@ -33,29 +33,30 @@ int Data::getAvailability() {
 }
 
 // Basic getters and setters
-void Data::setLastLuxValueArduino(float value, char arduino) { //arduino = {1, 2}
+void Data::setLastLuxValueArduino(float value, int arduino) { //arduino = {1, 2}
 
     // Convert arduino char into int
-    stringstream strValue;
+    /*stringstream strValue;
     strValue << arduino;
     int arduinoInt;
     strValue >> arduinoInt;
-    arduinoInt = arduinoInt - 1; // Because of indexes
+    arduinoInt = arduinoInt - 1;*/
 
-    cout << "Received arduino raw: " << arduino << endl;
-    cout << "Inserting on arduino index: " << arduinoInt << endl;
+    cout << "Received arduino number: " << arduino << endl;
+    arduino = arduino - 1;
+    cout << "Arduino index to access: " << arduino << endl;
 
     // Insert new measured value at beggining of measuredLuxs vector
     try{
-        measuredLuxs[arduinoInt].insert(measuredLuxs[arduinoInt].begin(), value);
+        measuredLuxs[arduino].insert(measuredLuxs[arduino].begin(), value);
     }
     catch (int e){
-        cout << "Erro na inserção de lux arduino index: " << arduinoInt << endl;
+        cout << "Erro na inserção de lux arduino index: " << arduino << endl;
     }
 
     // If vector has more than 10 elements remove last one
-    if(measuredLuxs[arduinoInt].size() > 10){
-        measuredLuxs[arduinoInt].pop_back();
+    if(measuredLuxs[arduino].size() > 10){
+        measuredLuxs[arduino].pop_back();
     }
 }
 
