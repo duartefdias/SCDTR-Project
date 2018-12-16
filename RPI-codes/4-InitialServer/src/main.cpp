@@ -59,8 +59,8 @@ int main() {
     std::thread i2cThread(i2cFunction, i2c, database);
 
     // Be carefull when calling getLastLuxValueArduino(arduino) -> arduino must be arduino - 1 because of indexes!
-    std::cout << "Last lux 1: " << database.getLastLuxValueArduino(1) << std::endl;
-    std::cout << "Last lux 2: " << database.getLastLuxValueArduino(2) << std::endl;
+    std::cout << "Last lux 1: " << database.getLastLuxValueArduino(0) << std::endl;
+    std::cout << "Last lux 2: " << database.getLastLuxValueArduino(1) << std::endl;
 
     // Create Networking "thread"
     // Listen to client requests, fetch requested data and respond
