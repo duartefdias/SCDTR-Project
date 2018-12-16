@@ -56,7 +56,7 @@ int main() {
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
-    std::thread i2cThread(i2cFunction, i2c, database, time);
+    std::thread i2cThread(i2cFunction, i2c, database);
 
     // Be carefull when calling getLastLuxValueArduino(arduino) -> arduino must be arduino - 1 because of indexes!
     std::cout << "Last lux 1: " << database.getLastLuxValueArduino(0) << std::endl;
