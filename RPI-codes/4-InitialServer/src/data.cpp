@@ -33,7 +33,7 @@ int Data::getAvailability() {
 }
 
 // Basic getters and setters
-void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
+void Data::setLastLuxValueArduino(float value, char arduino) { //arduino = {1, 2}
 
     // Convert arduino char into int
     stringstream strValue;
@@ -42,6 +42,7 @@ void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
     strValue >> arduinoInt;
     arduinoInt = arduinoInt - 1; // Because of indexes
 
+    cout << "Received arduino raw: " << arduino << endl;
     cout << "Inserting on arduino index: " << arduinoInt << endl;
 
     // Insert new measured value at beggining of measuredLuxs vector

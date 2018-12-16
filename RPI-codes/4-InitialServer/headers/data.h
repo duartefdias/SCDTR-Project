@@ -16,7 +16,7 @@ public:
     int getAvailability();
 
     // Basic getters and setters
-    void setLastLuxValueArduino(int value, char arduino);
+    void setLastLuxValueArduino(float value, char arduino);
     float getLastLuxValueArduino(int arduino);
     void setOccupancyAtDesk(int value, int desk);
     int getOccupancyAtDesk(int desk);
