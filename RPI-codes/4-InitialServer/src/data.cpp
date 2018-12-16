@@ -43,11 +43,15 @@ int Data::setOccupancyAtDesk(int value, int desk) {
 
 std::string Data::processRequest(char* request){
     std::string response = "";
+    stringstream strValue;
+    strValue << request[4];
+    int arduino;
+    strValue >> arduino;
     switch(request[0]){
         case 'g':
             switch(request[2]){
                 case 'l':
-                    response = std::to_string(this->getLastLuxValueArduino(atoi(request[4])));
+                    response = std::to_string(this->getLastLuxValueArduino(arduino));
                     break;
                 case 'd':
                     // ToDo: edit this
