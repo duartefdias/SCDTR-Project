@@ -29,6 +29,10 @@
         "ratio": "cpp",
         "thread": "cpp",
         "tuple": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "fstream": "cpp",
+        "sstream": "cpp"
     }
 }

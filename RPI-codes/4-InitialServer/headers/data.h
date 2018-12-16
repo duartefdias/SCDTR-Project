@@ -2,26 +2,27 @@
 #define DATA_H
 
 #include <string>
+#include <vector>
 
 using namespace std;
 
 class Data{
 public:
 
-    Data();
+    Data(int nDesks);
 
     int getAvailability();
 
     void setLastLuxValueArduino(int value, char arduino);
-    float getLastLuxValueArduino1();
-    float getLastLuxValueArduino2();
+    float getLastLuxValueArduino(int arduino);
+    int setOccupancyAtDesk(int value, int desk);
 
     std::string processRequest(char* request);
 
 private:
     int dataAvailability = 0;
-    float lastLuxValueArduino1 = 9.69;
-    float lastLuxValueArduino2 = 8.69;
+    vector< vector<float> > measuredLuxs;
+    std::vector <int> occupancyDesk;
 };
 
 #endif //DATA_H
