@@ -35,6 +35,13 @@ int Data::getAvailability() {
 // Basic getters and setters
 void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
 
+    // Convert arduino char into int
+    stringstream strValue;
+    strValue << arduino;
+    int arduinoInt;
+    strValue >> arduinoInt;
+    arduinoInt = arduinoInt - 1; // Because of indexes
+
     // Insert new measured value at beggining of measuredLuxs vector
     measuredLuxs[arduino].insert(measuredLuxs[arduino].begin(), value);
 
