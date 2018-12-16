@@ -17,29 +17,80 @@ Data::Data(int nDesks = 2) {
     // Allocate occupancy vector
     occupancyDesk.resize(nDesks, 1);
 
+    // Allocate lower bounds vector
+    luxLowerBound.resize(nDesks, 50);
+
+    // Allocate external illuminance vector
+    luxExternal.resize(nDesks, 150);
+
+    // Allocate illuminance control reference vector
+    luxControlReference.resize(nDesks, 60);
+
 }
 
 int Data::getAvailability() {
     return dataAvailability;
 }
 
+// Basic getters and setters
 void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
 
     // Insert new measured value at beggining of measuredLuxs vector
-    measuredLuxs[arduino-1].insert(measuredLuxs[arduino-1].begin(), value);
+    measuredLuxs[arduino-1].insert(measuredLuxs[arduino].begin(), value);
 
     // If vector has more than 10 elements remove last one
-    if(measuredLuxs[arduino-1].size() > 10){
-        measuredLuxs[arduino-1].pop_back();
+    if(measuredLuxs[arduino].size() > 10){
+        measuredLuxs[arduino].pop_back();
     }
 }
 
 float Data::getLastLuxValueArduino(int arduino) {
-    return measuredLuxs[arduino-1][0];
+    return measuredLuxs[arduino][0];
 }
 
-int Data::setOccupancyAtDesk(int value, int desk) {
+void Data::setOccupancyAtDesk(int value, int desk) {
+    if(value == 0 || value == 1){
+        occupancyDesk[desk] = value;
+    }
+}
 
+int Data::getOccupancyAtDesk(int desk){
+    return occupancyDesk[desk];
+}
+
+void Data::setLuxLowerBoundAtDesk(float value, int desk) {
+    if(value > 0 && value < 400){
+        luxLowerBound[desk] = value;
+    }
+}
+
+int Data::getLuxLowerBoundAtDesk(int desk){
+    return luxLowerBound[desk];
+}
+
+void Data::setLuxExternalAtDesk(float value, int desk){
+    if(value > 0 && value < 1000){
+        luxExternal[desk] = value;
+    }
+}
+
+int Data::getLuxExternalAtDesk(int desk){
+    return luxExternal[desk];
+}
+
+void Data::setLuxControlReference(float value, int desk){
+    if(value > 0 && value < 1000){
+        luxControlReference[desk] = value;
+    }
+}
+
+int Data::getLuxControlReference(int desk) {
+    return luxControlReference[desk];
+}
+
+// More complex getters
+float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
+    //do something
 }
 
 std::string Data::processRequest(char* request){
@@ -50,7 +101,8 @@ std::string Data::processRequest(char* request){
     strValue << request[4];
     int arduino;
     strValue >> arduino;
-    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid desk!";}
+    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!";}
+    arduino = arduino - 1; // Because of indexes
     // End of convertion
 
     switch(request[0]){
@@ -64,24 +116,20 @@ std::string Data::processRequest(char* request){
                     
                     break;
                 case 's':
-                    // ToDo: edit this
-                    
+                    response = std::to_string(this->getOccupancyAtDesk(arduino));
                     break;
                 case 'L':
-                    // ToDo: edit this
-                    
+                    response = std::to_string(this->getLuxLowerBoundAtDesk(arduino));
                     break;
                 case 'o':
-                    // ToDo: edit this
-                    
+                    response = std::to_string(this->getLuxExternalAtDesk(arduino));
                     break;
                 case 'r':
-                    // ToDo: edit this
-                    
+                    response = std::to_string(this->getLuxControlReference(arduino));
                     break;
                 case 'p':
                     // ToDo: edit this
-                    
+                    response = std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
                     break;
                 case 't':
                     // ToDo: edit this

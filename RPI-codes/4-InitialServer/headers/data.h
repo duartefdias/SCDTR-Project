@@ -9,14 +9,27 @@ using namespace std;
 class Data{
 public:
 
+    // Constructor
     Data(int nDesks);
 
     int getAvailability();
 
+    // Basic getters and setters
     void setLastLuxValueArduino(int value, char arduino);
     float getLastLuxValueArduino(int arduino);
-    int setOccupancyAtDesk(int value, int desk);
+    void setOccupancyAtDesk(int value, int desk);
+    int getOccupancyAtDesk(int desk);
+    void setLuxLowerBoundAtDesk(float value, int desk);
+    int getLuxLowerBoundAtDesk(int desk);
+    void setLuxExternalAtDesk(float value, int desk);
+    int getLuxExternalAtDesk(int desk);
+    void setLuxControlReference(float value, int desk);
+    int getLuxControlReference(int desk);
 
+    // More complex getters
+    float getInstantaneousPowerConsumptionAtDesk(int desk);
+
+    // Interpret client request and return response string
     std::string processRequest(char* request);
 
 private:
@@ -24,6 +37,9 @@ private:
     int dataAvailability = 0;
     vector< vector<float> > measuredLuxs;
     std::vector <int> occupancyDesk;
+    std::vector <float> luxLowerBound;
+    std::vector <float> luxExternal;
+    std::vector <float> luxControlReference;
 };
 
 #endif //DATA_H
