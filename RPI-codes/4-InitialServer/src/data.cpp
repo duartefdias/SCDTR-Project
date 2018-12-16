@@ -36,16 +36,16 @@ int Data::getAvailability() {
 void Data::setLastLuxValueArduino(int value, char arduino) { //arduino = {1, 2}
 
     // Insert new measured value at beggining of measuredLuxs vector
-    measuredLuxs[arduino-1].insert(measuredLuxs[arduino].begin(), value);
+    measuredLuxs[arduino-1].insert(measuredLuxs[arduino-1].begin(), value);
 
     // If vector has more than 10 elements remove last one
-    if(measuredLuxs[arduino].size() > 10){
-        measuredLuxs[arduino].pop_back();
+    if(measuredLuxs[arduino-1].size() > 10){
+        measuredLuxs[arduino-1].pop_back();
     }
 }
 
 float Data::getLastLuxValueArduino(int arduino) {
-    return measuredLuxs[arduino][0];
+    return measuredLuxs[arduino-1][0];
 }
 
 void Data::setOccupancyAtDesk(int value, int desk) {
