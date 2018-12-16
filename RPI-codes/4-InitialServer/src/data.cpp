@@ -3,6 +3,7 @@
 #include <iostream> //SYNC_TCP_SERVER.CPP
 #include <string>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -46,12 +47,9 @@ std::string Data::processRequest(char* request){
         case 'g':
             switch(request[2]){
                 case 'l':
-                        try{
-                            response = std::to_string(this->getLastLuxValueArduino(request[4]));
-                        }
-                        catch(int e){
-                            cout << "Error: " << request[4] << endl;
-                        }
+                    int arduino;
+                    request[4] >> arduino;
+                    response = std::to_string(this->getLastLuxValueArduino(arduino));
                     break;
                 case 'd':
                     // ToDo: edit this
