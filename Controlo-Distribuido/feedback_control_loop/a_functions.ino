@@ -41,7 +41,7 @@ void parseInput(){
 
 // Setup Interrupt
 ISR(TIMER1_COMPA_vect) {
-  flag = 1; //notify main loop
+  flag = true; //notify main loop
 }
 
 // Setup TIMER 1 Interrupt to 100 Hz sampling frequency 
@@ -103,7 +103,7 @@ void calibrateSystem() {
     if (debug) k21 = 2.04;
     Serial.print("k21 = ");
     Serial.print(k21);
-    Serial.println(" LUX/dimming");    
+    Serial.println(" LUX/dimming unit");    
     if(!debug) delay(1000);
   }
 
@@ -121,7 +121,7 @@ void calibrateSystem() {
     if (debug) k12 = 1.98;
     Serial.print("k12 = ");
     Serial.print(k12);
-    Serial.println(" LUX/dimming");       
+    Serial.println(" LUX/dimming unit");       
     if(!debug) delay(1000);
   }
   Negotiation = 1;

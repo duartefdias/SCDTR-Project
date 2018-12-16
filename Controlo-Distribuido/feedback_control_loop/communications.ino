@@ -14,7 +14,6 @@ void I2CSetup() {
 }
 
 void receiveEvent(int howMany) {  
-  noInterrupts();
   // we are expecting 3 or 4 bytes, so check we got them
   if (howMany == 3 || howMany == 4 || howMany == 5 || howMany == 6) {
      rcAddress = Wire.read();
@@ -54,7 +53,6 @@ void receiveEvent(int howMany) {
   while (Wire.available()) {
     Wire.read();    
   }
-  interrupts();
 }
 
 
@@ -134,6 +132,7 @@ void sendPWMRef(float pwmReff){
 }
 
 void sendNegotiationState(uint8_t state){
+  Serial.println();
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(7);  //message type
