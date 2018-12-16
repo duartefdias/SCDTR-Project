@@ -47,8 +47,7 @@ std::string Data::processRequest(char* request){
         case 'g':
             switch(request[2]){
                 case 'l':
-                    if(request[4] == '1')
-                        response = std::to_string(this->getLastLuxValueArduino(1));
+                    response = std::to_string(this->getLastLuxValueArduino(atoi(request[4])));
                     break;
                 case 'd':
                     // ToDo: edit this
