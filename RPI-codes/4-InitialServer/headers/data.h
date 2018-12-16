@@ -3,8 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <time.h>
 
 using namespace std;
+
+extern clock_t time;
 
 class Data{
 public:

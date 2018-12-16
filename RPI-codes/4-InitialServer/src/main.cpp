@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 #include <string>
 #include <thread>
+#include <time.h>
 
 #include "../headers/i2cFunctions.h"
 #include "../headers/data.h"
@@ -16,17 +17,21 @@ const int SERVER_PORT = 123;
 
 //void respondToClient()
 
+// Start clock (t=0)
+clock_t time;
+
 void i2cFunction(I2cFunctions i2c, Data database){
     std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
     std::cout << "I2c thread database availability: " << database.getAvailability() << std::endl;
 
-    i2c.readLoop(database);
+    i2c.readLoop(database, time);
 
 }
 
 int main() {
 
     std::cout << "Hello from main.cpp" << std::endl;
+    std::cout << "Elapsed time: " << std::string(time) << endl;
 
     io_service io;
     boost::system::error_code ec;
@@ -51,7 +56,7 @@ int main() {
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
-    std::thread i2cThread(i2cFunction, i2c, database);
+    std::thread i2cThread(i2cFunction, i2c, database, time);
 
     // Be carefull when calling getLastLuxValueArduino(arduino) -> arduino must be arduino - 1 because of indexes!
     std::cout << "Last lux 1: " << database.getLastLuxValueArduino(0) << std::endl;
