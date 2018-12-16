@@ -7,8 +7,6 @@
 
 using namespace std;
 
-extern clock_t time;
-
 class Data{
 public:
 
