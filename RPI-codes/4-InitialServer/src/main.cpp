@@ -31,7 +31,7 @@ void i2cFunction(I2cFunctions i2c, Data database){
 int main() {
 
     std::cout << "Hello from main.cpp" << std::endl;
-    std::cout << "Elapsed time: " << std::string(time) << endl;
+    //std::cout << "Elapsed time: " << std::string(time) << endl;
 
     io_service io;
     boost::system::error_code ec;
