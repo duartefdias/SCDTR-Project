@@ -49,7 +49,12 @@ std::string Data::processRequest(char* request){
         case 'g':
             switch(request[2]){
                 case 'l':
-                        response = std::to_string(this->getLastLuxValueArduino(request[4]));
+                        try{
+                            response = std::to_string(this->getLastLuxValueArduino(request[4]));
+                        }
+                        catch(int e){
+                            cout << "Error: " << request[4] << endl;
+                        }
                     break;
                 case 'd':
                     // ToDo: edit this
