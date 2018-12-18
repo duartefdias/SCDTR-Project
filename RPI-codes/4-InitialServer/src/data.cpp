@@ -223,7 +223,6 @@ std::string Data::processRequest(char* request){
             }
             break;
         case 'r':
-            //ToDo
             this->reset();
             response = "ack";
             break;
