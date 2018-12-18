@@ -2,7 +2,7 @@
 #include <boost/asio.hpp>
 #include <string>
 #include <thread>
-#include <time.h>
+#include <ctime>
 
 #include "../headers/i2cFunctions.h"
 #include "../headers/data.h"
@@ -18,21 +18,18 @@ const int SERVER_PORT = 123;
 //void respondToClient()
 
 // Start clock (t=0)
-//clock_t time = clock();
+clock_t begin = clock();
 
 void i2cFunction(I2cFunctions i2c, Data* database){
-    //std::cout << "I2c thread availability: " << i2c.getAvailability() << std::endl;
-    //std::cout << "I2c thread database availability: " << database->getAvailability() << std::endl;
-    std::cout << "I2C thread database address: " << database << std::endl;
-
     i2c.readLoop(database);
-
 }
 
 int main() {
 
     std::cout << "Hello from main.cpp" << std::endl;
-    //std::cout << "Elapsed time: " << std::string(time) << endl;
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    std::cout << "Elapsed time: " << elapsed_secs << endl;
 
     io_service io;
     boost::system::error_code ec;
@@ -53,17 +50,11 @@ int main() {
 
     // Test database module
     std::cout << "Database availability: " << database.getAvailability() << std::endl;
-    std::cout << "Database address in main before calling thread: " << &database << std::endl;
 
     // Create i2cReader thread
     // Read values in i2c line
     // Store values in database
     std::thread i2cThread(i2cFunction, i2c, &database);
-    std::cout << "Database address in main after calling thread: " << &database << std::endl;
-
-    // Be carefull when calling getLastLuxValueArduino(arduino) -> arduino must be arduino - 1 because of indexes!
-    std::cout << "Last lux 1: " << database.getLastLuxValueArduino(0) << std::endl;
-    std::cout << "Last lux 2: " << database.getLastLuxValueArduino(1) << std::endl;
 
     // Create Networking "thread"
     // Listen to client requests, fetch requested data and respond

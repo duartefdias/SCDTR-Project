@@ -54,17 +54,16 @@ int I2cFunctions::close_slave(bsc_xfer_t &xfer) {
 }
 
 void I2cFunctions::readLoop(Data* database) {
-    std::cout << "I2C thread inside readLoop database address: " << database << std::endl;
     int status, j, key = 0;
     uint16_t LuxValue = 0;
     float pwm, lux;
 
-    if (gpioInitialise() < 0) {printf("Erro 1\n"); return;}
+    if (gpioInitialise() < 0) {printf("Erro 1 - GPIO pins memory overload (reboot Raspberry Pi)\n"); return;}
     
     bsc_xfer_t xfer;
     status = this->init_slave(xfer, SLAVE_ADDR);
 
-    printf("Ready to receive data at address: 0\n");
+    printf("Ready to receive data\n");
     while(key != 'q') {
 
         xfer.txCnt = 0;
