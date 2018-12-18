@@ -29,6 +29,7 @@ int main() {
     std::cout << "Hello from main.cpp" << std::endl;
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff = end-start;
+    std::cout << "Elapsed time: " << diff << std::endl;
 
     io_service io;
     boost::system::error_code ec;
