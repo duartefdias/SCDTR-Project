@@ -197,6 +197,6 @@ std::string Data::processRequest(char* request){
             response = "Invalid request";
     }
     
-    response = response + "\0";
+    response = response + "                                  ";
     return response;
 }
