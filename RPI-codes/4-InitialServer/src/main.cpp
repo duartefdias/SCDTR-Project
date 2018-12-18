@@ -72,7 +72,8 @@ int main() {
         a.accept(s); //wait client to connect
         
         for(;;) { //got a client
-            size_t n = s.read_some(buffer(buf,128), ec);
+            int n = s.read_some(buffer(buf,128), ec);
+            cout << "Buffer received message size: " << n << endl;
             buf[n] = '\0';
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
