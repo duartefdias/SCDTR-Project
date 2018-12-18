@@ -32,7 +32,7 @@ public:
 
     // More complex getters
     float getInstantaneousPowerConsumptionAtDesk(int desk);
-    double getElapsedTimeAtDesk(int desk);
+    std::string getElapsedTimeAtDesk(int desk);
 
     // Interpret client request and return response string
     std::string processRequest(char* request);

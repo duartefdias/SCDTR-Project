@@ -128,11 +128,14 @@ float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
     //do something
 }
 
-double Data::getElapsedTimeAtDesk(int desk){
+std::string Data::getElapsedTimeAtDesk(int desk){
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff = end-start;
     std::cout << "Elapsed time: " << diff.count() << " seconds" << std::endl;
-    return diff.count;
+    stringstream output;
+    output << diff.count();
+    string response = output.str();
+    return response;
 }
 
 std::string Data::processRequest(char* request){
@@ -176,7 +179,7 @@ std::string Data::processRequest(char* request){
                     break;
                 case 't':
                     // ToDo: edit this
-                    response = "t " + std::to_string(arduino+1) + " " + std::to_string(this->getElapsedTimeAtDesk(arduino));
+                    response = "t " + std::to_string(arduino+1) + " " + this->getElapsedTimeAtDesk(arduino);
                     break;
                 case 'e':
                     // ToDo: edit this
