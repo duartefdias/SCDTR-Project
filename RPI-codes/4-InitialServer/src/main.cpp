@@ -17,9 +17,6 @@ const int SERVER_PORT = 123;
 
 //void respondToClient()
 
-// Start clock (t=0)
-auto start = std::chrono::system_clock::now();
-
 void i2cFunction(I2cFunctions i2c, Data* database){
     i2c.readLoop(database);
 }
@@ -29,7 +26,7 @@ int main() {
     std::cout << "Hello from main.cpp" << std::endl;
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff = end-start;
-    std::cout << "Elapsed time: " << diff.count() << std::endl;
+    std::cout << "Elapsed time: " << diff.count() << " seconds" << std::endl;
 
     io_service io;
     boost::system::error_code ec;

@@ -11,6 +11,9 @@ Data::Data(int nDesks = 2) {
     numberOfDesks = nDesks;
     dataAvailability = 1;
 
+    // Start clock (t=0)
+    start = std::chrono::system_clock::now();
+
     // Allocate 2D matrix to store measured luxs values
     measuredLuxs.assign(nDesks, vector < float >(1, 987));
 
@@ -125,6 +128,13 @@ float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
     //do something
 }
 
+double Data::getElapsedTimeAtDesk(int desk){
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff = end-start;
+    std::cout << "Elapsed time: " << diff.count() << " seconds" << std::endl;
+    return diff.count;
+}
+
 std::string Data::processRequest(char* request){
     std::string response = "";
 
@@ -166,7 +176,7 @@ std::string Data::processRequest(char* request){
                     break;
                 case 't':
                     // ToDo: edit this
-                    
+                    response = "t " + std::to_string(arduino+1) + " " + std::to_string(this->getElapsedTimeAtDesk(arduino));
                     break;
                 case 'e':
                     // ToDo: edit this
