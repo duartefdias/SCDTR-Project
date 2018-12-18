@@ -141,11 +141,11 @@ std::string Data::processRequest(char* request){
         case 'g':
             switch(request[2]){
                 case 'l':
-                    response = "l " + std::to_string(arduino) + " " + std::to_string(this->getLastLuxValueArduino(arduino));
+                    response = "l " + std::to_string(arduino+1) + " " + std::to_string(this->getLastLuxValueArduino(arduino));
                     cout << "Response: " << response << endl;
                     break;
                 case 'd':
-                    response = std::to_string(this->getcurrentPwmAtDesk(arduino));
+                    response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getcurrentPwmAtDesk(arduino));
                     break;
                 case 's':
                     response = std::to_string(this->getOccupancyAtDesk(arduino));
