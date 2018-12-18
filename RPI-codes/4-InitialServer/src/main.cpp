@@ -21,7 +21,7 @@ void i2cFunction(I2cFunctions i2c, Data* database){
     i2c.readLoop(database);
 }
 
-void connectToClient(tcp::socket s, Database database){
+void connectToClient(tcp::socket s, Data* database){
     for(;;) { //got a client
             boost::system::error_code ec;
             char buf[128];
@@ -72,7 +72,7 @@ int main() {
         a.accept(s);
         
         // Create new socket in new thread to allow more clients to connect
-        std::thread clientResponseThread(connectToClient, s, database);
+        std::thread clientResponseThread(connectToClient, s, &database);
     }
 
     clientResponseThread.join();
