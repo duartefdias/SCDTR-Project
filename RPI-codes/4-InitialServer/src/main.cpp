@@ -28,7 +28,7 @@ int main() {
 
     std::cout << "Hello from main.cpp" << std::endl;
     clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    double elapsed_secs = (end - begin) / CLOCKS_PER_SEC;
     std::cout << "Elapsed time: " << elapsed_secs << endl;
 
     io_service io;
