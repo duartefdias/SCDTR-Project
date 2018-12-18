@@ -2,7 +2,7 @@
 #include <boost/asio.hpp>
 #include <string>
 #include <thread>
-#include <ctime>
+#include <chrono>
 
 #include "../headers/i2cFunctions.h"
 #include "../headers/data.h"
@@ -18,7 +18,7 @@ const int SERVER_PORT = 123;
 //void respondToClient()
 
 // Start clock (t=0)
-clock_t begin = clock();
+auto start = std::chrono::system_clock::now();
 
 void i2cFunction(I2cFunctions i2c, Data* database){
     i2c.readLoop(database);
@@ -27,9 +27,8 @@ void i2cFunction(I2cFunctions i2c, Data* database){
 int main() {
 
     std::cout << "Hello from main.cpp" << std::endl;
-    clock_t end = clock();
-    double elapsed_secs = (end - begin) / CLOCKS_PER_SEC;
-    std::cout << "Elapsed time: " << elapsed_secs << endl;
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff = end-start;
 
     io_service io;
     boost::system::error_code ec;
