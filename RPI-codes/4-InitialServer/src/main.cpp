@@ -73,8 +73,6 @@ int main() {
         
         for(;;) { //got a client
             int n = s.read_some(buffer(buf,128), ec);
-            cout << "Buffer received message size: " << n << endl;
-            buf[n] = '\0';
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
             //cout << "Buffer message sent to client: " << database.processRequest(buf) << endl;
