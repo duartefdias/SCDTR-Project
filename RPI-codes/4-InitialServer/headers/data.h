@@ -34,6 +34,9 @@ public:
     float getInstantaneousPowerConsumptionAtDesk(int desk);
     std::string getElapsedTimeAtDesk(int desk);
 
+    //Reset system
+    void reset();
+
     // Interpret client request and return response string
     std::string processRequest(char* request);
 

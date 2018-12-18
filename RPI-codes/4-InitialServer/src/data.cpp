@@ -138,6 +138,31 @@ std::string Data::getElapsedTimeAtDesk(int desk){
     return response;
 }
 
+// Reset system
+void Data::reset(){
+    // Start clock (t=0)
+    start = std::chrono::system_clock::now();
+
+    // Allocate 2D matrix to store measured luxs values
+    measuredLuxs.assign(numberOfDesks, vector < float >(1, 987));
+
+    // Allocate 3D matrix to store apllied pwm values
+    appliedPwm.assign(numberOfDesks, vector < float >(1, 789));
+    
+    // Allocate occupancy vector
+    occupancyDesk.resize(numberOfDesks, 1);
+
+    // Allocate lower bounds vector
+    luxLowerBound.resize(numberOfDesks, 50);
+
+    // Allocate external illuminance vector
+    luxExternal.resize(numberOfDesks, 150);
+
+    // Allocate illuminance control reference vector
+    luxControlReference.resize(numberOfDesks, 60);
+}
+
+
 std::string Data::processRequest(char* request){
     std::string response = "";
 
@@ -199,6 +224,8 @@ std::string Data::processRequest(char* request){
             break;
         case 'r':
             //ToDo
+            this->reset();
+            response = "ack";
             break;
         case 'b':
             //ToDo
