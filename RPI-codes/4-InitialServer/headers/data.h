@@ -38,7 +38,7 @@ public:
     std::string processRequest(char* request);
 
 private:
-    std::chrono::time_point start;
+    std::chrono::time_point<std::chrono::system_clock> start;
     int numberOfDesks = 0;
     int dataAvailability = 0;
     vector< vector<float> > measuredLuxs;
