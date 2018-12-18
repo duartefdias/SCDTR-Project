@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <time.h>
+#include <chrono>
 
 using namespace std;
 
@@ -31,11 +32,13 @@ public:
 
     // More complex getters
     float getInstantaneousPowerConsumptionAtDesk(int desk);
+    std::string getElapsedTimeAtDesk(int desk);
 
     // Interpret client request and return response string
     std::string processRequest(char* request);
 
 private:
+    std::chrono::time_point<std::chrono::system_clock> start;
     int numberOfDesks = 0;
     int dataAvailability = 0;
     vector< vector<float> > measuredLuxs;

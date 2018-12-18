@@ -11,6 +11,9 @@ Data::Data(int nDesks = 2) {
     numberOfDesks = nDesks;
     dataAvailability = 1;
 
+    // Start clock (t=0)
+    start = std::chrono::system_clock::now();
+
     // Allocate 2D matrix to store measured luxs values
     measuredLuxs.assign(nDesks, vector < float >(1, 987));
 
@@ -125,6 +128,16 @@ float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
     //do something
 }
 
+std::string Data::getElapsedTimeAtDesk(int desk){
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff = end-start;
+    std::cout << "Elapsed time: " << diff.count() << " seconds" << std::endl;
+    stringstream output;
+    output << diff.count();
+    string response = output.str();
+    return response;
+}
+
 std::string Data::processRequest(char* request){
     std::string response = "";
 
@@ -133,7 +146,7 @@ std::string Data::processRequest(char* request){
     strValue << request[4];
     int arduino;
     strValue >> arduino;
-    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!";}
+    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!                                 ";}
     arduino = arduino - 1; // Because of indexes
     // End of convertion
 
@@ -141,31 +154,31 @@ std::string Data::processRequest(char* request){
         case 'g':
             switch(request[2]){
                 case 'l':
-                    response = std::to_string(this->getLastLuxValueArduino(arduino));
+                    response = "l " + std::to_string(arduino+1) + " " + std::to_string(this->getLastLuxValueArduino(arduino));
                     cout << "Response: " << response << endl;
                     break;
                 case 'd':
-                    response = std::to_string(this->getcurrentPwmAtDesk(arduino));
+                    response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getcurrentPwmAtDesk(arduino));
                     break;
                 case 's':
-                    response = std::to_string(this->getOccupancyAtDesk(arduino));
+                    response = "s " + std::to_string(arduino+1) + " " + std::to_string(this->getOccupancyAtDesk(arduino));
                     break;
                 case 'L':
-                    response = std::to_string(this->getLuxLowerBoundAtDesk(arduino));
+                    response = "L " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxLowerBoundAtDesk(arduino));
                     break;
                 case 'o':
-                    response = std::to_string(this->getLuxExternalAtDesk(arduino));
+                    response = "o " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxExternalAtDesk(arduino));
                     break;
                 case 'r':
-                    response = std::to_string(this->getLuxControlReference(arduino));
+                    response = "r " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxControlReference(arduino));
                     break;
                 case 'p':
                     // ToDo: edit this
-                    response = std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
+                    if(request[4] == 'T')
+                        response = "p " + std::to_string(arduino+1) + " " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
                     break;
                 case 't':
-                    // ToDo: edit this
-                    
+                    response = "t " + std::to_string(arduino+1) + " " + this->getElapsedTimeAtDesk(arduino);
                     break;
                 case 'e':
                     // ToDo: edit this
@@ -189,6 +202,14 @@ std::string Data::processRequest(char* request){
             break;
         case 'b':
             //ToDo
+            switch(request[2]){
+                case 'i':
+                    // Get all lux values in last minute
+                    break;
+                case 'd':
+                    // Gett all pwm values in last minute
+                    break;
+            }
             break;
         case 's':
             //ToDo
@@ -197,6 +218,6 @@ std::string Data::processRequest(char* request){
             response = "Invalid request";
     }
     
-    response = response + "              ";
+    response = response + "                                  ";
     return response;
 }
