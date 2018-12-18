@@ -148,20 +148,21 @@ std::string Data::processRequest(char* request){
                     response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getcurrentPwmAtDesk(arduino));
                     break;
                 case 's':
-                    response = std::to_string(this->getOccupancyAtDesk(arduino));
+                    response = "s " + std::to_string(arduino+1) + " " + std::to_string(this->getOccupancyAtDesk(arduino));
                     break;
                 case 'L':
-                    response = std::to_string(this->getLuxLowerBoundAtDesk(arduino));
+                    response = "L " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxLowerBoundAtDesk(arduino));
                     break;
                 case 'o':
-                    response = std::to_string(this->getLuxExternalAtDesk(arduino));
+                    response = "o " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxExternalAtDesk(arduino));
                     break;
                 case 'r':
-                    response = std::to_string(this->getLuxControlReference(arduino));
+                    response = "r " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxControlReference(arduino));
                     break;
                 case 'p':
                     // ToDo: edit this
-                    response = std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
+                    if(request[4] == 'T')
+                        response = "p " + std::to_string(arduino+1) + " " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
                     break;
                 case 't':
                     // ToDo: edit this
@@ -189,6 +190,14 @@ std::string Data::processRequest(char* request){
             break;
         case 'b':
             //ToDo
+            switch(request[2]){
+                case 'i':
+                    // Get all lux values in last minute
+                    break;
+                case 'd':
+                    // Gett all pwm values in last minute
+                    break;
+            }
             break;
         case 's':
             //ToDo
