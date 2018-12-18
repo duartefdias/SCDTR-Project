@@ -30,7 +30,7 @@ void connectToClient(tcp::socket s, Data* database){
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
             //cout << "Buffer message sent to client: " << database.processRequest(buf) << endl;
-            write(s, buffer(database.processRequest(buf)), ec);
+            write(s, buffer(database->processRequest(buf)), ec);
             if(ec) break;
         } //kills connection
 }
