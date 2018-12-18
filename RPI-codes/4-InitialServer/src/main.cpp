@@ -21,6 +21,20 @@ void i2cFunction(I2cFunctions i2c, Data* database){
     i2c.readLoop(database);
 }
 
+void connectToClient(tcp::socket s){
+    for(;;) { //got a client
+            int n = s.read_some(buffer(buf,128), ec);
+            if(ec) break;
+            std::cout << "Received message: " << buf << std::endl;
+            //cout << "Buffer message sent to client: " << database.processRequest(buf) << endl;
+            write(s, buffer(database.processRequest(buf)), ec);
+            //write(s, buffer("                                    "), ec);
+            //write(s, buffer("\n",n), ec);
+            //write(s, buffer(buf,n), ec);
+            if(ec) break;
+        } //kills connection
+}
+
 int main() {
 
     std::cout << "Hello from main.cpp" << std::endl;
@@ -50,25 +64,20 @@ int main() {
     // Store values in database
     std::thread i2cThread(i2cFunction, i2c, &database);
 
-    // Create Networking "thread"
+    // Create Networking threads
     // Listen to client requests, fetch requested data and respond
     for (;;) {
-        tcp::socket s(io); //create new listening socket
-        a.accept(s); //wait client to connect
+        // Create new listening socket
+        tcp::socket s(io);
+
+        // Wait for a client to connect
+        a.accept(s);
         
-        for(;;) { //got a client
-            int n = s.read_some(buffer(buf,128), ec);
-            if(ec) break;
-            std::cout << "Received message: " << buf << std::endl;
-            //cout << "Buffer message sent to client: " << database.processRequest(buf) << endl;
-            write(s, buffer(database.processRequest(buf)), ec);
-            //write(s, buffer("                                    "), ec);
-            //write(s, buffer("\n",n), ec);
-            //write(s, buffer(buf,n), ec);
-            if(ec) break;
-        } //kills connection
+        // Create new socket in new thread to allow more clients to connect
+        std::thread clientResponseThread(connectToClient, s);
     }
 
+    clientResponseThread.join();
     i2cThread.join();
 
     return 0;
