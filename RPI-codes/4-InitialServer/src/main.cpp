@@ -75,7 +75,7 @@ int main() {
         std::thread clientResponseThread(connectToClient, s, &database);
     }
 
-    clientResponseThread.join();
+    //clientResponseThread.join();
     i2cThread.join();
 
     return 0;
