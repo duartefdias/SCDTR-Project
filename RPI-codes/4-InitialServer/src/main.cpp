@@ -76,7 +76,7 @@ int main() {
             if(ec) break;
             std::cout << "Received message: " << buf << std::endl;
             //cout << "Buffer message sent to client: " << database.processRequest(buf) << endl;
-            write(s, buffer(database.processRequest(buf)), ec);
+            write(s, database.processRequest(buf), ec);
             //write(s, buffer("                                    "), ec);
             //write(s, buffer("\n",n), ec);
             //write(s, buffer(buf,n), ec);
