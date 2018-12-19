@@ -81,6 +81,8 @@ void I2cFunctions::readLoop(Data* database) {
                     //printf("\tPWM: %f\n\n", pwm);
                     // Add value to database
                     database->setCurrentPwmAtDesk(pwm, (int)xfer.rxBuf[0]);
+                    // Accumulate energy consumption
+                    database->accumulateEnergy(pwm, (int)xfer.rxBuf[0]-1);
                     break;
                 // received lux reading
                 case 1:

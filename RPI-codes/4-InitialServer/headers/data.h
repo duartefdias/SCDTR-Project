@@ -24,14 +24,18 @@ public:
     void setOccupancyAtDesk(int value, int desk);
     int getOccupancyAtDesk(int desk);
     void setLuxLowerBoundAtDesk(float value, int desk);
-    int getLuxLowerBoundAtDesk(int desk);
+    float getLuxLowerBoundAtDesk(int desk);
     void setLuxExternalAtDesk(float value, int desk);
-    int getLuxExternalAtDesk(int desk);
+    float getLuxExternalAtDesk(int desk);
     void setLuxControlReference(float value, int desk);
-    int getLuxControlReference(int desk);
+    float getLuxControlReference(int desk);
+    void accumulateEnergy(float pwm, int desk);
 
     // More complex getters
     float getInstantaneousPowerConsumptionAtDesk(int desk);
+    float getInstantaneousPowerConsumption();
+    float getAccumulatedEnergyAtDesk(int desk);
+    float getAccumulatedEnergy();
     std::string getElapsedTimeAtDesk(int desk);
 
     //Reset system
