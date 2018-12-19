@@ -1,13 +1,3 @@
-//
-// server.cpp
-// ~~~~~~~~~~
-//
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -70,7 +60,7 @@ class tcp_server
 {
 public:
   tcp_server(boost::asio::io_service& io_service)
-    : acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 123 )
+    : acceptor_(io_service, tcp::endpoint(tcp::v4(), 13))
   {
     start_accept();
   }
