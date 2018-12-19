@@ -29,7 +29,8 @@ public:
     float getLuxExternalAtDesk(int desk);
     void setLuxControlReference(float value, int desk);
     float getLuxControlReference(int desk);
-    
+    std::string getLastMinuteLux(int desk);
+    std::string getLastMinutePWM(int desk);
 
     // More complex getters
     float getInstantaneousPowerConsumptionAtDesk(int desk);

@@ -127,6 +127,21 @@ float Data::getLuxControlReference(int desk) {
     return luxControlReference[desk];
 }
 
+std::string getLastMinuteLux(int desk) {
+    int N = measuredLuxs[desk];
+    std::string response = "b l " + std::to_string(desk) + " ";
+    for (int j=0; j<N; j++){
+        response = response + std::to_string(measuredLuxs[desk][j]);
+        if (j != N-1)
+            response = response + ",";
+    }
+    return response + "\n";
+}
+
+std::string getLastMinutePWM(int desk) {
+    return "b d ";
+
+}
 // More complex getters
 float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
     return this->getCurrentPwmAtDesk(desk)/5;
