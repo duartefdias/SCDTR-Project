@@ -99,7 +99,7 @@ void Data::setLuxLowerBoundAtDesk(float value, int desk) {
     }
 }
 
-int Data::getLuxLowerBoundAtDesk(int desk){
+float Data::getLuxLowerBoundAtDesk(int desk){
     return luxLowerBound[desk];
 }
 
@@ -109,7 +109,7 @@ void Data::setLuxExternalAtDesk(float value, int desk){
     }
 }
 
-int Data::getLuxExternalAtDesk(int desk){
+float Data::getLuxExternalAtDesk(int desk){
     return luxExternal[desk];
 }
 
@@ -119,14 +119,38 @@ void Data::setLuxControlReference(float value, int desk){
     }
 }
 
-int Data::getLuxControlReference(int desk) {
+float Data::getLuxControlReference(int desk) {
     return luxControlReference[desk];
 }
 
 // More complex getters
 float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
-    //do something
     return this->getCurrentPwmAtDesk(desk)/5;
+}
+
+float Data::getInstantaneousPowerConsumption(){
+    float powr = 0;
+    for(int j=0; j < this->numberOfDesks; j++){
+        power += this->getInstantaneousPowerConsumptionAtDesk(j);
+    }
+    return powr;
+}
+
+void Data::accumulateEnergy(float pwm, int desk){
+    // Energy = power*time
+    accumulatedEnergyConsumption[desk] += pwm/5*0.005; //Period = 0.005 secs
+}
+
+float getAccumulatedEnergyAtDesk(int desk){
+    return accumulatedEnergyConsumption[desk];
+}
+
+float getAccumulatedEnergy(){
+    float energy = 0;
+    for (int j=0; j < this->numberOfDesks; j++){
+        energy += this->getAccumulatedEnergy(j);
+    }
+    return energy;
 }
 
 std::string Data::getElapsedTimeAtDesk(int desk){
@@ -200,16 +224,20 @@ std::string Data::processRequest(char* request){
                     break;
                 case 'p':
                     // ToDo: edit this
-                    if(request[4] == 'T')
-                        response = "p T " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
-                    else 
+                    if(request[4] == 'T') {
+                        printf("Power request received\n");
+                        response = "p T " + std::to_string(this->getInstantaneousPowerConsumption());
+                    } else {
                         response = "p " + std::to_string(arduino+1) + " " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
+                    }
                     break;
                 case 't':
                     response = "t " + std::to_string(arduino+1) + " " + this->getElapsedTimeAtDesk(arduino);
                     break;
                 case 'e':
                     // ToDo: edit this
+                    // getAccumulatedEnergyAtDesk(arduino)
+                    // getAccumulatedEnergy()
                     
                     break;
                 case 'c':
