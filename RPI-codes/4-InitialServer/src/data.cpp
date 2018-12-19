@@ -157,6 +157,24 @@ float Data::getAccumulatedEnergy(){
     return energy;
 }
 
+float Data::getComfortErrorAtDesk(int desk){
+    int N = measuredLuxs[desk].size();
+    printf("Number of samples to compare: %d\n", N);
+    float cError = 0;
+    for (int i=0; i<N; i++) {
+         cError += fmax(luxLowerBound[desk] - measuredLuxs[desk][i], 0);
+    }
+    return cError/N;
+}
+
+float Data::getTotalComfortError(){
+    float totalError = 0;
+    for(int j=0; j < this->numberOfDesks; j++){
+        totalError += this->getComfortErrorAtDesk(j);
+    }
+    return totalError;
+}
+
 std::string Data::getElapsedTimeAtDesk(int desk){
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff = end-start;
@@ -245,8 +263,10 @@ std::string Data::processRequest(char* request){
                         response = "e " + std::to_string(arduino+1) + " " + std::to_string(this->getAccumulatedEnergyAtDesk(arduino));                    
                     break;
                 case 'c':
-                    // ToDo: edit this
-                    
+                    if(request[4] == 'T')
+                        response = "c T " + std::to_string(this->getTotalComfortError());
+                    else
+                        response = "c " + std::to_string(arduino+1) + " " + std::to_string(this->getComfortErrorAtDesk(arduino));                    
                     break;
                 case 'v':
                     // ToDo: edit this

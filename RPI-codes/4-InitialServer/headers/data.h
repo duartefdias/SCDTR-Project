@@ -29,14 +29,18 @@ public:
     float getLuxExternalAtDesk(int desk);
     void setLuxControlReference(float value, int desk);
     float getLuxControlReference(int desk);
-    void accumulateEnergy(float pwm, int desk);
 
     // More complex getters
     float getInstantaneousPowerConsumptionAtDesk(int desk);
     float getInstantaneousPowerConsumption();
+    void accumulateEnergy(float pwm, int desk);
     float getAccumulatedEnergyAtDesk(int desk);
     float getAccumulatedEnergy();
     std::string getElapsedTimeAtDesk(int desk);
+
+    // Performance metrics
+    float getComfortErrorAtDesk(int desk);
+    float getTotalComfortError();
 
     //Reset system
     void reset();
