@@ -6,30 +6,20 @@
 
 float rho = 0.07;
 
-// Initialize my_node
-void consensusSetup(){
-  if (own_addr == 1){
-    my_node.set(own_addr-1, G0(refValue), k12, 1, noise, refValue, Nodes);
-    
-  } else if (own_addr == 2){
-    my_node.set(own_addr-1, k21, G0(refValue), 1, noise, refValue, Nodes);
-  }
-}
-
 // Compute optimal solution with consensus algorithm
 struct solution consensus_algorithm(){
   int i, l=0;
   struct solution sol;  
   
   // Reset node values
-  set_array(my_node.d, 0, my_node.N);     // my_node.d[0] = 0; my_node.d[1] = 0;    
+  set_array(my_node.d, 0, my_node.N);        
   set_array(my_node.d_av, 0, my_node.N); 
   set_array(my_node.y, 0, my_node.N);
   
   Serial.print("BEGINNING CONSENSUS. My node:");
-  Serial.print(" i-1=");  Serial.print(my_node.index);
-  Serial.print(" ki1=");  Serial.print(my_node.k[0]);
-  Serial.print(" ki2=");  Serial.print(my_node.k[1]);
+  Serial.print(" i=");  Serial.print(my_node.index);
+  Serial.print(" k"); Serial.print(my_node.index+1); Serial.print("1=");  Serial.print(my_node.k[0]);
+  Serial.print(" k"); Serial.print(my_node.index+1); Serial.print("2=");  Serial.print(my_node.k[1]);
   Serial.print(" n=");  Serial.print(my_node.n);
   Serial.print(" m=");  Serial.print(my_node.m);
   Serial.print(" c=");  Serial.print(my_node.c);
@@ -41,7 +31,7 @@ struct solution consensus_algorithm(){
   {
     // Compute own solution and send
     sol = primal_solve(my_node,rho);
-    copy_array(sol.d, my_node.d, my_node.N); //    my_node.d[0] = sol.d[0];    my_node.d[1] = sol.d[1];
+    copy_array(sol.d, my_node.d, my_node.N);
     Serial.print("SEND: "); Serial.print(my_node.d[0]); Serial.print(" "); Serial.println(my_node.d[1]);
     sendNegotiation(my_node.d, my_node.N);
 
@@ -53,26 +43,20 @@ struct solution consensus_algorithm(){
         Negotiation = 0;
         break;
       }
-      //Serial.println("stuck");        
     }
     ReceivedSolution = false;      
 
     // Compute averages using the received information
-    //my_node.d_av[0] = (my_node.d[0]+other_solution.d[0])/2;
-    //my_node.d_av[1] = (my_node.d[1]+other_solution.d[1])/2;
     for (int j=0; j<my_node.N; j++){
       my_node.d_av[j] = (my_node.d[j]+other_solution.d[j])/2;
     }
     
     // Update local lagrangians
-    //my_node.y[0] = my_node.y[0] + rho*(my_node.d[0]-my_node.d_av[0]);
-    //my_node.y[1] = my_node.y[1] + rho*(my_node.d[1]-my_node.d_av[1]);
     for (int j=0; j<my_node.N; j++){
       my_node.y[j] = my_node.y[j] + rho*(my_node.d[j]-my_node.d_av[j]);
     }
     
-    if (max_abs_diff(my_node.d, other_solution.d, my_node.N) < 0.01 || !Negotiation){
-    //((abs(my_node.d[0]-other_solution.d[0]) < 0.02 && abs(other_solution.d[1]-my_node.d[1]) < 0.02) || !Negotiation){
+    if (max_abs_diff(my_node.d, other_solution.d, my_node.N) < 0.005 || !Negotiation){
       Negotiation = 0;
       break;
     }
@@ -82,8 +66,7 @@ struct solution consensus_algorithm(){
   sendNegotiationState(Negotiation);
   sendNegotiationState(Negotiation);
   Serial.print("Consensus at iteration ");  Serial.println(i);
-  copy_array(my_node.d, sol.d, my_node.N);   //  sol.d[0] = my_node.d[0]; sol.d[1] = my_node.d[1];
-  
+  copy_array(my_node.d, sol.d, my_node.N);  
   return sol;
 }
 
@@ -112,7 +95,7 @@ struct solution primal_solve(Node node, float rho){
   if (sol_unconstrained){
     cost_unconstrained = evaluate_cost(node, d_u, rho);
     if (cost_unconstrained < cost_best) {
-      copy_array(d_u, sol.d, node.N);//      sol.d[0] = d_u[0]; sol.d[1] = d_u[1];
+      copy_array(d_u, sol.d, node.N);
       sol.cost = cost_unconstrained;
       return sol;  // If solution exists, then it is optimal, can return now   
     }
@@ -120,13 +103,12 @@ struct solution primal_solve(Node node, float rho){
 
   // Compute minimum constrained by linear boundary - S1
   for(int j=0; j<node.N; j++)
-    d_b1[j] = z[j]/rho - (node.k[j]/node.n) * (node.o-node.L+(1/rho)*(dot_product(node.k, z, node.N))); //node.k[0]*z[0]+node.k[1]*z[1]));
-  //d_b1[1] = z[1]/rho - (node.k[1]/node.n) * (node.o-node.L+(1/rho)*(dot_product(node.k, z, node.N))); //(node.k[0]*z[0]+node.k[1]*z[1]));
+    d_b1[j] = z[j]/rho - (node.k[j]/node.n) * (node.o-node.L+(1/rho)*(dot_product(node.k, z, node.N)));
   sol_boundary_linear = check_feasibility(node, d_b1);
   if (sol_boundary_linear){
     cost_boundary_linear = evaluate_cost(node, d_b1, rho); 
     if (cost_boundary_linear < cost_best) {
-      copy_array(d_b1, d_best, node.N); //d_best[0] = d_b1[0]; d_best[1] = d_b1[1];
+      copy_array(d_b1, d_best, node.N); 
       cost_best = cost_boundary_linear;
     }
   }
@@ -139,7 +121,7 @@ struct solution primal_solve(Node node, float rho){
   if (sol_boundary_0){
     cost_boundary_0 = evaluate_cost(node,d_b0,rho);
     if (cost_boundary_0 < cost_best){
-      copy_array(d_b0, d_best, node.N); //d_best[0] = d_b0[0]; d_best[1] = d_b0[1];
+      copy_array(d_b0, d_best, node.N); 
       cost_best = cost_boundary_0;
     }
   }
@@ -152,7 +134,7 @@ struct solution primal_solve(Node node, float rho){
   if (sol_boundary_5){
     cost_boundary_5 = evaluate_cost(node, d_b1,rho);
     if (cost_boundary_5 < cost_best){
-      copy_array(d_b1, d_best, node.N);//      d_best[0] = d_b1[0]; d_best[1] = d_b1[1];
+      copy_array(d_b1, d_best, node.N);
       cost_best = cost_boundary_5;
     }
   }
@@ -167,7 +149,7 @@ struct solution primal_solve(Node node, float rho){
   if (sol_linear_0){
     cost_linear_0 = evaluate_cost(node, d_10,rho);
     if (cost_linear_0 < cost_best){
-      copy_array(d_10, d_best, node.N); //    d_best[0] = d_10[0]; d_best[1] = d_10[1];
+      copy_array(d_10, d_best, node.N);
       cost_best = cost_linear_0;
     }
   }
@@ -176,19 +158,19 @@ struct solution primal_solve(Node node, float rho){
   for(int j=0; j<node.N; j++)
     d_11[j] = (1/rho)*z[j] - 
               (1/node.m)*node.k[j]*(node.o-node.L + 5*node.k[node.index]) +
-              (1/rho/node.m)*node.k[j]*(node.k[node.index]*z[node.index]-dot_product(z, node.k, node.N)); //(z[0]*node.k[0]+z[1]*node.k[1]));
+              (1/rho/node.m)*node.k[j]*(node.k[node.index]*z[node.index]-dot_product(z, node.k, node.N)); 
   d_11[node.index] = 5;
   sol_linear_5 = check_feasibility(node, d_11);
   if (sol_linear_5){
     cost_linear_5 = evaluate_cost(node, d_11, rho);
     if (cost_linear_5 < cost_best){
-      copy_array(d_11, d_best, node.N); //   d_best[0] = d_11[0]; d_best[1] = d_11[1];
+      copy_array(d_11, d_best, node.N); 
       cost_best = cost_linear_5;
     }
   }
 
   // Return solution
-  copy_array(d_best, sol.d, node.N); //  sol.d[0] = d_best[0]; sol.d[1] = d_best[1];
+  copy_array(d_best, sol.d, node.N);
   sol.cost = cost_best;  
   return sol;
 }
@@ -204,7 +186,7 @@ bool check_feasibility(Node node, float d[]){
   if (d[node.index] > 5 + tol){   // above allowed dimming level
     return false;
   }
-  if (dot_product(d, node.k, node.N)  < node.L - node.o - tol){     // below lighting constraints -  d[0]*node.k[0]+d[1]*node.k[1]
+  if (dot_product(d, node.k, node.N)  < node.L - node.o - tol){     // below lighting constraints 
     return false;
   }
   return true;
@@ -212,8 +194,8 @@ bool check_feasibility(Node node, float d[]){
 
 // Evaluate the cost of a given solution d to Node n
 float evaluate_cost (Node n, float d[], float rho){
-  float r2 = 0; //n.y[0]*(d[0]-n.d_av[0]) + n.y[1]*(d[1]-n.d_av[1]);
-  float r3 = 0; //pow(d[0]-n.d_av[0],2) + pow(d[1]-n.d_av[1],2);  
+  float r2 = 0; 
+  float r3 = 0;
   for (int j=0; j<n.N; j++){
     r2 += n.y[j]*(d[j]-n.d_av[j]);
     r3 += pow(d[j]-n.d_av[j],2);

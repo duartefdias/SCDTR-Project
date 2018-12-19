@@ -132,7 +132,6 @@ void sendPWMRef(float pwmReff){
 }
 
 void sendNegotiationState(uint8_t state){
-  Serial.println();
   Wire.beginTransmission(0);//get BUS
   Wire.write(own_addr);
   Wire.write(7);  //message type

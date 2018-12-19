@@ -2,10 +2,10 @@
 #include "Node.h"
 
 
-Node::Node(int i, float ki1, float ki2, float ci, float oi, int Li, int num_Nodes){
+Node::Node(int i, float ki[], float ci, float oi, int Li, int num_Nodes){
   index = i;
-  k[0] = ki1;
-  k[1] = ki2;
+  for(int j=0; j<num_Nodes; j++)
+    k[j] = ki[j];
   n = 0;
   N = num_Nodes;
   for (int j=0; j < N; j++){
@@ -26,12 +26,13 @@ Node::updateGain(float kii){
   m = n - sq(k[index]);
 }
 
-Node::set(int i, float ki1, float ki2, float ci, float oi, int Li, int num_Nodes){
+Node::set(int i, float ki[], float ci, float oi, int Li, int num_Nodes){
   index = i;
-  k[0] = ki1;
-  k[1] = ki2;
-  n = 0;
   N = num_Nodes;
+  for (int j=0; j<N; j++){
+    k[j] = ki[j];
+  }
+  n = 0;
   for (int j=0; j < N; j++){
     n = n + sq(k[j]);
   }

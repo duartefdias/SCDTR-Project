@@ -6,7 +6,9 @@
 #include "constants.h"
 #include "globals.h"
 
-int debug = 0;
+int debug = 1;
+
+Node my_node(own_addr-1,ki,energyCost,-1,-1,Nodes);
 
 void setup() {
   // Setup pinmodes
@@ -33,12 +35,11 @@ void setup() {
     }
   }
   Serial.println(refValue);
+  my_node.L = refValue;
+  my_node.updateGain(G0(my_node.L));
   Negotiation = 1;
   sendNegotiationState(Negotiation);
   Serial.flush();
-
-  // Setup consensus protocol and setup my_node
-  consensusSetup();
 
   // TODO: some initial setup to do consensus and send initial values to server
 }
@@ -55,9 +56,8 @@ void loop() {
     u = mapfloat(u, 0, 5, 0, 255);
     analogWrite(LED1, u);
     
-    // Print and send Lux measurement
-    //Serial.print("Measured illuminance: ");
-    //Serial.println(measuredY);
+    // Print and send Lux measurement and pwm value
+    //Serial.print("Measured illuminance: "); Serial.println(measuredY);
     sendLuxReading(measuredY);
     sendPwm(u);
     flag = 0;
