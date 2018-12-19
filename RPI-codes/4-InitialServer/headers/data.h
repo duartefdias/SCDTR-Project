@@ -19,8 +19,8 @@ public:
     // Basic getters and setters
     void setLastLuxValueArduino(float value, int arduino);
     float getLastLuxValueArduino(int arduino);
-    void setcurrentPwmAtDesk(float value, int arduino);
-    float getcurrentPwmAtDesk(int arduino);
+    void setCurrentPwmAtDesk(float value, int arduino);
+    float getCurrentPwmAtDesk(int arduino);
     void setOccupancyAtDesk(int value, int desk);
     int getOccupancyAtDesk(int desk);
     void setLuxLowerBoundAtDesk(float value, int desk);

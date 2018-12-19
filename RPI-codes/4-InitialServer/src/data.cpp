@@ -62,7 +62,7 @@ float Data::getLastLuxValueArduino(int arduino) {
     return measuredLuxs[arduino][0];
 }
 
-void Data::setcurrentPwmAtDesk(float value, int desk){
+void Data::setCurrentPwmAtDesk(float value, int desk){
     
     desk = desk - 1;
 
@@ -79,7 +79,7 @@ void Data::setcurrentPwmAtDesk(float value, int desk){
     }
 }
 
-float Data::getcurrentPwmAtDesk(int desk){
+float Data::getCurrentPwmAtDesk(int desk){
     return appliedPwm[desk][0];
 }
 
@@ -126,6 +126,7 @@ int Data::getLuxControlReference(int desk) {
 // More complex getters
 float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
     //do something
+    return this->getCurrentPwmAtDesk(desk)/5;
 }
 
 std::string Data::getElapsedTimeAtDesk(int desk){
@@ -183,7 +184,7 @@ std::string Data::processRequest(char* request){
                     cout << "Response: " << response << endl;
                     break;
                 case 'd':
-                    response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getcurrentPwmAtDesk(arduino));
+                    response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getCurrentPwmAtDesk(arduino));
                     break;
                 case 's':
                     response = "s " + std::to_string(arduino+1) + " " + std::to_string(this->getOccupancyAtDesk(arduino));
@@ -200,6 +201,8 @@ std::string Data::processRequest(char* request){
                 case 'p':
                     // ToDo: edit this
                     if(request[4] == 'T')
+                        response = "p T " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
+                    else 
                         response = "p " + std::to_string(arduino+1) + " " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
                     break;
                 case 't':
