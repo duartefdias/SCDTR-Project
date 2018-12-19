@@ -333,10 +333,10 @@ std::string Data::processRequest(char* request){
         case 'b':
             switch(request[2]){
                 case 'l':
-                    response = this->getLastMinuteLux();
+                    response = this->getLastMinuteLux(arduino);
                     break;
                 case 'd':
-                    response = this->getLastMinutePWM();
+                    response = this->getLastMinutePWM(arduino);
                     break;
             }
             break;
