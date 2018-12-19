@@ -60,7 +60,7 @@ class tcp_server
 {
 public:
   tcp_server(boost::asio::io_service& io_service)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), 13))
+    : acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 123))
   {
     start_accept();
   }

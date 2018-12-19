@@ -60,7 +60,7 @@ class tcp_server
 {
 public:
   tcp_server(boost::asio::io_service& io_service)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), 13))
+    : acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 123))
   {
     start_accept();
   }
@@ -91,16 +91,19 @@ private:
 
 int main()
 {
-  try
-  {
-    boost::asio::io_service io_service;
-    tcp_server server(io_service);
-    io_service.run();
+  while(1){
+    try
+    {
+      boost::asio::io_service io_service;
+      tcp_server server(io_service);
+      io_service.run();
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+    }
   }
-  catch (std::exception& e)
-  {
-    std::cerr << e.what() << std::endl;
-  }
+  
 
   return 0;
 }
