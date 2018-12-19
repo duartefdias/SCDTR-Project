@@ -209,7 +209,7 @@ float Data::getComfortFlickerAtDesk(int desk){
         v1 = measuredLuxs[desk][i]-measuredLuxs[desk][i-1];
         v2 = measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2];
         if (v1 * v2 < 0) {
-            cFlicker += (std::abs(v1) + std::(v2)) / (2*Ts);
+            cFlicker += (std::abs(v1) + std::abs(v2)) / (2*Ts);
         }
         else {
             cFlicker += 0;
