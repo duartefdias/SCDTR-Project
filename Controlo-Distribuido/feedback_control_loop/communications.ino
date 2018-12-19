@@ -81,7 +81,7 @@ void sendLuxReading(float luxReading){
 
 void sendNegotiation(float pwmValues[], int N){
   uint8_t pwmNegotiation;
-  byte buf[3+N];
+  byte buf[10];
   buf[0] = own_addr;
   buf[1] = 2;  //message type
   buf[2] = N;
@@ -141,7 +141,6 @@ void sendPWMRef(float pwmReff){
 
 void sendNegotiationState(uint8_t state){
   byte buf[3];
-  Serial.println();
   buf[0] = own_addr;
   buf[1] = 7;
   buf[2] = state;

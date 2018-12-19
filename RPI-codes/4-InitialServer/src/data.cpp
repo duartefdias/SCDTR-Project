@@ -32,6 +32,10 @@ Data::Data(int nDesks = 2) {
     // Allocate illuminance control reference vector
     luxControlReference.resize(nDesks, 60);
 
+    // Allocate power metrics
+    accumulatedEnergyConsumption.resize(nDesks, 0);
+    accumulatedComfortError.resize(nDesks, 0);
+    accumulatedComfortFlicker.resize(nDesks, 0);
 }
 
 int Data::getAvailability() {
@@ -131,7 +135,7 @@ float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
 float Data::getInstantaneousPowerConsumption(){
     float powr = 0;
     for(int j=0; j < this->numberOfDesks; j++){
-        power += this->getInstantaneousPowerConsumptionAtDesk(j);
+        powr += this->getInstantaneousPowerConsumptionAtDesk(j);
     }
     return powr;
 }
@@ -141,11 +145,11 @@ void Data::accumulateEnergy(float pwm, int desk){
     accumulatedEnergyConsumption[desk] += pwm/5*0.005; //Period = 0.005 secs
 }
 
-float getAccumulatedEnergyAtDesk(int desk){
+float Data::getAccumulatedEnergyAtDesk(int desk){
     return accumulatedEnergyConsumption[desk];
 }
 
-float getAccumulatedEnergy(){
+float Data::getAccumulatedEnergy(){
     float energy = 0;
     for (int j=0; j < this->numberOfDesks; j++){
         energy += this->getAccumulatedEnergy(j);
