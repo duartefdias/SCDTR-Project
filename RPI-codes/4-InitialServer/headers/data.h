@@ -50,6 +50,9 @@ private:
     std::vector <float> luxLowerBound;
     std::vector <float> luxExternal;
     std::vector <float> luxControlReference;
+    float accumulatedEnergyConsumption = 0;
+    float accumulatedComfortError = 0;
+    float accumulatedComfortFlicker = 0;
 };
 
 #endif //DATA_H

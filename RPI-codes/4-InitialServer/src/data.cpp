@@ -85,7 +85,7 @@ float Data::getCurrentPwmAtDesk(int desk){
 
 void Data::setOccupancyAtDesk(int value, int desk) {
     if(value == 0 || value == 1){
-        occupancyDesk[desk] = value;
+        occupancyDesk[desk-1] = value;
     }
 }
 
@@ -95,7 +95,7 @@ int Data::getOccupancyAtDesk(int desk){
 
 void Data::setLuxLowerBoundAtDesk(float value, int desk) {
     if(value > 0 && value < 400){
-        luxLowerBound[desk] = value;
+        luxLowerBound[desk-1] = value;
     }
 }
 
@@ -105,7 +105,7 @@ int Data::getLuxLowerBoundAtDesk(int desk){
 
 void Data::setLuxExternalAtDesk(float value, int desk){
     if(value >= 0 && value < 100){
-        luxExternal[desk] = value;
+        luxExternal[desk-1] = value;
     }
 }
 
@@ -115,7 +115,7 @@ int Data::getLuxExternalAtDesk(int desk){
 
 void Data::setLuxControlReference(float value, int desk){
     if(value >= 0 && value <= 10){
-        luxControlReference[desk] = value;
+        luxControlReference[desk-1] = value;
     }
 }
 
