@@ -26,11 +26,11 @@ int main() {
 
     std::cout << "Hello from main.cpp" << std::endl;
 
-    io_service io;
-    tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 123);
+    //io_service io;
+    //tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 123);
 
     std::cout << "Listening at: " << ep << std::endl;
-    tcp::acceptor a(io, ep);
+    //tcp::acceptor a(io, ep);
 
     // Initialize i2cReading module
     I2cFunctions i2c;
@@ -51,11 +51,16 @@ int main() {
 
     // Create Networking threadss
     // Listen to client requests, fetch requested data and respond
-    for (;;) {
-        boost::asio::io_service io_service;
-        tcp_server server(io_service);
-        io_service.run();
-    }
+    try
+  {
+    boost::asio::io_service io_service;
+    tcp_server server = (io_service);
+    io_service.run();
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
 
     //clientResponseThread.join();
     i2cThread.join();
