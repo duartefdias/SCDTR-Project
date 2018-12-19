@@ -127,8 +127,8 @@ float Data::getLuxControlReference(int desk) {
     return luxControlReference[desk];
 }
 
-std::string getLastMinuteLux(int desk) {
-    int N = measuredLuxs[desk];
+std::string Data::getLastMinuteLux(int desk) {
+    int N = measuredLuxs[desk].size();
     std::string response = "b l " + std::to_string(desk) + " ";
     for (int j=0; j<N; j++){
         response = response + std::to_string(measuredLuxs[desk][j]);
@@ -138,7 +138,7 @@ std::string getLastMinuteLux(int desk) {
     return response + "\n";
 }
 
-std::string getLastMinutePWM(int desk) {
+std::string Data::getLastMinutePWM(int desk) {
     return "b d ";
 
 }
@@ -199,7 +199,7 @@ float Data::getComfortFlickerAtDesk(int desk){
     float cFlicker = 0;
     for (int i=2; i<N; i++) {
         if ((measuredLuxs[desk][i]-measuredLuxs[desk][i-1]) * (measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2]) < 0) {
-            cFlicker += (abs(measuredLuxs[desk][i]-measuredLuxs[desk][i-1]) + abs(measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2])) / (2*Ts);
+            cFlicker += (std::abs(measuredLuxs[desk][i]-measuredLuxs[desk][i-1]) + std::abs(measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2])) / (2*Ts);
         }
         else {
             cFlicker += 0;
