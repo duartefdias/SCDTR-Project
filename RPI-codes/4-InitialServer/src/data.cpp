@@ -152,7 +152,7 @@ float Data::getAccumulatedEnergyAtDesk(int desk){
 float Data::getAccumulatedEnergy(){
     float energy = 0;
     for (int j=0; j < this->numberOfDesks; j++){
-        energy += this->getAccumulatedEnergy(j);
+        energy += this->getAccumulatedEnergyAtDesk(j);
     }
     return energy;
 }
