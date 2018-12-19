@@ -104,7 +104,7 @@ int Data::getLuxLowerBoundAtDesk(int desk){
 }
 
 void Data::setLuxExternalAtDesk(float value, int desk){
-    if(value > 0 && value < 1000){
+    if(value >= 0 && value < 100){
         luxExternal[desk] = value;
     }
 }
@@ -114,7 +114,7 @@ int Data::getLuxExternalAtDesk(int desk){
 }
 
 void Data::setLuxControlReference(float value, int desk){
-    if(value > 0 && value < 1000){
+    if(value >= 0 && value <= 10){
         luxControlReference[desk] = value;
     }
 }

@@ -45,7 +45,7 @@ private:
     int numberOfDesks = 0;
     int dataAvailability = 0;
     vector< vector<float> > measuredLuxs;
-     vector< vector<float> > appliedPwm;
+    vector< vector<float> > appliedPwm;
     std::vector <int> occupancyDesk;
     std::vector <float> luxLowerBound;
     std::vector <float> luxExternal;

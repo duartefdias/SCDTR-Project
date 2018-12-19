@@ -103,7 +103,7 @@ void I2cFunctions::readLoop(Data* database) {
                 case 3:
                     printf("Arduino %d ", xfer.rxBuf[0]);
                     printf("\tOccupancy: %d\n\n", xfer.rxBuf[2]);
-                    database->setOccupancyAtDesk(xfer.rxBuf[2], (int)xfer.rxBuf[0]);
+                    database->setOccupancyAtDesk((int)xfer.rxBuf[2], (int)xfer.rxBuf[0]);
                     break;
                 // lux lower bound
                 case 4:
