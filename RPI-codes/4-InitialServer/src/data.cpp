@@ -69,9 +69,9 @@ void Data::setCurrentPwmAtDesk(float value, int desk){
     // Insert new measured value at beggining of appliedPwm vector
     appliedPwm[desk].insert(appliedPwm[desk].begin(), value);
 
-    for(int i = 0; i <  appliedPwm[desk].size(); i++){
+    /*for(int i = 0; i <  appliedPwm[desk].size(); i++){
         cout << "Value in position " << i << ": " << appliedPwm[desk][i] << endl;
-    }
+    }*/
 
     // If vector has more than 10 elements remove last one
     if(appliedPwm[desk].size() > 10){
