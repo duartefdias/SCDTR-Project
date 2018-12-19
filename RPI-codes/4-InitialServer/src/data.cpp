@@ -138,10 +138,17 @@ std::string Data::getLastMinuteLux(int desk) {
     return response + "\n";
 }
 
-std::string Data::getLastMinutePWM(int desk) {
-    return "b d ";
-
+std::string Data::getLastMinutePWM(int desk) {    
+    int N = appliedPwm[desk].size();
+    std::string response = "b d " + std::to_string(desk) + " ";
+    for (int j=0; j<N; j++){
+        response = response + std::to_string(appliedPwm[desk][j]);
+        if (j != N-1)
+            response = response + ",";
+    }
+    return response + "\n";
 }
+
 // More complex getters
 float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
     return this->getCurrentPwmAtDesk(desk)/5;
