@@ -49,8 +49,8 @@ private:
   {
   }
 
-  void handle_write(const boost::system::error_code&,
-      size_t 100)
+  void handle_write(const boost::system::error_code& /*error*/,
+      size_t /*bytes_transferred*/)
   {
   }
 
@@ -64,7 +64,7 @@ class tcp_server
 {
 public:
   tcp_server(boost::asio::io_service& io_service)
-    : acceptor_(io_service, tcp::endpoint(ip::address::from_string("127.0.0.1"), 123))
+    : acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 123 ))
   {
     start_accept();
   }
