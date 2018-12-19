@@ -6,6 +6,7 @@
 
 #include "../headers/i2cFunctions.h"
 #include "../headers/data.h"
+#include "../headers/server.h"
 
 using namespace std;
 using namespace boost::asio;
@@ -19,20 +20,6 @@ const int SERVER_PORT = 123;
 
 void i2cFunction(I2cFunctions i2c, Data* database){
     i2c.readLoop(database);
-}
-
-void connectToClient(tcp::socket s, Data* database){
-    for(;;) { //got a client
-            boost::system::error_code ec;
-            char buf[128];
-
-            int n = s.read_some(buffer(buf,128), ec);
-            if(ec) break;
-            std::cout << "Received message: " << buf << std::endl;
-            //cout << "Buffer message sent to client: " << database.processRequest(buf) << endl;
-            write(s, buffer(database->processRequest(buf)), ec);
-            if(ec) break;
-        } //kills connection
 }
 
 int main() {
@@ -65,14 +52,9 @@ int main() {
     // Create Networking threads
     // Listen to client requests, fetch requested data and respond
     for (;;) {
-        // Create new listening socket
-        tcp::socket s(io);
-
-        // Wait for a client to connect
-        a.accept(s);
-        
-        // Create new socket in new thread to allow more clients to connect
-        std::thread clientResponseThread(connectToClient, s, &database);
+        boost::asio::io_service io_service;
+        tcp_server server(io_service);
+        io_service.run();
     }
 
     //clientResponseThread.join();
