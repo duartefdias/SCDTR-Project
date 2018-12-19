@@ -239,10 +239,10 @@ std::string Data::processRequest(char* request){
                     response = "t " + std::to_string(arduino+1) + " " + this->getElapsedTimeAtDesk(arduino);
                     break;
                 case 'e':
-                    // ToDo: edit this
-                    // getAccumulatedEnergyAtDesk(arduino)
-                    // getAccumulatedEnergy()
-                    
+                    if(request[4] == 'T')
+                        response = "e T " + std::to_string(this->getAccumulatedEnergy());
+                    else 
+                        response = "e " + std::to_string(arduino+1) + " " + std::to_string(this->getAccumulatedEnergyAtDesk(arduino));                    
                     break;
                 case 'c':
                     // ToDo: edit this
