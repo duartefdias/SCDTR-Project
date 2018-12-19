@@ -1,3 +1,13 @@
+//
+// server.cpp
+// ~~~~~~~~~~
+//
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -15,8 +25,6 @@ std::string make_daytime_string()
   return ctime(&now);
 }
 
-
-//TCP_CONNECTION
 class tcp_connection
   : public boost::enable_shared_from_this<tcp_connection>
 {
@@ -49,8 +57,8 @@ private:
   {
   }
 
-  void handle_write(const boost::system::error_code&,
-      size_t 100)
+  void handle_write(const boost::system::error_code& /*error*/,
+      size_t /*bytes_transferred*/)
   {
   }
 
@@ -58,13 +66,11 @@ private:
   std::string message_;
 };
 
-
-// TCP SERVER CLASS
 class tcp_server
 {
 public:
   tcp_server(boost::asio::io_service& io_service)
-    : acceptor_(io_service, tcp::endpoint(ip::address::from_string("127.0.0.1"), 123))
+    : acceptor_(io_service, tcp::endpoint(tcp::v4(), 13))
   {
     start_accept();
   }
@@ -92,3 +98,19 @@ private:
 
   tcp::acceptor acceptor_;
 };
+
+int main()
+{
+  try
+  {
+    boost::asio::io_service io_service;
+    tcp_server server(io_service);
+    io_service.run();
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
+
+  return 0;
+}
