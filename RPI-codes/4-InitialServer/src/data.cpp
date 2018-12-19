@@ -129,7 +129,7 @@ float Data::getLuxControlReference(int desk) {
 
 std::string Data::getLastMinuteLux(int desk) {
     int N = measuredLuxs[desk].size();
-    std::string response = "b l " + std::to_string(desk) + " ";
+    std::string response = "b l " + std::to_string(desk+1) + " ";
     for (int j=0; j<N; j++){
         response = response + std::to_string(measuredLuxs[desk][j]);
         if (j != N-1)
@@ -140,7 +140,7 @@ std::string Data::getLastMinuteLux(int desk) {
 
 std::string Data::getLastMinutePWM(int desk) {    
     int N = appliedPwm[desk].size();
-    std::string response = "b d " + std::to_string(desk) + " ";
+    std::string response = "b d " + std::to_string(desk+1) + " ";
     for (int j=0; j<N; j++){
         response = response + std::to_string(appliedPwm[desk][j]);
         if (j != N-1)
