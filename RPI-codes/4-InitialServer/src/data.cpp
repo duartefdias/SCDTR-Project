@@ -165,7 +165,7 @@ float Data::getComfortErrorAtDesk(int desk){
     for (int i=0; i<N; i++) {
         err = luxLowerBound[desk] - measuredLuxs[desk][i];
         if (err > 0)
-        |   cError += err;
+            cError += err;
     }
     return cError/N;
 }
