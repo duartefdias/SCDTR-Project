@@ -58,84 +58,94 @@ void receiveEvent(int howMany) {
 
 void sendPwm(float pwm){
   uint8_t pwmValue = mapfloat(pwm, 0, 5, 0, 255);
+  byte buf[3];
+  buf[0] = own_addr;
+  buf[1] = 0;
+  buf[2] = pwmValue;
   Wire.beginTransmission(0);//get BUS
-  Wire.write(own_addr);
-  Wire.write(0);  //message type
-  Wire.write(pwmValue);
+  Wire.write(buf, sizeof(buf));
   Wire.endTransmission(); //release BUS
 }
 
 void sendLuxReading(float luxReading){
   uint16_t luxValue = mapfloat(luxReading, 0, MAXLUX, 0, 65536);
+  byte buf[4];
+  buf[0] = own_addr;
+  buf[1] = 1;  //message type
+  buf[2] = luxValue >> 8;
+  buf[3] = luxValue & 0xFF;
   Wire.beginTransmission(0);//get BUS
-  Wire.write(own_addr);
-  Wire.write(1);  //message type
-  uint8_t luxH = luxValue >> 8;
-  uint8_t luxL = luxValue & 0xFF;
-  Wire.write(luxH);
-  Wire.write(luxL);
+  Wire.write(buf, sizeof(buf));
   Wire.endTransmission(); //release BUS
 }
 
 void sendNegotiation(float pwmValues[], int N){
   uint8_t pwmNegotiation;
-  Wire.beginTransmission(0);//get BUS
-  Wire.write(own_addr);
-  Wire.write(2);  //message type
-  Wire.write(N);
+  byte buf[3+N];
+  buf[0] = own_addr;
+  buf[1] = 2;  //message type
+  buf[2] = N;
   for (int j=0; j<N; j++){
     pwmNegotiation = mapfloat(pwmValues[j], 0, 5, 0, 255);
-    Wire.write(pwmNegotiation);
+    buf[j+3] = pwmNegotiation;
   }
+  Wire.beginTransmission(0);//get BUS
+  Wire.write(buf, sizeof(buf));
   Wire.endTransmission(); //release BUS
 }
 
 void sendOccupancy(uint8_t occupancy){
+  byte buf[3];
+  buf[0] = own_addr;
+  buf[1] = 3;  //message type
+  buf[2] = occupancy;
   Wire.beginTransmission(0);//get BUS
-  Wire.write(own_addr);
-  Wire.write(3);  //message type
-  Wire.write(occupancy);
+  Wire.write(buf, sizeof(buf));
   Wire.endTransmission(); //release BUS
 }
 
 void sendLuxLowerBound(float lowerBound){
   uint16_t luxLowerBound = mapfloat(lowerBound, 0, MAXLUX, 0, 65536);
+  byte buf[4];
+  buf[0] = own_addr;
+  buf[1] = 4;  //message type
+  buf[2] = luxLowerBound >> 8;
+  buf[3] = luxLowerBound & 0xFF;
   Wire.beginTransmission(0);//get BUS
-  Wire.write(own_addr);
-  Wire.write(4);  //message type
-  uint8_t luxH = luxLowerBound >> 8;
-  uint8_t luxL = luxLowerBound & 0xFF;
-  Wire.write(luxH);
-  Wire.write(luxL);
+  Wire.write(buf, sizeof(buf));
   Wire.endTransmission(); //release BUS
 }
 
 void sendLuxBackground(float background){
   uint16_t luxBackground = mapfloat(background, 0, MAXLUX, 0, 65536);
+  byte buf[4];
+  buf[0] = own_addr;
+  buf[1] = 5;  //message type
+  buf[2] = luxBackground >> 8;
+  buf[3] = luxBackground & 0xFF;
   Wire.beginTransmission(0);//get BUS
-  Wire.write(own_addr);
-  Wire.write(5);  //message type
-  uint8_t luxH = luxBackground >> 8;
-  uint8_t luxL = luxBackground & 0xFF;
-  Wire.write(luxH);
-  Wire.write(luxL);
+  Wire.write(buf, sizeof(buf));
   Wire.endTransmission(); //release BUS
 }
 
 void sendPWMRef(float pwmReff){
   uint8_t pwmRef = mapfloat(pwmReff, 0, 5, 0, 255);
+  byte buf[3];
+  buf[0] = own_addr;
+  buf[1] = 6;
+  buf[2] = pwmRef;
   Wire.beginTransmission(0);//get BUS
-  Wire.write(own_addr);
-  Wire.write(6);  //message type
-  Wire.write(pwmRef);
+  Wire.write(buf, sizeof(buf));
   Wire.endTransmission(); //release BUS
 }
 
 void sendNegotiationState(uint8_t state){
+  byte buf[3];
   Serial.println();
+  buf[0] = own_addr;
+  buf[1] = 7;
+  buf[2] = state;
   Wire.beginTransmission(0);//get BUS
-  Wire.write(own_addr);
-  Wire.write(7);  //message type
-  Wire.write(state);
+  Wire.write(buf, sizeof(buf));
   Wire.endTransmission(); //release BUS
 }
