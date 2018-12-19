@@ -49,7 +49,7 @@ int main() {
     // Store values in database
     std::thread i2cThread(i2cFunction, i2c, &database);
 
-    // Create Networking threads
+    // Create Networking threadss
     // Listen to client requests, fetch requested data and respond
     for (;;) {
         boost::asio::io_service io_service;
