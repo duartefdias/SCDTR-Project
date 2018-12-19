@@ -6,7 +6,6 @@
 
 #include "../headers/i2cFunctions.h"
 #include "../headers/data.h"
-#include "../headers/server.h"
 
 using namespace std;
 using namespace boost::asio;
