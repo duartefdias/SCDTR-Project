@@ -1,18 +1,19 @@
 #ifndef Node_h
 #define Node_h
+#define MAX_NODES 10
 
 class Node{
   private:
    
   public:
-   Node(int i, float ki1, float ki2, float ci, float oi, int Li, int num_Nodes);
-   set(int i, float ki1, float ki2, float ci, float oi, int Li, int num_Nodes);
+   Node(int i, float ki[], float ci, float oi, int Li, int num_Nodes);
+   set(int i, float ki[], float ci, float oi, int Li, int num_Nodes);
    updateGain(float kii);
    int index;
-   float d[2] = {0,0};
-   float d_av[2] = {0,0};
-   float y[2] = {0,0};
-   float k[2] = {0,0};
+   float d[MAX_NODES] = {0};
+   float d_av[MAX_NODES] = {0};
+   float y[MAX_NODES] = {0};
+   float k[MAX_NODES] = {0};
    float n;
    float m;
    float c;

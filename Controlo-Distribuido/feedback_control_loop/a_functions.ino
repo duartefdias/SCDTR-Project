@@ -84,45 +84,29 @@ void calibrateSystem() {
   if (!debug) delay(1000);
   noise = readLDR();
   if (debug) noise = 0.01;
-  Serial.print("Ambient noise: ");
-  Serial.println(noise);  
+  Serial.print("Ambient noise: ");  Serial.println(noise); 
+  my_node.o=noise; 
   sendLuxBackground(noise);
-  if (!debug) delay(3000);
+  if (!debug) delay(1000);
 
-  // Measure k21
-  Serial.println("Measuring 1's influence on 2 (k21) ...");
-  if (own_addr==1) {
-    analogWrite(LED1, 255);
-    if (!debug) delay(5000);
-    analogWrite(LED1, 0);
-  }
-  else if (own_addr==2) {
-    if(!debug) delay(4000);
-    lum = readLDR();
-    k21 = (lum-noise)/5;
-    if (debug) k21 = 2.04;
-    Serial.print("k21 = ");
-    Serial.print(k21);
-    Serial.println(" LUX/dimming unit");    
-    if(!debug) delay(1000);
-  }
-
-  // Measure k12
-    Serial.println("Measuring 2's influence on 1 (k12) ...");
-  if (own_addr==2) {
-    analogWrite(LED1, 255);   // full brightness
-    if (!debug) delay(5000);
-    analogWrite(LED1, 0);
-  }
-  else if (own_addr==1) {
-    if(!debug) delay(4000);
-    lum = readLDR();
-    k12 = (lum-noise)/5;              // dimming = 5
-    if (debug) k12 = 1.98;
-    Serial.print("k12 = ");
-    Serial.print(k12);
-    Serial.println(" LUX/dimming unit");       
-    if(!debug) delay(1000);
+  for (int j=1; j<=Nodes; j++) {
+    Serial.print("Measuring Arduino "); Serial.print(j); Serial.println("'s influence on other nodes...");
+    if (own_addr==j) {
+      analogWrite(LED1, 255);
+      if (!debug) delay(2000);
+      analogWrite(LED1, 0);
+    }
+    else {
+      if(!debug) delay(1000);
+      lum = readLDR();
+      k21 = (lum-noise)/5;
+      if (debug) k21 = 2.04;
+      my_node.k[j-1]=k21;
+      Serial.print("k21 = ");
+      Serial.print(k21);
+      Serial.println(" LUX/dimming unit");    
+      if(!debug) delay(1000);
+    }
   }
   Negotiation = 1;
 }

@@ -54,17 +54,16 @@ int I2cFunctions::close_slave(bsc_xfer_t &xfer) {
 }
 
 void I2cFunctions::readLoop(Data* database) {
-    std::cout << "I2C thread inside readLoop database address: " << database << std::endl;
     int status, j, key = 0;
     uint16_t LuxValue = 0;
     float pwm, lux;
 
-    if (gpioInitialise() < 0) {printf("Erro 1\n"); return;}
+    if (gpioInitialise() < 0) {printf("Erro 1 - GPIO pins memory overload (reboot Raspberry Pi)\n"); return;}
     
     bsc_xfer_t xfer;
     status = this->init_slave(xfer, SLAVE_ADDR);
 
-    printf("Ready to receive data at address: 0\n");
+    printf("Ready to receive data\n");
     while(key != 'q') {
 
         xfer.txCnt = 0;
@@ -77,20 +76,20 @@ void I2cFunctions::readLoop(Data* database) {
             switch(xfer.rxBuf[1]){
                 // current pwm signal
                 case 0:
-                    printf("Arduino %d ", xfer.rxBuf[0]);
+                    //printf("Arduino %d ", xfer.rxBuf[0]);
                     pwm = this->mapfloat(xfer.rxBuf[2], 0, 255, 0, 5);
-                    printf("\tPWM: %f\n\n", pwm);
+                    //printf("\tPWM: %f\n\n", pwm);
                     // Add value to database
-                    database->setcurrentPwmAtDesk(pwm, (int)xfer.rxBuf[0]);
+                    database->setCurrentPwmAtDesk(pwm, (int)xfer.rxBuf[0]);
                     break;
                 // received lux reading
                 case 1:
-                    printf("Arduino %d ", xfer.rxBuf[0]);
+                    //printf("Arduino %d ", xfer.rxBuf[0]);
                     LuxValue = xfer.rxBuf[2];
                     LuxValue <<= 8;
                     LuxValue |= xfer.rxBuf[3];
                     lux = this->mapfloat(LuxValue, 0, 65536, 0, MAX_LUX);  
-                    printf("\tLux: %f\n\n", lux);
+                    //printf("\tLux: %f\n\n", lux);
                     // Add value to database
                     database->setLastLuxValueArduino(lux, (int)xfer.rxBuf[0]);
                     break;
@@ -104,7 +103,7 @@ void I2cFunctions::readLoop(Data* database) {
                 case 3:
                     printf("Arduino %d ", xfer.rxBuf[0]);
                     printf("\tOccupancy: %d\n\n", xfer.rxBuf[2]);
-                    database->setOccupancyAtDesk(xfer.rxBuf[2], (int)xfer.rxBuf[0]);
+                    database->setOccupancyAtDesk((int)xfer.rxBuf[2], (int)xfer.rxBuf[0]);
                     break;
                 // lux lower bound
                 case 4:

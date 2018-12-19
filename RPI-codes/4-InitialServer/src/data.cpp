@@ -11,6 +11,9 @@ Data::Data(int nDesks = 2) {
     numberOfDesks = nDesks;
     dataAvailability = 1;
 
+    // Start clock (t=0)
+    start = std::chrono::system_clock::now();
+
     // Allocate 2D matrix to store measured luxs values
     measuredLuxs.assign(nDesks, vector < float >(1, 987));
 
@@ -59,16 +62,16 @@ float Data::getLastLuxValueArduino(int arduino) {
     return measuredLuxs[arduino][0];
 }
 
-void Data::setcurrentPwmAtDesk(float value, int desk){
+void Data::setCurrentPwmAtDesk(float value, int desk){
     
     desk = desk - 1;
 
     // Insert new measured value at beggining of appliedPwm vector
     appliedPwm[desk].insert(appliedPwm[desk].begin(), value);
 
-    for(int i = 0; i <  appliedPwm[desk].size(); i++){
+    /*for(int i = 0; i <  appliedPwm[desk].size(); i++){
         cout << "Value in position " << i << ": " << appliedPwm[desk][i] << endl;
-    }
+    }*/
 
     // If vector has more than 10 elements remove last one
     if(appliedPwm[desk].size() > 10){
@@ -76,13 +79,13 @@ void Data::setcurrentPwmAtDesk(float value, int desk){
     }
 }
 
-float Data::getcurrentPwmAtDesk(int desk){
+float Data::getCurrentPwmAtDesk(int desk){
     return appliedPwm[desk][0];
 }
 
 void Data::setOccupancyAtDesk(int value, int desk) {
     if(value == 0 || value == 1){
-        occupancyDesk[desk] = value;
+        occupancyDesk[desk-1] = value;
     }
 }
 
@@ -92,7 +95,7 @@ int Data::getOccupancyAtDesk(int desk){
 
 void Data::setLuxLowerBoundAtDesk(float value, int desk) {
     if(value > 0 && value < 400){
-        luxLowerBound[desk] = value;
+        luxLowerBound[desk-1] = value;
     }
 }
 
@@ -101,8 +104,8 @@ int Data::getLuxLowerBoundAtDesk(int desk){
 }
 
 void Data::setLuxExternalAtDesk(float value, int desk){
-    if(value > 0 && value < 1000){
-        luxExternal[desk] = value;
+    if(value >= 0 && value < 100){
+        luxExternal[desk-1] = value;
     }
 }
 
@@ -111,8 +114,8 @@ int Data::getLuxExternalAtDesk(int desk){
 }
 
 void Data::setLuxControlReference(float value, int desk){
-    if(value > 0 && value < 1000){
-        luxControlReference[desk] = value;
+    if(value >= 0 && value <= 10){
+        luxControlReference[desk-1] = value;
     }
 }
 
@@ -123,7 +126,43 @@ int Data::getLuxControlReference(int desk) {
 // More complex getters
 float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
     //do something
+    return this->getCurrentPwmAtDesk(desk)/5;
 }
+
+std::string Data::getElapsedTimeAtDesk(int desk){
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff = end-start;
+    std::cout << "Elapsed time: " << diff.count() << " seconds" << std::endl;
+    stringstream output;
+    output << diff.count();
+    string response = output.str();
+    return response;
+}
+
+// Reset system
+void Data::reset(){
+    // Start clock (t=0)
+    start = std::chrono::system_clock::now();
+
+    // Allocate 2D matrix to store measured luxs values
+    measuredLuxs.assign(numberOfDesks, vector < float >(1, 987));
+
+    // Allocate 3D matrix to store apllied pwm values
+    appliedPwm.assign(numberOfDesks, vector < float >(1, 789));
+    
+    // Allocate occupancy vector
+    occupancyDesk.resize(numberOfDesks, 1);
+
+    // Allocate lower bounds vector
+    luxLowerBound.resize(numberOfDesks, 50);
+
+    // Allocate external illuminance vector
+    luxExternal.resize(numberOfDesks, 150);
+
+    // Allocate illuminance control reference vector
+    luxControlReference.resize(numberOfDesks, 60);
+}
+
 
 std::string Data::processRequest(char* request){
     std::string response = "";
@@ -133,7 +172,7 @@ std::string Data::processRequest(char* request){
     strValue << request[4];
     int arduino;
     strValue >> arduino;
-    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!";}
+    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!                                 ";}
     arduino = arduino - 1; // Because of indexes
     // End of convertion
 
@@ -141,31 +180,33 @@ std::string Data::processRequest(char* request){
         case 'g':
             switch(request[2]){
                 case 'l':
-                    response = std::to_string(this->getLastLuxValueArduino(arduino));
+                    response = "l " + std::to_string(arduino+1) + " " + std::to_string(this->getLastLuxValueArduino(arduino));
                     cout << "Response: " << response << endl;
                     break;
                 case 'd':
-                    response = std::to_string(this->getcurrentPwmAtDesk(arduino));
+                    response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getCurrentPwmAtDesk(arduino));
                     break;
                 case 's':
-                    response = std::to_string(this->getOccupancyAtDesk(arduino));
+                    response = "s " + std::to_string(arduino+1) + " " + std::to_string(this->getOccupancyAtDesk(arduino));
                     break;
                 case 'L':
-                    response = std::to_string(this->getLuxLowerBoundAtDesk(arduino));
+                    response = "L " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxLowerBoundAtDesk(arduino));
                     break;
                 case 'o':
-                    response = std::to_string(this->getLuxExternalAtDesk(arduino));
+                    response = "o " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxExternalAtDesk(arduino));
                     break;
                 case 'r':
-                    response = std::to_string(this->getLuxControlReference(arduino));
+                    response = "r " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxControlReference(arduino));
                     break;
                 case 'p':
                     // ToDo: edit this
-                    response = std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
+                    if(request[4] == 'T')
+                        response = "p T " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
+                    else 
+                        response = "p " + std::to_string(arduino+1) + " " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
                     break;
                 case 't':
-                    // ToDo: edit this
-                    
+                    response = "t " + std::to_string(arduino+1) + " " + this->getElapsedTimeAtDesk(arduino);
                     break;
                 case 'e':
                     // ToDo: edit this
@@ -185,10 +226,19 @@ std::string Data::processRequest(char* request){
             }
             break;
         case 'r':
-            //ToDo
+            this->reset();
+            response = "ack";
             break;
         case 'b':
             //ToDo
+            switch(request[2]){
+                case 'i':
+                    // Get all lux values in last minute
+                    break;
+                case 'd':
+                    // Gett all pwm values in last minute
+                    break;
+            }
             break;
         case 's':
             //ToDo
@@ -197,6 +247,6 @@ std::string Data::processRequest(char* request){
             response = "Invalid request";
     }
     
-    response = response + "              ";
+    response = response + "                                  ";
     return response;
 }
