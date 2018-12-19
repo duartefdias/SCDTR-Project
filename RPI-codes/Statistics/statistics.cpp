@@ -27,7 +27,7 @@ float confort_error(vector<float> luxMeas, vector<float> luxRef) {
 }
 
 float confort_flicker(vector<float> luxMeas) {
-    int Ts = 100;   //Sampling period
+    float Ts = 0.005;   //Sampling frequency = 200 Hz
     int N = luxMeas.size();
     float cFlicker = 0;
 

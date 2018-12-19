@@ -29,6 +29,7 @@ public:
     float getLuxExternalAtDesk(int desk);
     void setLuxControlReference(float value, int desk);
     float getLuxControlReference(int desk);
+    
 
     // More complex getters
     float getInstantaneousPowerConsumptionAtDesk(int desk);
@@ -41,6 +42,8 @@ public:
     // Performance metrics
     float getComfortErrorAtDesk(int desk);
     float getTotalComfortError();
+    float getComfortFlickerAtDesk(int desk);
+    float getTotalComfortFlicker();
 
     //Reset system
     void reset();

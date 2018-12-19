@@ -178,6 +178,29 @@ float Data::getTotalComfortError(){
     return totalError;
 }
 
+float Data::getComfortFlickerAtDesk(int desk){    
+    float Ts = 0.005;   //Sampling frequency = 200 Hz
+    int N = measuredLuxs[desk].size();
+    float cFlicker = 0;
+    for (int i=2; i<N; i++) {
+        if ((measuredLuxs[desk][i]-measuredLuxs[desk][i-1]) * (measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2]) < 0) {
+            cFlicker += (abs(measuredLuxs[desk][i]-measuredLuxs[desk][i-1]) + abs(measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2])) / (2*Ts);
+        }
+        else {
+            cFlicker += 0;
+        }
+    }
+    return cFlicker/N;
+}
+
+float Data::getTotalComfortFlicker(){    
+    float totalFlicker = 0;
+    for(int j=0; j < this->numberOfDesks; j++){
+        totalFlicker += this->getComfortFlickerAtDesk(j);
+    }
+    return totalFlicker;
+}
+
 std::string Data::getElapsedTimeAtDesk(int desk){
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff = end-start;
@@ -272,10 +295,11 @@ std::string Data::processRequest(char* request){
                         response = "c " + std::to_string(arduino+1) + " " + std::to_string(this->getComfortErrorAtDesk(arduino));                    
                     break;
                 case 'v':
-                    // ToDo: edit this
-                    
-                    break;
-                
+                    if(request[4] == 'T')
+                        response = "v T " + std::to_string(this->getTotalComfortFlicker());
+                    else
+                        response = "v " + std::to_string(arduino+1) + " " + std::to_string(this->getComfortFlickerAtDesk(arduino));
+                    break;                
                 default:
                     response = "Invalid request";
             }
@@ -285,7 +309,6 @@ std::string Data::processRequest(char* request){
             response = "ack";
             break;
         case 'b':
-            //ToDo
             switch(request[2]){
                 case 'i':
                     // Get all lux values in last minute
