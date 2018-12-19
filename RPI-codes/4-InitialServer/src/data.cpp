@@ -200,6 +200,13 @@ float Data::getTotalComfortError(){
     return totalError;
 }
 
+float abs(float val){
+    if (val >= 0)
+        return val;
+    else
+        return -val;
+}
+
 float Data::getComfortFlickerAtDesk(int desk){    
     float Ts = 0.005;   //Sampling frequency = 200 Hz
     int N = measuredLuxs[desk].size();
@@ -209,7 +216,7 @@ float Data::getComfortFlickerAtDesk(int desk){
         v1 = measuredLuxs[desk][i]-measuredLuxs[desk][i-1];
         v2 = measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2];
         if (v1 * v2 < 0) {
-            cFlicker += (std::abs(v1) + std::abs(v2)) / (2*Ts);
+            cFlicker += (abs(v1) + abs(v2)) / (2*Ts);
         }
         else {
             cFlicker += 0;
