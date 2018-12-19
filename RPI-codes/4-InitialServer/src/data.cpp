@@ -332,11 +332,11 @@ std::string Data::processRequest(char* request){
             break;
         case 'b':
             switch(request[2]){
-                case 'i':
-                    // Get all lux values in last minute
+                case 'l':
+                    response = this->getLastMinuteLux();
                     break;
                 case 'd':
-                    // Gett all pwm values in last minute
+                    response = this->getLastMinutePWM();
                     break;
             }
             break;
