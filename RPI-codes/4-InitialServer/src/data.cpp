@@ -204,9 +204,12 @@ float Data::getComfortFlickerAtDesk(int desk){
     float Ts = 0.005;   //Sampling frequency = 200 Hz
     int N = measuredLuxs[desk].size();
     float cFlicker = 0;
+    float v1 = 0, v2 = 0;
     for (int i=2; i<N; i++) {
-        if ((measuredLuxs[desk][i]-measuredLuxs[desk][i-1]) * (measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2]) < 0) {
-            cFlicker += (std::abs(measuredLuxs[desk][i]-measuredLuxs[desk][i-1]) + std::abs(measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2])) / (2*Ts);
+        v1 = measuredLuxs[desk][i]-measuredLuxs[desk][i-1];
+        v2 = measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2];
+        if (v1 * v2 < 0) {
+            cFlicker += (std::abs(v1) + std::(v2)) / (2*Ts);
         }
         else {
             cFlicker += 0;
