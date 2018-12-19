@@ -200,7 +200,7 @@ std::string Data::processRequest(char* request){
     strValue << request[4];
     int arduino;
     strValue >> arduino;
-    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!                                 ";}
+    //if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!                                 ";}
     arduino = arduino - 1; // Because of indexes
     // End of convertion
 
