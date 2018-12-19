@@ -161,8 +161,11 @@ float Data::getComfortErrorAtDesk(int desk){
     int N = measuredLuxs[desk].size();
     printf("Number of samples to compare: %d\n", N);
     float cError = 0;
+    float err = 0;
     for (int i=0; i<N; i++) {
-         cError += max(luxLowerBound[desk] - measuredLuxs[desk][i], 0);
+        err = luxLowerBound[desk] - measuredLuxs[desk][i];
+        if (err > 0)
+        |   cError += err;
     }
     return cError/N;
 }
