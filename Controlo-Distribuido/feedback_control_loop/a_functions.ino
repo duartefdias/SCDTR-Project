@@ -18,6 +18,7 @@ void parseInput(){
   if (input == -1 and occupancy == 1) {
     occupancy = 0;
     sendOccupancy(occupancy); // Empty desk
+    sendOccupancy(occupancy);
     my_node.L = LowValue;
     sendLuxLowerBound(my_node.L);
     my_node.updateGain(G0(my_node.L));      
@@ -27,6 +28,7 @@ void parseInput(){
   }
   else if (input == 1 and occupancy == 0) {
     occupancy = 1;
+    sendOccupancy(occupancy);
     sendOccupancy(occupancy);
     my_node.L = HighValue;   // Occupied desk
     sendLuxLowerBound(my_node.L);
