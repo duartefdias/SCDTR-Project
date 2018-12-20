@@ -32,6 +32,10 @@ Data::Data(int nDesks = 2) {
     // Allocate illuminance control reference vector
     luxControlReference.resize(nDesks, 60);
 
+    // Allocate power metrics
+    accumulatedEnergyConsumption.resize(nDesks, 0);
+    accumulatedComfortError.resize(nDesks, 0);
+    accumulatedComfortFlicker.resize(nDesks, 0);
 }
 
 int Data::getAvailability() {
@@ -62,16 +66,16 @@ float Data::getLastLuxValueArduino(int arduino) {
     return measuredLuxs[arduino][0];
 }
 
-void Data::setcurrentPwmAtDesk(float value, int desk){
+void Data::setCurrentPwmAtDesk(float value, int desk){
     
     desk = desk - 1;
 
     // Insert new measured value at beggining of appliedPwm vector
     appliedPwm[desk].insert(appliedPwm[desk].begin(), value);
 
-    for(int i = 0; i <  appliedPwm[desk].size(); i++){
+    /*for(int i = 0; i <  appliedPwm[desk].size(); i++){
         cout << "Value in position " << i << ": " << appliedPwm[desk][i] << endl;
-    }
+    }*/
 
     // If vector has more than 10 elements remove last one
     if(appliedPwm[desk].size() > 10){
@@ -79,13 +83,13 @@ void Data::setcurrentPwmAtDesk(float value, int desk){
     }
 }
 
-float Data::getcurrentPwmAtDesk(int desk){
+float Data::getCurrentPwmAtDesk(int desk){
     return appliedPwm[desk][0];
 }
 
 void Data::setOccupancyAtDesk(int value, int desk) {
     if(value == 0 || value == 1){
-        occupancyDesk[desk] = value;
+        occupancyDesk[desk-1] = value;
     }
 }
 
@@ -95,37 +99,138 @@ int Data::getOccupancyAtDesk(int desk){
 
 void Data::setLuxLowerBoundAtDesk(float value, int desk) {
     if(value > 0 && value < 400){
-        luxLowerBound[desk] = value;
+        luxLowerBound[desk-1] = value;
     }
 }
 
-int Data::getLuxLowerBoundAtDesk(int desk){
+float Data::getLuxLowerBoundAtDesk(int desk){
     return luxLowerBound[desk];
 }
 
 void Data::setLuxExternalAtDesk(float value, int desk){
-    if(value > 0 && value < 1000){
-        luxExternal[desk] = value;
+    if(value >= 0 && value < 100){
+        luxExternal[desk-1] = value;
     }
 }
 
-int Data::getLuxExternalAtDesk(int desk){
+float Data::getLuxExternalAtDesk(int desk){
     return luxExternal[desk];
 }
 
 void Data::setLuxControlReference(float value, int desk){
-    if(value > 0 && value < 1000){
-        luxControlReference[desk] = value;
+    if(value >= 0 && value <= 10){
+        luxControlReference[desk-1] = value;
     }
 }
 
-int Data::getLuxControlReference(int desk) {
+float Data::getLuxControlReference(int desk) {
     return luxControlReference[desk];
+}
+
+std::string Data::getLastMinuteLux(int desk) {
+    int N = measuredLuxs[desk].size();
+    std::string response = "b l " + std::to_string(desk+1) + " ";
+    for (int j=0; j<N; j++){
+        response = response + std::to_string(measuredLuxs[desk][j]);
+        if (j != N-1)
+            response = response + ",";
+    }
+    return response + "\n";
+}
+
+std::string Data::getLastMinutePWM(int desk) {    
+    int N = appliedPwm[desk].size();
+    std::string response = "b d " + std::to_string(desk+1) + " ";
+    for (int j=0; j<N; j++){
+        response = response + std::to_string(appliedPwm[desk][j]);
+        if (j != N-1)
+            response = response + ",";
+    }
+    return response + "\n";
 }
 
 // More complex getters
 float Data::getInstantaneousPowerConsumptionAtDesk(int desk){
-    //do something
+    return this->getCurrentPwmAtDesk(desk)/5;
+}
+
+float Data::getInstantaneousPowerConsumption(){
+    float powr = 0;
+    for(int j=0; j < this->numberOfDesks; j++){
+        powr += this->getInstantaneousPowerConsumptionAtDesk(j);
+    }
+    return powr;
+}
+
+void Data::accumulateEnergy(float pwm, int desk){
+    // Energy = power*time
+    accumulatedEnergyConsumption[desk] += pwm/5*0.005; //Period = 0.005 secs
+}
+
+float Data::getAccumulatedEnergyAtDesk(int desk){
+    return accumulatedEnergyConsumption[desk];
+}
+
+float Data::getAccumulatedEnergy(){
+    float energy = 0;
+    for (int j=0; j < this->numberOfDesks; j++){
+        energy += this->getAccumulatedEnergyAtDesk(j);
+    }
+    return energy;
+}
+
+float Data::getComfortErrorAtDesk(int desk){
+    int N = measuredLuxs[desk].size();
+    printf("Number of samples to compare: %d\n", N);
+    float cError = 0;
+    float err = 0;
+    for (int i=0; i<N; i++) {
+        err = luxLowerBound[desk] - measuredLuxs[desk][i];
+        if (err > 0)
+            cError += err;
+    }
+    return cError/N;
+}
+
+float Data::getTotalComfortError(){
+    float totalError = 0;
+    for(int j=0; j < this->numberOfDesks; j++){
+        totalError += this->getComfortErrorAtDesk(j);
+    }
+    return totalError;
+}
+
+float abs(float val){
+    if (val >= 0)
+        return val;
+    else
+        return -val;
+}
+
+float Data::getComfortFlickerAtDesk(int desk){    
+    float Ts = 0.005;   //Sampling frequency = 200 Hz
+    int N = measuredLuxs[desk].size();
+    float cFlicker = 0;
+    float v1 = 0, v2 = 0;
+    for (int i=2; i<N; i++) {
+        v1 = measuredLuxs[desk][i]-measuredLuxs[desk][i-1];
+        v2 = measuredLuxs[desk][i-1]-measuredLuxs[desk][i-2];
+        if (v1 * v2 < 0) {
+            cFlicker += (abs(v1) + abs(v2)) / (2*Ts);
+        }
+        else {
+            cFlicker += 0;
+        }
+    }
+    return cFlicker/N;
+}
+
+float Data::getTotalComfortFlicker(){    
+    float totalFlicker = 0;
+    for(int j=0; j < this->numberOfDesks; j++){
+        totalFlicker += this->getComfortFlickerAtDesk(j);
+    }
+    return totalFlicker;
 }
 
 std::string Data::getElapsedTimeAtDesk(int desk){
@@ -164,7 +269,6 @@ void Data::reset(){
 
 
 std::string Data::processRequest(char* request){
-    cout << "Request: " << request << endl;
     std::string response = "";
 
     // Converting arduino value from const char to int
@@ -172,7 +276,7 @@ std::string Data::processRequest(char* request){
     strValue << request[4];
     int arduino;
     strValue >> arduino;
-    if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!                                 ";}
+    //if(arduino < 1 || arduino > numberOfDesks){return response = "Invalid request!                                 ";}
     arduino = arduino - 1; // Because of indexes
     // End of convertion
 
@@ -181,9 +285,10 @@ std::string Data::processRequest(char* request){
             switch(request[2]){
                 case 'l':
                     response = "l " + std::to_string(arduino+1) + " " + std::to_string(this->getLastLuxValueArduino(arduino));
+                    cout << "Response: " << response << endl;
                     break;
                 case 'd':
-                    response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getcurrentPwmAtDesk(arduino));
+                    response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getCurrentPwmAtDesk(arduino));
                     break;
                 case 's':
                     response = "s " + std::to_string(arduino+1) + " " + std::to_string(this->getOccupancyAtDesk(arduino));
@@ -199,25 +304,34 @@ std::string Data::processRequest(char* request){
                     break;
                 case 'p':
                     // ToDo: edit this
-                    if(request[4] == 'T')
+                    if(request[4] == 'T') {
+                        printf("Power request received\n");
+                        response = "p T " + std::to_string(this->getInstantaneousPowerConsumption());
+                    } else {
                         response = "p " + std::to_string(arduino+1) + " " + std::to_string(this->getInstantaneousPowerConsumptionAtDesk(arduino));
+                    }
                     break;
                 case 't':
                     response = "t " + std::to_string(arduino+1) + " " + this->getElapsedTimeAtDesk(arduino);
                     break;
                 case 'e':
-                    // ToDo: edit this
-                    
+                    if(request[4] == 'T')
+                        response = "e T " + std::to_string(this->getAccumulatedEnergy());
+                    else 
+                        response = "e " + std::to_string(arduino+1) + " " + std::to_string(this->getAccumulatedEnergyAtDesk(arduino));                    
                     break;
                 case 'c':
-                    // ToDo: edit this
-                    
+                    if(request[4] == 'T')
+                        response = "c T " + std::to_string(this->getTotalComfortError());
+                    else
+                        response = "c " + std::to_string(arduino+1) + " " + std::to_string(this->getComfortErrorAtDesk(arduino));                    
                     break;
                 case 'v':
-                    // ToDo: edit this
-                    
-                    break;
-                
+                    if(request[4] == 'T')
+                        response = "v T " + std::to_string(this->getTotalComfortFlicker());
+                    else
+                        response = "v " + std::to_string(arduino+1) + " " + std::to_string(this->getComfortFlickerAtDesk(arduino));
+                    break;                
                 default:
                     response = "Invalid request";
             }
@@ -227,13 +341,12 @@ std::string Data::processRequest(char* request){
             response = "ack";
             break;
         case 'b':
-            //ToDo
             switch(request[2]){
-                case 'i':
-                    // Get all lux values in last minute
+                case 'l':
+                    response = this->getLastMinuteLux(arduino);
                     break;
                 case 'd':
-                    // Gett all pwm values in last minute
+                    response = this->getLastMinutePWM(arduino);
                     break;
             }
             break;
@@ -244,7 +357,6 @@ std::string Data::processRequest(char* request){
             response = "Invalid request";
     }
     
-    cout << "Response: " << response << endl;
     response = response + "                                  ";
     return response;
 }

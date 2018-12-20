@@ -24,14 +24,6 @@ void i2cFunction(I2cFunctions i2c, Data* database){
 
 int main() {
 
-    std::cout << "Hello from main.cpp" << std::endl;
-
-    //io_service io;
-    //tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 123);
-
-    //std::cout << "Listening at: " << ep << std::endl;
-    //tcp::acceptor a(io, ep);
-
     // Initialize i2cReading module
     I2cFunctions i2c;
 
