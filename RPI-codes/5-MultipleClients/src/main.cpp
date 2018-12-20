@@ -29,7 +29,7 @@ int main() {
     //io_service io;
     //tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 123);
 
-    std::cout << "Listening at: " << ep << std::endl;
+    //std::cout << "Listening at: " << ep << std::endl;
     //tcp::acceptor a(io, ep);
 
     // Initialize i2cReading module
