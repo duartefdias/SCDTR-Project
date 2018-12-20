@@ -52,13 +52,13 @@ class server {
     void haccept(session* sess, const error_code& ec) {
         if (!ec) sess->start();
         else delete sess;
-        start_accept(db); 
+        start_accept(); 
     }
 
     public:
     server(io_service& io, short port, Data* database)
     : io(io), acc(io, ip::tcp::endpoint(ip::address::from_string("127.0.0.1"), port)) {
         db = database;
-        start_accept(db); 
+        start_accept(); 
     }
 };
