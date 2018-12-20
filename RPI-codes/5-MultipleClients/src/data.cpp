@@ -360,7 +360,8 @@ std::string Data::processRequest(char* request){
             }
             break;
         case 's':
-            //ToDo
+            //ToDo stream = true;
+            // stream = false;
             break;
         default:
             response = "Invalid request";

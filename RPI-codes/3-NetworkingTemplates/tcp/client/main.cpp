@@ -36,7 +36,7 @@ int main() {
                 
                 while(1){
                     buf[0] = 'g'; buf[1] = ' '; buf[2] = 'l'; buf[3] = ' ';buf[4] = arduino;
-                    std::cout << "Loop stream message: " << buf << std::endl;
+                    //std::cout << "Loop stream message: " << buf << std::endl;
                     write(s,buffer(buf,strlen(buf)+1), ec);
                     size_t n = s.read_some(buffer(buf,20000), ec);
                     if (ec) break;
@@ -46,14 +46,18 @@ int main() {
             }
             else if(buf[2] == 'd'){
                
-                buf[0] = 's'; buf[1] = ' '; buf[2] = 'l'; buf[3] = ' ';buf[3] = arduino;
+                buf[0] = 's'; buf[1] = ' '; buf[2] = 'l'; buf[3] = ' ';buf[4] = arduino;
+                std::cout << "Inicial stream message: " << buf << std::endl;
+                write(s,buffer(buf,strlen(buf)+1), ec);
                 size_t n = s.read_some(buffer(buf,20000), ec);
                 if (ec) break;
                 std::cout << "Server response: " << buf << std::endl;
                 memset(buf, 0, sizeof(buf));
 
                 while(1){
-                    buf[0] = 'g'; buf[1] = ' '; buf[2] = 'd'; buf[3] = ' ';buf[3] = arduino;
+                    buf[0] = 'g'; buf[1] = ' '; buf[2] = 'l'; buf[3] = ' ';buf[4] = arduino;
+                    std::cout << "Loop stream message: " << buf << std::endl;
+                    write(s,buffer(buf,strlen(buf)+1), ec);
                     size_t n = s.read_some(buffer(buf,20000), ec);
                     if (ec) break;
                     std::cout << buf << std::endl;
