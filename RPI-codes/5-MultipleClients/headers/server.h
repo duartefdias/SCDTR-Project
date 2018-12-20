@@ -1,90 +1,55 @@
-#include <ctime>
 #include <iostream>
-#include <string>
 #include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/asio.hpp>
 
-using boost::asio::ip::tcp;
+using namespace boost::asio;
+using boost::system::error_code;
 
-std::string make_daytime_string()
-{
-  using namespace std; // For time_t, time and ctime;
-  time_t now = time(0);
-  return ctime(&now);
-}
+class session {
+    ip::tcp::socket s;
+    enum { max_len = 1024 };
+    char data[max_len];
 
-class tcp_connection
-  : public boost::enable_shared_from_this<tcp_connection>
-{
-public:
-  typedef boost::shared_ptr<tcp_connection> pointer;
+    void hread(const error_code& ec, size_t sz) {
+        if (!ec) async_write(s, buffer(std::string("banana"), sz),
+        boost::bind(&session::hwrite, this, _1));
+        else delete this; 
+    }
 
-  static pointer create(boost::asio::io_service& io_service)
-  {
-    return pointer(new tcp_connection(io_service));
-  }
+    void hwrite(const error_code& ec) {
+        if (!ec) start();
+        else delete this; 
+    }
 
-  tcp::socket& socket()
-  {
-    return socket_;
-  }
+    public:
+    session(io_service& io) : s(io) { }
+    ip::tcp::socket& socket() {return s;}
 
-  void start()
-  {
-    message_ = make_daytime_string();
-
-    boost::asio::async_write(socket_, boost::asio::buffer(message_),
-        boost::bind(&tcp_connection::handle_write, shared_from_this(),
-          boost::asio::placeholders::error,
-          boost::asio::placeholders::bytes_transferred));
-  }
-
-private:
-  tcp_connection(boost::asio::io_service& io_service)
-    : socket_(io_service)
-  {
-  }
-
-  void handle_write(const boost::system::error_code& /*error*/,
-      size_t /*bytes_transferred*/)
-  {
-  }
-
-  tcp::socket socket_;
-  std::string message_;
+    void start() {
+        s.async_read_some(buffer(data,max_len),
+        boost::bind(&session::hread, this, _1, _2));
+    }
 };
 
-class tcp_server
-{
-public:
-  tcp_server(boost::asio::io_service& io_service)
-    : acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 123))
-  {
-    start_accept();
-  }
+class server {
+    io_service& io;
+    ip::tcp::acceptor acc;
 
-private:
-  void start_accept()
-  {
-    tcp_connection::pointer new_connection =
-      tcp_connection::create(acceptor_.get_io_service());
-
-    acceptor_.async_accept(new_connection->socket(),
-        boost::bind(&tcp_server::handle_accept, this, new_connection,
-          boost::asio::placeholders::error));
-  }
-
-  void handle_accept(tcp_connection::pointer new_connection,
-      const boost::system::error_code& error)
-  {
-    if (!error)
-    {
-      new_connection->start();
-      start_accept();
+    void start_accept() {
+        session* new_sess = new session(io);
+        acc.async_accept(new_sess->socket(),
+        boost::bind(&server::haccept, this, new_sess,_1)); 
     }
-  }
 
-  tcp::acceptor acceptor_;
+    void haccept(session* sess, const error_code& ec) {
+        if (!ec) sess->start();
+        else delete sess;
+        start_accept(); 
+    }
+
+    public:
+    server(io_service& io, short port)
+    : io(io), acc(io, ip::tcp::endpoint(ip::address::from_string("127.0.0.1"), port)) {
+        start_accept(); 
+    }
 };

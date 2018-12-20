@@ -51,16 +51,9 @@ int main() {
 
     // Create Networking threadss
     // Listen to client requests, fetch requested data and respond
-    try
-  {
-    boost::asio::io_service io_service;
-    tcp_server server = (io_service);
-    io_service.run();
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << e.what() << std::endl;
-  }
+    io_service io;
+    server s(io, 123);
+    io.run();
 
     //clientResponseThread.join();
     i2cThread.join();
