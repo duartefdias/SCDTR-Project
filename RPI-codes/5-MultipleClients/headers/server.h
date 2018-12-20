@@ -10,7 +10,7 @@ using boost::system::error_code;
 
 class session {
     ip::tcp::socket s;
-    enum { max_len = 1024 };
+    enum { max_len = 20000 };
     char data[max_len];
     Data* db;
 

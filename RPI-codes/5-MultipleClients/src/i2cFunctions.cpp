@@ -94,6 +94,9 @@ void I2cFunctions::readLoop(Data* database) {
                     //printf("\tLux: %f\n\n", lux);
                     // Add value to database
                     database->setLastLuxValueArduino(lux, (int)xfer.rxBuf[0]);
+                    // if stream
+                    // send to client
+                    // "s l <i> <lux> time"
                     break;
                 // received pwm negotiation message
                 /*case 2:

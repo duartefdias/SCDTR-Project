@@ -15,22 +15,22 @@ Data::Data(int nDesks = 2) {
     start = std::chrono::system_clock::now();
 
     // Allocate 2D matrix to store measured luxs values
-    measuredLuxs.assign(nDesks, vector < float >(1, 987));
+    measuredLuxs.assign(nDesks, vector < float >(1, 0));
 
     // Allocate 3D matrix to store apllied pwm values
-    appliedPwm.assign(nDesks, vector < float >(1, 789));
+    appliedPwm.assign(nDesks, vector < float >(1, 0));
     
     // Allocate occupancy vector
     occupancyDesk.resize(nDesks, 1);
 
     // Allocate lower bounds vector
-    luxLowerBound.resize(nDesks, 50);
+    luxLowerBound.resize(nDesks, 20);
 
     // Allocate external illuminance vector
-    luxExternal.resize(nDesks, 150);
+    luxExternal.resize(nDesks, 0);
 
     // Allocate illuminance control reference vector
-    luxControlReference.resize(nDesks, 60);
+    luxControlReference.resize(nDesks, 0);
 
     // Allocate power metrics
     accumulatedEnergyConsumption.resize(nDesks, 0);
@@ -56,7 +56,7 @@ void Data::setLastLuxValueArduino(float value, int arduino) { //arduino = {1, 2}
     }*/
 
     // If vector has more than 10 elements remove last one
-    if(measuredLuxs[arduino].size() > 10){
+    if(measuredLuxs[arduino].size() > 1200){
         measuredLuxs[arduino].pop_back();
     }
 }
@@ -78,7 +78,7 @@ void Data::setCurrentPwmAtDesk(float value, int desk){
     }*/
 
     // If vector has more than 10 elements remove last one
-    if(appliedPwm[desk].size() > 10){
+    if(appliedPwm[desk].size() > 1200){
         appliedPwm[desk].pop_back();
     }
 }
@@ -249,22 +249,32 @@ void Data::reset(){
     start = std::chrono::system_clock::now();
 
     // Allocate 2D matrix to store measured luxs values
-    measuredLuxs.assign(numberOfDesks, vector < float >(1, 987));
+    measuredLuxs.assign(numberOfDesks, vector < float >(1, 0));
 
     // Allocate 3D matrix to store apllied pwm values
-    appliedPwm.assign(numberOfDesks, vector < float >(1, 789));
+    appliedPwm.assign(numberOfDesks, vector < float >(1, 0));
     
-    // Allocate occupancy vector
+    // Reset occupancy vector
     occupancyDesk.resize(numberOfDesks, 1);
 
-    // Allocate lower bounds vector
-    luxLowerBound.resize(numberOfDesks, 50);
+    // Reset lower bounds vector
+    luxLowerBound.resize(numberOfDesks, 0);
 
-    // Allocate external illuminance vector
-    luxExternal.resize(numberOfDesks, 150);
+    // Reset external illuminance vector
+    luxExternal.resize(numberOfDesks, 0);
 
-    // Allocate illuminance control reference vector
-    luxControlReference.resize(numberOfDesks, 60);
+    // Reset illuminance control reference vector
+    luxControlReference.resize(numberOfDesks, 0);
+
+    // Reset power metrics 
+    //accumulatedEnergyConsumption.resize(numberOfDesks, 0);
+    //accumulatedComfortError.resize(numberOfDesks, 0);
+    //accumulatedComfortFlicker.resize(numberOfDesks, 0);
+    for(int i = 0; i < numberOfDesks; i++){
+        accumulatedEnergyConsumption[i] = 0;
+        accumulatedComfortError[i] = 0;
+        accumulatedComfortFlicker[i] = 0;
+    }
 }
 
 
@@ -350,13 +360,14 @@ std::string Data::processRequest(char* request){
             }
             break;
         case 's':
-            //ToDo
+            //ToDo stream = true;
+            // stream = false;
             break;
         default:
             response = "Invalid request";
     }
     
-    cout << "Response: " << response << endl;
+    cout << "Response: " << response << "\n" << endl;
     response = response + "                                  ";
     return response;
 }
