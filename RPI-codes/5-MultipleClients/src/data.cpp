@@ -269,6 +269,7 @@ void Data::reset(){
 
 
 std::string Data::processRequest(char* request){
+    cout << "Request: " << request << endl;
     std::string response = "";
 
     // Converting arduino value from const char to int
@@ -285,7 +286,6 @@ std::string Data::processRequest(char* request){
             switch(request[2]){
                 case 'l':
                     response = "l " + std::to_string(arduino+1) + " " + std::to_string(this->getLastLuxValueArduino(arduino));
-                    cout << "Response: " << response << endl;
                     break;
                 case 'd':
                     response = "d " + std::to_string(arduino+1) + " " + std::to_string(this->getCurrentPwmAtDesk(arduino));
@@ -303,7 +303,6 @@ std::string Data::processRequest(char* request){
                     response = "r " + std::to_string(arduino+1) + " " + std::to_string(this->getLuxControlReference(arduino));
                     break;
                 case 'p':
-                    // ToDo: edit this
                     if(request[4] == 'T') {
                         printf("Power request received\n");
                         response = "p T " + std::to_string(this->getInstantaneousPowerConsumption());
@@ -357,6 +356,7 @@ std::string Data::processRequest(char* request){
             response = "Invalid request";
     }
     
+    cout << "Response: " << response << endl;
     response = response + "                                  ";
     return response;
 }

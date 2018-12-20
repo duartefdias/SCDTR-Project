@@ -35,7 +35,7 @@ class session {
     ip::tcp::socket& socket() {return s;}
 
     void start() {
-        s.async_read_some(buffer(data/*,max_len*/), boost::bind(&session::hread, this, _1, _2));
+        s.async_read_some(buffer(data,max_len), boost::bind(&session::hread, this, _1, _2));
     }
 };
 
