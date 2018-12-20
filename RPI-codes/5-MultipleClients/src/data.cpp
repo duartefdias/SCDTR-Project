@@ -266,7 +266,7 @@ void Data::reset(){
     // Reset illuminance control reference vector
     luxControlReference.resize(numberOfDesks, 0);
 
-    // Reset power metrics
+    // Reset power metrics 
     //accumulatedEnergyConsumption.resize(numberOfDesks, 0);
     //accumulatedComfortError.resize(numberOfDesks, 0);
     //accumulatedComfortFlicker.resize(numberOfDesks, 0);
