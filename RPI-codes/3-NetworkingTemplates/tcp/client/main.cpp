@@ -26,7 +26,7 @@ int main() {
             int arduino = buf[4];
             if(buf[2] == 'l'){
                 
-                buf[0] = 's'; buf[1] = ' '; buf[2] = 'l'; buf[3] = ' ';buf[3] = arduino;
+                buf[0] = 's'; buf[1] = ' '; buf[2] = 'l'; buf[3] = ' ';buf[4] = arduino;
                 std::cout << "Inicial stream message: " << buf << std::endl;
                 write(s,buffer(buf,strlen(buf)+1), ec);
                 size_t n = s.read_some(buffer(buf,20000), ec);
@@ -35,7 +35,7 @@ int main() {
                 memset(buf, 0, sizeof(buf));
                 
                 while(1){
-                    buf[0] = 'g'; buf[1] = ' '; buf[2] = 'l'; buf[3] = ' ';buf[3] = arduino;
+                    buf[0] = 'g'; buf[1] = ' '; buf[2] = 'l'; buf[3] = ' ';buf[4] = arduino;
                     std::cout << "Loop stream message: " << buf << std::endl;
                     write(s,buffer(buf,strlen(buf)+1), ec);
                     size_t n = s.read_some(buffer(buf,20000), ec);
