@@ -35,14 +35,12 @@ else delete sess;
 start_accept(); }
 public:
 server(io_service& io, short port)
-: io(io), acc(io, ip::tcp::endpoint(ip::tcp::v4(), port)) {
+: io(io), acc(io, ip::tcp::endpoint(ip::address::from_string("127.0.0.1"), port)) {
 start_accept(); }
 };
 
 int main(int argc, char* argv[]) {
-if (argc != 2) {
-std::cerr << "Usage: server <port>\n"; return 1; }
 io_service io;
-server s(io, std::atoi(argv[1]));
+server s(io, 123);
 io.run();
 }
