@@ -15,7 +15,7 @@ class session {
     Data* db;
 
     void hread(const error_code& ec, size_t sz) {
-        if (!ec) async_write(s, buffer(db->processRequest(data)), sz),
+        if (!ec) async_write(s, buffer(db->processRequest(data), sz),
         boost::bind(&session::hwrite, this, _1));
         else delete this; 
     }
