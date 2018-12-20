@@ -31,7 +31,7 @@ class session {
     }
 
     public:
-    session(io_service& io, Data* database) : s(io) {db = database}
+    session(io_service& io, Data* database) : s(io) {db = database;}
     ip::tcp::socket& socket() {return s;}
 
     void start() {
@@ -42,7 +42,7 @@ class session {
 class server {
     io_service& io;
     ip::tcp::acceptor acc;
-    Data* database;
+    Data* db;
 
     void start_accept(Data* database) {
         session* new_sess = new session(io, database);
