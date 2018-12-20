@@ -7,7 +7,7 @@ using ip::tcp;
 int main() {
     io_service io;
     boost::system::error_code ec;
-    char buf[128];
+    char buf[20000];
 
     tcp::resolver r(io); //find endpoints from address
     tcp::resolver::query q("127.0.0.1", "123");
@@ -24,9 +24,9 @@ int main() {
         write(s,buffer(buf,strlen(buf)+1), ec);
 
         if(ec) break;
-        size_t n = s.read_some(buffer(buf,128), ec);
+        size_t n = s.read_some(buffer(buf,20000), ec);
         if (ec) break;
         std::cout << "Server response: " << buf << std::endl;
-        //std::cout.write(buf, n-1);
+        memset(buf, 0, sizeof(buf));
     }
 }

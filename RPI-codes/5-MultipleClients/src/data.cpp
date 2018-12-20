@@ -361,7 +361,7 @@ std::string Data::processRequest(char* request){
             response = "Invalid request";
     }
     
-    cout << "Response: \n" << response << endl;
+    cout << "Response: " << response << "\n" << endl;
     response = response + "                                  ";
     return response;
 }
