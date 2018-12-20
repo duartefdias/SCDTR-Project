@@ -26,7 +26,7 @@ class session {
     }
 
     public:
-    session(io_service& io, Data* database) : s(io) {db = database}
+    session(io_service& io, Data* database) : s(io) {db = database;}
     ip::tcp::socket& socket() {return s;}
 
     void start() {
