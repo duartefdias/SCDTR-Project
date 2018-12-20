@@ -9,9 +9,14 @@ class session {
     ip::tcp::socket s;
     enum { max_len = 1024 };
     char data[max_len];
+    Data* db;
+
+    void session(Data* database){
+        db = database;
+    }
 
     void hread(const error_code& ec, size_t sz) {
-        if (!ec) async_write(s, buffer(std::string("banana"), sz),
+        if (!ec) async_write(s, buffer(db->processRequest(data)), sz),
         boost::bind(&session::hwrite, this, _1));
         else delete this; 
     }
@@ -35,8 +40,8 @@ class server {
     io_service& io;
     ip::tcp::acceptor acc;
 
-    void start_accept() {
-        session* new_sess = new session(io);
+    void start_accept(Data* database = nullptr) {
+        session* new_sess = new session(io, database);
         acc.async_accept(new_sess->socket(),
         boost::bind(&server::haccept, this, new_sess,_1)); 
     }
@@ -50,6 +55,6 @@ class server {
     public:
     server(io_service& io, short port)
     : io(io), acc(io, ip::tcp::endpoint(ip::address::from_string("127.0.0.1"), port)) {
-        start_accept(); 
+        start_accept(Data* database); 
     }
 };

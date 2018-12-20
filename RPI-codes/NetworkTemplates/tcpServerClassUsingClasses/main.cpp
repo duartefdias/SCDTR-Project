@@ -11,7 +11,7 @@ class session {
     char data[max_len];
 
     void hread(const error_code& ec, size_t sz) {
-        if (!ec) async_write(s, buffer(std::string("banana"), sz),
+        if (!ec) async_write(s, buffer(data, sz),
         boost::bind(&session::hwrite, this, _1));
         else delete this; 
     }
