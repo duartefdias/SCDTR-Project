@@ -12,7 +12,7 @@ class session {
     ip::tcp::socket s;
     enum { max_len = 1024 };
     char data[max_len];
-    Database* db;
+    Data* db;
 
     // Sends response to client
     void hread(const error_code& ec, size_t sz) {
