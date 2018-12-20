@@ -254,24 +254,27 @@ void Data::reset(){
     // Allocate 3D matrix to store apllied pwm values
     appliedPwm.assign(numberOfDesks, vector < float >(1, 0));
     
-    // Allocate occupancy vector
+    // Reset occupancy vector
     occupancyDesk.resize(numberOfDesks, 1);
 
-    // Allocate lower bounds vector
+    // Reset lower bounds vector
     luxLowerBound.resize(numberOfDesks, 20);
 
-    // Allocate external illuminance vector
+    // Reset external illuminance vector
     luxExternal.resize(numberOfDesks, 0);
 
-    // Allocate illuminance control reference vector
+    // Reset illuminance control reference vector
     luxControlReference.resize(numberOfDesks, 0);
 
-    // Allocate power metrics
+    // Reset power metrics
     //accumulatedEnergyConsumption.resize(numberOfDesks, 0);
-    accumulatedEnergyConsumption[0] = 0;
-    accumulatedEnergyConsumption[1] = 0;
-    accumulatedComfortError.resize(numberOfDesks, 0);
-    accumulatedComfortFlicker.resize(numberOfDesks, 0);
+    //accumulatedComfortError.resize(numberOfDesks, 0);
+    //accumulatedComfortFlicker.resize(numberOfDesks, 0);
+    for(int i = 0; i < numberOfDesks; i++){
+        accumulatedEnergyConsumption[i] = 0;
+        accumulatedComfortError[i] = 0;
+        accumulatedComfortFlicker[i] = 0;
+    }
 }
 
 
