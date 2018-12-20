@@ -92,7 +92,7 @@ int main()
         boost::asio::io_service IO_Service;
 
         tcp::resolver Resolver(IO_Service);
-        tcp::resolver::query Query("127.0.0.1", "daytime");
+        tcp::resolver::query Query("127.0.0.1", "123");
 
         tcp::resolver::iterator EndPointIterator = Resolver.resolve(Query);
 
@@ -115,3 +115,4 @@ int main()
     {
         std::cerr << e.what() << std::endl;
     }
+}
