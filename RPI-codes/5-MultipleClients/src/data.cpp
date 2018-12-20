@@ -258,7 +258,7 @@ void Data::reset(){
     occupancyDesk.resize(numberOfDesks, 1);
 
     // Reset lower bounds vector
-    luxLowerBound.resize(numberOfDesks, 20);
+    luxLowerBound.resize(numberOfDesks, 0);
 
     // Reset external illuminance vector
     luxExternal.resize(numberOfDesks, 0);
