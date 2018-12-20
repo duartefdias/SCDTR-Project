@@ -44,15 +44,15 @@ class server {
     ip::tcp::acceptor acc;
     Data* db;
 
-    void start_accept(Data* database) {
-        session* new_sess = new session(io, database);
+    void start_accept() {
+        session* new_sess = new session(io, db);
         acc.async_accept(new_sess->socket(), boost::bind(&server::haccept, this, new_sess,_1)); 
     }
 
     void haccept(session* sess, const error_code& ec) {
         if (!ec) sess->start();
         else delete sess;
-        start_accept(database); 
+        start_accept(db); 
     }
 
     public:
