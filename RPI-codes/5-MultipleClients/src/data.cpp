@@ -78,7 +78,7 @@ void Data::setCurrentPwmAtDesk(float value, int desk){
     }*/
 
     // If vector has more than 10 elements remove last one
-    if(appliedPwm[desk].size() > 10){
+    if(appliedPwm[desk].size() > 1200){
         appliedPwm[desk].pop_back();
     }
 }
