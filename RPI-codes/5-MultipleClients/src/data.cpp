@@ -267,8 +267,10 @@ void Data::reset(){
     luxControlReference.resize(numberOfDesks, 0);
 
     // Allocate power metrics
-    accumulatedEnergyConsumption.resize(numberOfDesks, 0);
-    accumulatedComfortError.resize(numberOfDesks, 0);
+    //accumulatedEnergyConsumption.resize(numberOfDesks, 0);
+    //accumulatedComfortError.resize(numberOfDesks, 0);
+    accumulatedComfortError[0] = 0;
+    accumulatedComfortError[1] = 0;
     accumulatedComfortFlicker.resize(numberOfDesks, 0);
 }
 
