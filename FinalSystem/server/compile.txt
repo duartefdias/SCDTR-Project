@@ -1,0 +1,11 @@
+#Installing boost
+sudo apt-get install libboost-all-dev
+
+#Compiling code
+g++ -o output main.cpp -lboost_system -lpthread
+
+g++ -lboost_system -lpthread -o output src/main.cpp src/networkFunctions.cpp src/i2cFunctions.cpp src/data.cpp
+
+g++ -lboost_system -lpthread -o output src/main.cpp src/i2cFunctions.cpp src/data.cpp
+
+g++ -std=c++11 -lpigpio -lboost_system -lpthread -o output src/main.cpp src/i2cFunctions.cpp src/data.cpp
