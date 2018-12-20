@@ -66,6 +66,7 @@ struct solution consensus_algorithm(){
   Negotiation = 0;
   sendNegotiationState(Negotiation);
   sendNegotiationState(Negotiation);
+  //
   Serial.print("Consensus at iteration ");  Serial.println(i);
   copy_array(my_node.d, sol.d, my_node.N);  
   return sol;
