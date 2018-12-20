@@ -91,11 +91,11 @@ private:
 
 int main()
 {
+  boost::asio::io_service io_service;
+  tcp_server server(io_service);
   while(1){
     try
     {
-      boost::asio::io_service io_service;
-      tcp_server server(io_service);
       io_service.run();
     }
     catch (std::exception& e)

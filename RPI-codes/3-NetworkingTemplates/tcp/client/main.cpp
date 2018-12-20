@@ -16,11 +16,10 @@ int main() {
     
     std::cout << "Ready to send messages: " << std::endl;
 
-    s.connect(*server, ec); //connect and wait
-
     for (;;) {
         
         std::cin.getline(buf,128);
+        s.connect(*server, ec); //connect and wait
 
         write(s,buffer(buf,strlen(buf)+1), ec);
 
