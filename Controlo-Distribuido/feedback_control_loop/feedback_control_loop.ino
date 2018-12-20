@@ -6,7 +6,7 @@
 #include "constants.h"
 #include "globals.h"
 
-int debug = 1;
+int debug = 0;
 
 Node my_node(own_addr-1,ki,energyCost,-1,-1,Nodes);
 

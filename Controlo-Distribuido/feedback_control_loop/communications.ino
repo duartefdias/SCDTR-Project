@@ -10,6 +10,7 @@ volatile float rcPwm[MAXNODES];
 void I2CSetup() {
   Wire.begin(own_addr);
   TWAR = (own_addr << 1) | 1;  // enable broadcasts to be received
+  Wire.setClock(400000);
   Wire.onReceive(receiveEvent);   // set up receive handler
 }
 
@@ -62,7 +63,10 @@ void sendPwm(float pwm){
   Wire.write(own_addr);
   Wire.write(0);  //message type
   Wire.write(pwmValue);
-  Wire.endTransmission(); //release BUS
+  int e = Wire.endTransmission(); //release BUS
+  if (e!=0) {
+    Serial.print("Erro "); Serial.println(e);
+  }
 }
 
 void sendLuxReading(float luxReading){
@@ -74,7 +78,10 @@ void sendLuxReading(float luxReading){
   uint8_t luxL = luxValue & 0xFF;
   Wire.write(luxH);
   Wire.write(luxL);
-  Wire.endTransmission(); //release BUS
+  int e = Wire.endTransmission(); //release BUS
+  if (e!=0) {
+    Serial.print("Erro "); Serial.println(e);
+  }
 }
 
 void sendNegotiation(float pwmValues[], int N){

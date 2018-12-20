@@ -61,6 +61,7 @@ struct solution consensus_algorithm(){
       break;
     }
   }
+  
   // Consensus was obtained!
   Negotiation = 0;
   sendNegotiationState(Negotiation);
