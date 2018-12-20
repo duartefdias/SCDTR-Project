@@ -14,7 +14,7 @@ class session {
     char data[max_len];
     Data* db;
 
-    //  Sends response to client
+    //  Sends response to client 
     void hread(const error_code& ec, size_t sz) {
         if (!ec){
             async_write(s, buffer(db->processRequest(data)), boost::bind(&session::hwrite, this, _1));
