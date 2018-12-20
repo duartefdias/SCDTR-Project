@@ -52,7 +52,7 @@ int main() {
     // Create Networking threadss
     // Listen to client requests, fetch requested data and respond
     io_service io;
-    server s(io, 123);
+    server s(io, 123, &database);
     io.run();
 
     //clientResponseThread.join();

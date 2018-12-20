@@ -2,6 +2,9 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 
+
+#include "../headers/data.h"
+
 using namespace boost::asio;
 using boost::system::error_code;
 
@@ -10,10 +13,6 @@ class session {
     enum { max_len = 1024 };
     char data[max_len];
     Data* db;
-
-    void session(Data* database){
-        db = database;
-    }
 
     void hread(const error_code& ec, size_t sz) {
         if (!ec) async_write(s, buffer(db->processRequest(data)), sz),
@@ -27,7 +26,7 @@ class session {
     }
 
     public:
-    session(io_service& io) : s(io) { }
+    session(io_service& io, Data* database) : s(io) {db = database}
     ip::tcp::socket& socket() {return s;}
 
     void start() {
@@ -53,8 +52,8 @@ class server {
     }
 
     public:
-    server(io_service& io, short port)
+    server(io_service& io, short port, Data* database)
     : io(io), acc(io, ip::tcp::endpoint(ip::address::from_string("127.0.0.1"), port)) {
-        start_accept(Data* database); 
+        start_accept(database); 
     }
 };
