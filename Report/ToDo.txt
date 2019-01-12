@@ -3,36 +3,14 @@ Relatório SCDTR
 1. Introduction
 	- escrever no último parágrafo da introdução quais as secções que fora escritas por cada um
 
-2. Background
-	- explicar o que é I2C e PWM [?]
-
-3.1. Overall System Architecture
-	- Incluir fotografia do interior da caixa [Duarte]
-
-3.2. Initialization and calibration [Pedro]
-	- Incluir figura do circuito do LDR
-	- Incluir plot do log(Vcc/Vin-1) vs log(L) - os dados estão no ficheiro classTesting.m na pasta Lab2-LDR. Atenção usar uma escala logaritmica
-	- refazer os plots do tau e G0 vs illuminance para que fiquem mais claros
-
-3.4. Global Controller [Lourenço]
-	- Descrever o controlador global
-	- Descrever o algoritmo de consenso
-
 3.5. I2C Communication Protocol [Pedro]
-	- Detalhar mais precisamente a implementação (frequencia de comunicação, análise de quanto tempo demoram as mensagens, ...)
-	- Incluir tabela do protocolo
-
-3.6. Data Server [Duarte]
-	- dividir em sub-secções/parágrafos. (Nos slides da ultima aula sugere: Data Acquisition, Storage, Processing, Communications, mas podes tentar seguir as alíneas do relatório)
-	- incluir gráficos/figuras/tabelas/pedaços de código para organizar a informação
-
-4. Experiments and results
-4.1. Combined Feedback/Feedforward control [Lourenço e Duarte]
-4.2. Global vs Local control [Lourenço e Duarte]
-	- Plots of the controlled and manipulated variables.
-	- Quantification of the solutions: plots/tables with comfort/flicker/energy metrics.
-	- Plot the time response of both controllers in similar situations and create a
-table with their performance metrics.
+	- Detalhar mais precisamente a implementação - MT-SR (master transmit slave receive em modo multi-master, mais info nos slides)
+	- Endereços dos arduinos
+	- Endereço de broadcast
 
 5. Conclusions
-	- não sei bem ainda o que podemos escrever aqui
+	- What are the main results of this work (in terms of achieving the energy saving goals)
+	- Future work / improvements
+
+6. References
+	Incluir referências a tudo o que for preciso: slides do prof, enunciado, Arduino, Raspberry Pi, I2C, PWM, etc.

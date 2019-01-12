@@ -1,9 +1,6 @@
 #include "Node.h"
 #define MAX 10
 
-// TODO:
-//  What to do in case there is no feasible solution (too bright or too dim)
-
 float rho = 0.07;
 
 // Compute optimal solution with consensus algorithm
@@ -56,7 +53,7 @@ struct solution consensus_algorithm(){
       my_node.y[j] = my_node.y[j] + rho*(my_node.d[j]-my_node.d_av[j]);
     }
     
-    if (max_abs_diff(my_node.d, other_solution.d, my_node.N) < 0.005 || !Negotiation){
+    if (max_abs_diff(my_node.d, my_node.d_av, my_node.N) < 0.01 || !Negotiation){
       Negotiation = 0;
       break;
     }

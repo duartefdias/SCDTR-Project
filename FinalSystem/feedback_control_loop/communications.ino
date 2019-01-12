@@ -27,15 +27,7 @@ void receiveEvent(int howMany) {
           rcPwmNegotiation[j] = Wire.read();
           rcPwm[j] = mapfloat(rcPwmNegotiation[j], 0, 255, 0, 5);
         }
-        //Serial.print("Received "); Serial.print(rcN); Serial.println(" values from other");
-        copy_array(rcPwm, other_solution.d, rcN);
-        /*rcPwmNegotiation1 = Wire.read();
-        rcPwmNegotiation2 = Wire.read();
-        rcPwm1 = mapfloat(rcPwmNegotiation1, 0, 255, 0, 5);
-        rcPwm2 = mapfloat(rcPwmNegotiation2, 0, 255, 0, 5);
-        other_solution.d[0] = rcPwm1;
-        other_solution.d[1] = rcPwm2;*/
-        //Serial.print(" Received solution: d[0] = "); Serial.print(other_solution.d[0]); Serial.print(" d[1] = "); Serial.println(other_solution.d[1]);
+        copy_array(rcPwm, other_solution.d, rcN); // received other node solution
         ReceivedSolution = true;
      }
      // Negotiation State

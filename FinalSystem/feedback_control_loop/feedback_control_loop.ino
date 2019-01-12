@@ -40,13 +40,11 @@ void setup() {
   Negotiation = 1;
   sendNegotiationState(Negotiation);
   Serial.flush();
-
-  // TODO: some initial setup to do consensus and send initial values to server
 }
 
 void loop() {
   struct solution sol;
-  //if (Negotiation) sendNegotiationState(Negotiation);
+
   if (flag){
     // Read current output - y
     float measuredY = readLDR();
@@ -57,7 +55,7 @@ void loop() {
     analogWrite(LED1, u);
     
     // Print and send Lux measurement and pwm value
-    //Serial.print("Measured illuminance: "); Serial.println(measuredY);
+    // Serial.print("Measured illuminance: "); Serial.println(measuredY);
     sendLuxReading(measuredY);
     sendPwm(u);
     flag = 0;
